@@ -5,7 +5,7 @@ function AddRecipe() {
         title: '',
         ingredients: '',
         instructions: '',
-        // Add other fields, need to check over what we are keeping and not
+        // add other fields, need to check over what we are keeping and not
     });
 
     const handleChange = (e) => {
@@ -19,15 +19,14 @@ function AddRecipe() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Logic to save the recipe to your server/database
-        // For example, make a POST request to our API here
+        // logic to save the recipe to your server/database
 
         alert('Recipe added successfully!'); // You can replace this with a more sophisticated notification
 
     };
 
     return (
-        <div className="add-recipe">
+        <div className="page-content">
             <h1>Add a New Recipe</h1>
             <form onSubmit={handleSubmit}>
                 <label>
@@ -45,7 +44,7 @@ function AddRecipe() {
                     <textarea name="instructions" value={recipe.instructions} onChange={handleChange} required />
                 </label>
                 <br></br>
-                {/* Add other fields as needed */}
+                {/* add other fields */}
                 <button type="submit">Add Recipe</button>
             </form>
         </div>

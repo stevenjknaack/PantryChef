@@ -38,7 +38,7 @@ const App = () => {
     }
     setUser(true)
 
-    // set to sessStorage
+    // also set to sessStorage
   };
 
   const register = async (credentials) => {
@@ -54,13 +54,13 @@ const App = () => {
       return
     }
     setUser(true)
-    // set to sessStorage
+    // also set to sessStorage
   };
 
   const logout = async ()=> {
     // logic to database to logout
     setUser(false)
-    // remove from sessStorage
+    // also remove from sessStorage
   }
 
   function submitIngredients(ingredients) {
@@ -86,30 +86,3 @@ const App = () => {
 };
 
 export default App;
-
-
-/*
-import { Container, Row, Col } from 'react-bootstrap';
-
-// ... Your code here ...
-
-return (
-  <BrowserRouter>
-    <Container fluid>
-      <Row className="justify-content-md-center">
-        <Col md="auto">
-          <Routes>
-            <Route path="/" element={<NavBar user={user}/>}>
-              <Route index element={<Home />} />
-              <Route path="/login" element={<Login onLogin={login} />} />
-              <Route path="/register" element={<Register onRegister={register} />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/favorites" element={<Favorites user={user} />} />
-            </Route>
-          </Routes>
-        </Col>
-      </Row>
-    </Container>
-  </BrowserRouter>
-);
-*/
