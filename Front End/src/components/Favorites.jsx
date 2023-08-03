@@ -12,10 +12,10 @@ function Favorites({ user }) {
 
   useEffect(() => {
     loadFavorites();
-  }, [user]); // Reload favorites when the user changes
+  }, [user]); // reload favorites when the user changes
 
   const addFavorite = (recipe) => {
-    // Add the new favorite to the list
+    // add the new favorite to the list
     setFavorites([...favorites, recipe]);
 
     // send this change to the server
@@ -23,7 +23,7 @@ function Favorites({ user }) {
   };
 
   const removeFavorite = (recipe) => {
-    // Remove the favorite from the list
+    // remove the favorite from the list
     setFavorites(favorites.filter(favorite => favorite !== recipe));
 
     // send this change to the server
