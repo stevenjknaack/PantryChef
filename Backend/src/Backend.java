@@ -1,5 +1,3 @@
-package PantryChefBackend;
-
 import java.sql.*;
 public class Backend {
 	public static void main(String[] args) {
@@ -29,5 +27,4 @@ public class Backend {
 			}
 		}
 	}
-
 }
