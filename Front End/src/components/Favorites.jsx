@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function Favorites({ user }) {
   const [favorites, setFavorites] = useState([]);
 
-  // Function to load favorites from a server, or you might load them from local storage
+  // Function to load favorites from a server
   const loadFavorites = () => {
     // fetch favorites from the server
     // a static list for now
