@@ -13,6 +13,7 @@ import Favorites from './components/Favorites';
 import NavBar from './components/NavBar';
 import Logout from './components/Logout';
 import Recipe from './components/Recipe';
+import AddRecipe from './components/AddRecipe';
 
 const App = () => {
   const [user, setUser] = useState(false); // true if user is logged in
@@ -36,6 +37,8 @@ const App = () => {
       return;
     }
     setUser(true)
+
+    // set to sessStorage
   };
 
   const register = async (credentials) => {
@@ -51,11 +54,13 @@ const App = () => {
       return
     }
     setUser(true)
+    // set to sessStorage
   };
 
   const logout = async ()=> {
+    // logic to database to logout
     setUser(false)
-
+    // remove from sessStorage
   }
 
   function submitIngredients(ingredients) {
@@ -73,6 +78,7 @@ const App = () => {
           <Route path="/favorites" element={<Favorites user={user} />} />
           <Route path="/logout" element={<Logout onLogout={logout} />} />
           <Route path="/recipe" element={<Recipe ingredients={selectedIngredients} />} />
+          <Route path="/add-recipe" element={<AddRecipe user={user} />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -17,10 +17,9 @@ function Login ({ onLogin }) {
     };
 
     onLogin(credentials);
- 
-    
-  }
+    navigate('/');
 
+  }
 
   return (
     <div className="page-content">

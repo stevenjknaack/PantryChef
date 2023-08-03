@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Register({ onRegister }) {
-  
+
   const username = useRef("");
   const password = useRef("");
   const passwordConfirm = useRef("")
+  const navigate = useNavigate();
 
-  function handleSubmit (e) {
+  function handleSubmit(e) {
     e.preventDefault();
 
     const credentials = {
@@ -15,6 +17,7 @@ function Register({ onRegister }) {
       passwordConfirm: passwordConfirm.current.value,
     };
     onRegister(credentials);
+    navigate('/');
   }
 
 

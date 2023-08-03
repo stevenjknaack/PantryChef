@@ -19,17 +19,7 @@ function NavBar (props) {
             <Navbar.Brand as={Link} to="/"> Pantry Chef </Navbar.Brand>
                 <Container>
                     <Nav className="me-auto ">
-                        {/* <Nav.Link as={Link} to="/"> Home Page</Nav.Link> */}
                         <Nav.Link as={Link} to="/search"> Search </Nav.Link>
-                        {/* <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link> */}
-                        <Nav.Link 
-                            as={Link} 
-                            to={props.user ? "/favorites" : "#"} 
-                            onClick={handleFavoritesClick}
-                            style={{ color: props.user ? 'purple' : 'gray' }}
-                        >
-                            Favorites
-                        </Nav.Link>
 
                         {!props.user && (
                             <>
@@ -39,8 +29,10 @@ function NavBar (props) {
                         )}
                         {props.user && (
                             <>
+                                <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link>
+                                <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
                                 <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
-
+                                <Nav.Link as={Link} to="/recipe"></Nav.Link>
                             </>
                         )}
                     </Nav>
