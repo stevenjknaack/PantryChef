@@ -14,6 +14,8 @@ owners:
   Joseph Frazier
 """
 
+### TODO If a string contains "" or , then wrap the whole thing in double quotes
+
 from io import open
 from csv import reader 
 from re import sub
@@ -21,7 +23,12 @@ from time import time
 
 ### global parameters and constants
 
+restrict_output = True
+upper_bound_recipes = 45
+upper_bound_reviews = 20
+
 DELIMINATOR = '|'
+LINE_END = '\r\n'
 
 ORIG_RECIPES_FILE_NAME = 'recipes'
 ORIG_REVIEWS_FILE_NAME = 'reviews'
@@ -112,7 +119,7 @@ class Parser :
 
         # open output files (writers) 
         for output_name in OUTPUTS :
-            output_file = open(f'data/{output_name}.csv', 'w', encoding='utf8', newline='')
+            output_file = open(f'data/csv_tables/{output_name}.csv', 'w', encoding='utf8', newline='')
             self.writers.append(output_file)
 
     def _close_io(self) :
@@ -151,15 +158,18 @@ class Parser :
         self.last_time = time()
         self.time_start = time()
         for line in recipes_orig_reader :
+            if restrict_output and (int(line[0]) < 38 or int(line[0]) > upper_bound_recipes) : # TEST
+                    continue
+            
             for i in range(len(self.writers) - 1) :
-                #if int(line[0]) < 38 or int(line[0]) > 50 : # TEST
-                #    continue
-
                 parse_f = self.recipe_parse_functions[i]
                 parsed_str = parse_f(line)
 
+                if (line == '') : 
+                    continue
+
                 writer = self.writers[i]
-                writer.write(parsed_str)
+                writer.write(parsed_str + LINE_END)
 
             self.lines_read += 1
             self._update_time()
@@ -169,18 +179,26 @@ class Parser :
         reviews_orig_reader = self.readers[1]
         self.reviews_orig_keys = next(reviews_orig_reader)
         for line in reviews_orig_reader :
-            #if int(line[0]) < 2 or int(line[0]) > 20 : # TEST
-            #    continue
+            if restrict_output and (int(line[0]) < 2 or int(line[0]) > upper_bound_reviews) : # TEST
+                continue
 
             # user
             parsed_str = self._parse_user_review(line)
+
+            if (line == '') : 
+                continue
+
             writer = self.writers[0]
-            writer.write(parsed_str)
+            writer.write(parsed_str + LINE_END)
 
             # review
             parsed_str = self._parse_review(line)
+
+            if (line == '') : 
+                continue
+
             writer = self.writers[len(self.writers) - 1]
-            writer.write(parsed_str)
+            writer.write(parsed_str + LINE_END)
 
             self.lines_read += 1
             self._update_time()
@@ -230,7 +248,7 @@ class Parser :
         if len(password) > 50 :
             password = password[:51]
 
-        user_string = f'{username},{password}\n'
+        user_string = f'{username},{password}'
 
         return user_string
     
@@ -365,7 +383,7 @@ class Parser :
         recipe_string += f'{recipe_id},{name},{instructions_string},'
         recipe_string += f'{time_description},{servings},{nutrional_content},'
         recipe_string += f'{description},{author_username},'
-        recipe_string += f'{date_published},{date_modified}\n'
+        recipe_string += f'{date_published},{date_modified}'
 
         return recipe_string 
     
@@ -387,6 +405,8 @@ class Parser :
             return ''
 
         # process
+        images = sub('\n', '', images)
+
         if images[0] == 'c' :
             images = Parser._process_split_csv_array(images)
         else :
@@ -397,9 +417,9 @@ class Parser :
             image_id = self.num_images + 1
             self.num_images += 1
 
-            images_string += f'{image_id},{image}\n'
+            images_string += f'{image_id},{image}{LINE_END}'
 
-        return images_string
+        return images_string[:-len(LINE_END)]
     
     def _parse_illustrates(self, recipes_line) :
         """
@@ -421,9 +441,9 @@ class Parser :
             image_id = i + 1
             self.num_illustrates += 1
 
-            illustrates_string += f'{image_id},{recipe_id}\n'
+            illustrates_string += f'{image_id},{recipe_id}{LINE_END}'
             
-        return illustrates_string
+        return illustrates_string[:-len(LINE_END)]
     
     def _parse_calls_for(self, recipes_line) :
         """
@@ -468,9 +488,9 @@ class Parser :
             ingredient = ingredient[1:-1]
             quantity = quantity[1:-1]
 
-            calls_for_string += f'{recipe_id},{ingredient},{quantity}\n'
+            calls_for_string += f'{recipe_id},{ingredient},{quantity}{LINE_END}'
 
-        return calls_for_string
+        return calls_for_string[:-len(LINE_END)]
     
     def _parse_has_ingredient(self, recipes_line) :
         """
@@ -500,12 +520,12 @@ class Parser :
         for i in range(min(5, len(self.ingredients))) :
             ingredient_index = (i + self.ingredients_index) % len(self.ingredients)
             ingredient = self.ingredients[ingredient_index]
-            has_ingredient_string += f'{ingredient[1:-1]},{username}\n'
+            has_ingredient_string += f'{ingredient[1:-1]},{username}{LINE_END}'
 
         self.ingredients_index += 5
         self.ingredients_index %= len(self.ingredients)
 
-        return has_ingredient_string
+        return has_ingredient_string[:-len(LINE_END)]
     
     def _parse_favorites(self, recipes_line) :
         """
@@ -535,12 +555,12 @@ class Parser :
         for i in range(min(5, len(self.recipe_ids))) :
             favorite_index = (i + self.favorites_index) % len(self.recipe_ids)
             favorite = self.recipe_ids[favorite_index]
-            favorites_string += f'{favorite},{username}\n'
+            favorites_string += f'{favorite},{username}{LINE_END}'
 
         self.favorites_index += 5
         self.favorites_index %= len(self.recipe_ids)
 
-        return favorites_string
+        return favorites_string[:-len(LINE_END)]
     
     
     def _parse_review(self, reviews_line) :
@@ -559,7 +579,7 @@ class Parser :
         recipe_id_index = ORIG_REVIEWS_KEYS['RecipeId'] 
         recipe_id = reviews_line[recipe_id_index]
 
-        if not self.recipe_ids_check.__contains__(recipe_id) :
+        if not self.recipe_ids_check.__contains__(recipe_id) and not restrict_output :
             return ''
 
         # ReviewID
@@ -594,7 +614,7 @@ class Parser :
         # create and return
         review_string += f'{review_id},{review},{rating},'
         review_string += f'{recipe_id},{author_username},'
-        review_string += f'{date_submitted},{date_modified}\n'
+        review_string += f'{date_submitted},{date_modified}'
                                     
         return review_string
     
@@ -608,7 +628,7 @@ class Parser :
 
         given an array string , return a string array
         """
-        csv_string_array = sub('[^\S ]+', '', csv_string_array)
+        csv_string_array = sub('\r\n', '', csv_string_array)
         csv_string_array = sub(' +', ' ', csv_string_array)
         csv_string_array = csv_string_array[2:-1]
         csv_string_array = csv_string_array.split(split_re)
