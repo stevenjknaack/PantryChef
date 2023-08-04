@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import userLoggedIn from '../context/userLoggedIn';
 
-function Favorites({ user }) {
+function Favorites() {
+
+  const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
   const [favorites, setFavorites] = useState([]);
 
   // Function to load favorites from a server
   const loadFavorites = () => {
-    // fetch favorites from the server
+    // fetch favorites from the server when changed to favs
+    
     // a static list for now
     setFavorites(["Recipe 1", "Recipe 2", "Recipe 3"]);
   };
 
   useEffect(() => {
     loadFavorites();
-  }, [user]); // reload favorites when the user changes
+  }, [loggedIn]); // reload favorites when the user changes
 
-  const addFavorite = (recipe) => {
-    // add the new favorite to the list
-    setFavorites([...favorites, recipe]);
-
-    // send this change to the server
-    // this will need to be moved the recipe side of stuff
-  };
 
   const removeFavorite = (recipe) => {
-    // remove the favorite from the list
+    // remove the favorite from the list for now
     setFavorites(favorites.filter(favorite => favorite !== recipe));
 
-    // send this change to the server
+    // what will happen is when the - button gets clicked
+    // it will be removed from the favorites in the database (recipeID, username)
+    // and site will reload the favorites when action occurs
+    console.log(loggedIn)
   };
 
   return (
