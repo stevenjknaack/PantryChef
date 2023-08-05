@@ -37,7 +37,7 @@ function Register({ onRegister }) {
         <br />
         <label>
           Confirm Password:
-          <input id="PASSWORD" type={"text"} ref={passwordConfirm} />
+          <input id="DUP-PASSWORD" type={"text"} ref={passwordConfirm} />
         </label>
         <br />
         <button type="submit">Register</button>
