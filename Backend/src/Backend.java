@@ -211,7 +211,7 @@ public class Backend {
 //	  			  }
 //	  			 System.out.println();
   			  
-				boolean userFound = false; // Check if a result was returned
+				boolean userFound = false; 
 				String fetchedUsername = "";
 				String fetchedPassword = "";
 
