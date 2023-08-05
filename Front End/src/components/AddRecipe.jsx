@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 function AddRecipe() {
     const [recipe, setRecipe] = useState({
         title: '',
-        cookTime:'',
-        prepTime:'',
-        totalTime:'',
+        cookTime: '',
+        prepTime: '',
+        totalTime: '',
         description: '',
-        ingredients:'',
+        ingredients: '',
         instructions: '',
         recipeIngredientQuantities: '',
-        calories:'',
+        calories: '',
         fatContent: '',
         saturatedFatContent: '',
         cholesterolContent: '',
@@ -26,7 +26,7 @@ function AddRecipe() {
     });
 
     // console.log("RecipeId,Name,AuthorId,AuthorName,CookTime,PrepTime,TotalTime,DatePublished,Description,Images,RecipeCategory,Keywords,RecipeIngredientQuantities,RecipeIngredientParts,AggregatedRating,ReviewCount,Calories,FatContent,SaturatedFatContent,CholesterolContent,SodiumContent,CarbohydrateContent,FiberContent,SugarContent,ProteinContent,RecipeServings,RecipeYield,RecipeInstructions")
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRecipe({
@@ -41,7 +41,47 @@ function AddRecipe() {
         // logic to save the recipe to your server/database
         // will need all the attributes from above, + username + a generated recipeID (from the backend) + a way to get the date
 
-        alert('Recipe added successfully!');
+        fetch("http://localhost:8000/addrecipe", {
+            method: "POST",
+            body: JSON.stringify({
+                title: recipe.title,
+                cookTime: recipe.cookTime,
+                prepTime: recipe.prepTime,
+                totalTime: recipe.totalTime,
+                description: recipe.description,
+                ingredients: recipe.ingredients,
+                instructions: recipe.instructions,
+                recipeIngredientQuantities: recipe.recipeIngredientQuantities,
+                calories: recipe.calories,
+                fatContent: recipe.fatContent,
+                saturatedFatContent: recipe.saturatedFatContent,
+                cholesterolContent: recipe.cholesterolContent,
+                sodiumContent: recipe.sodiumContent,
+                carbohydrateContent: recipe.carbohydrateContent,
+                fiberContent: recipe.fiberContent,
+                sugarContent: recipe.sugarContent,
+                proteinContent: recipe.proteinContent,
+                recipeServings: recipe.recipeServings,
+                recipeYield: recipe.recipeYield
+            }),
+
+        }).then(res => {
+
+            if (res.status === 401) {
+                alert('recipe failed to add!')
+                return false;
+            }
+            else if (res.status === 200) {
+                alert('recipe successfully added!')
+                return res.json()
+
+            } else if (res.status === 405) {
+                alert('unknown error')
+                return false;
+            }
+        })
+        // no json recieved back
+
     };
 
     return (
@@ -55,13 +95,18 @@ function AddRecipe() {
                 </label>
                 <br></br>
                 <label>
+                    Description:
+                    <textarea name="description" value={recipe.description} onChange={handleChange} required />
+                </label>
+                <br></br>
+                <label>
                     Ingredients:
                     <textarea name="ingredients" value={recipe.ingredients} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Recipe Ingredient Quantities:
-                    <textarea name="ingredient quantities" value={recipe.recipeIngredientQuantities} onChange={handleChange} required />
+                    Recipe Ingredient Quantities:
+                    <textarea name="recipeIngredientQuantities" value={recipe.recipeIngredientQuantities} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
@@ -71,77 +116,72 @@ function AddRecipe() {
                 <br></br>
                 <label>
                     Cook Time:
-                    <textarea name="cook time" value={recipe.cookTime} onChange={handleChange} required />
+                    <textarea name="cookTime" value={recipe.cookTime} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
                     Prep Time:
-                    <textarea name="prep time" value={recipe.prepTime} onChange={handleChange} required />
+                    <textarea name="prepTime" value={recipe.prepTime} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Total Time:
-                    <textarea name="total time" value={recipe.totalTime} onChange={handleChange} required />
+                    Total Time:
+                    <textarea name="totalTime" value={recipe.totalTime} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Description:
-                    <textarea name="description" value={recipe.description} onChange={handleChange} required />
+                    calories:
+                    <textarea name="calories" value={recipe.calories} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                calories:
-                    <textarea name="calorites" value={recipe.calories} onChange={handleChange} required />
+                    Fat Content:
+                    <textarea name="fatContent" value={recipe.fatContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Fat Content:
-                    <textarea name="fat content" value={recipe.fatContent} onChange={handleChange} required />
+                    Saturated Fat Content:
+                    <textarea name="saturatedFatContent" value={recipe.saturatedFatContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Saturated Fat Content:
-                    <textarea name="sat fat content" value={recipe.saturatedFatContent} onChange={handleChange} required />
+                    Cholesterol Content:
+                    <textarea name="cholesterolContent" value={recipe.cholesterolContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Cholesterol Content:
-                    <textarea name="cholesterol content" value={recipe.cholesterolContent} onChange={handleChange} required />
+                    Sodium Content:
+                    <textarea name="sodiumContent" value={recipe.sodiumContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Sodium Content:
-                    <textarea name="sodium content" value={recipe.sodiumContent} onChange={handleChange} required />
+                    Carbohydrate Content:
+                    <textarea name="carbohydrateContent" value={recipe.carbohydrateContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Carbohydrate Content:
-                    <textarea name="carbs" value={recipe.carbohydrateContent} onChange={handleChange} required />
+                    Fiber Content:
+                    <textarea name="fiberContent" value={recipe.fiberContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Fiber Content:
-                    <textarea name="fiber" value={recipe.fiberContent} onChange={handleChange} required />
+                    Sugar Content:
+                    <textarea name="sugarContent" value={recipe.sugarContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Sugar Content:
-                    <textarea name="sugar" value={recipe.sugarContent} onChange={handleChange} required />
+                    Protein Content:
+                    <textarea name="proteinContent" value={recipe.proteinContent} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Protein Content:
-                    <textarea name="protein" value={recipe.proteinContent} onChange={handleChange} required />
+                    Recipe Servings:
+                    <textarea name="recipeServings" value={recipe.recipeServings} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <label>
-                Recipe Servings:
-                    <textarea name="servings" value={recipe.recipeServings} onChange={handleChange} required />
-                </label>
-                <br></br>
-                <label>
-                Recipe Yield:
-                    <textarea name="yield" value={recipe.recipeYield} onChange={handleChange} required />
+                    Recipe Yield:
+                    <textarea name="recipeYield" value={recipe.recipeYield} onChange={handleChange} required />
                 </label>
                 <br></br>
                 <br></br>
