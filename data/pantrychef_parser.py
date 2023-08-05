@@ -21,11 +21,13 @@ from csv import reader
 from re import sub
 from time import time
 
-### global parameters and constants
+# test parameters
 
-restrict_output = True
-upper_bound_recipes = 45
-upper_bound_reviews = 20
+restrict_output = True # switch to false to parse entire files
+upper_bound_recipes = 45 # max recipeID to parse
+upper_bound_reviews = 20 # max reviewID to parse
+
+### global parameters and constants
 
 DELIMINATOR = '|'
 LINE_END = '\r\n'
