@@ -1,15 +1,19 @@
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Recipe.csv" INTO TABLE Recipe FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+# populates PantryChef database for Windows
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Image.csv" INTO TABLE Image FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+SET GLOBAL local_infile=true;
+
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Recipe.csv" INTO TABLE Recipe FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Image.csv" INTO TABLE Image FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
 LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Illustrates.csv" INTO TABLE Illustrates FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/CallsFor.csv" INTO TABLE CallsFor FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/CallsFor.csv" INTO TABLE CallsFor FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/User.csv" INTO TABLE User FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/User.csv" INTO TABLE User FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/HasIngredient.csv" INTO TABLE HasIngredient FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/HasIngredient.csv" INTO TABLE HasIngredient FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Favorites.csv" INTO TABLE Favorites FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Favorites.csv" INTO TABLE Favorites FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
 
-#LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Review.csv" INTO TABLE Review FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";
+LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Review.csv" INTO TABLE Review FIELDS TERMINATED BY "," LINES TERMINATED BY "\r\n";

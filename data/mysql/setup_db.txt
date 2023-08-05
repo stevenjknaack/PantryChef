@@ -1,4 +1,4 @@
-SET GLOBAL local_infile=true;
+# setup for PantryChef database in mySQL
 
 CREATE DATABASE PantryChef;
 
