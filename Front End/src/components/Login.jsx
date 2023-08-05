@@ -18,7 +18,6 @@ function Login ({ onLogin }) {
 
     onLogin(credentials);
     navigate('/');
-
   }
 
   return (
