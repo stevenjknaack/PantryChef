@@ -7,7 +7,7 @@ USE PantryChef;
 CREATE TABLE Recipe (
   RecipeID INTEGER,
   Name VARCHAR(300),
-  Instructions VARCHAR(1000),
+  Instructions VARCHAR(2000),
   TimeDescription VARCHAR(1000),
   Servings VARCHAR(100),
   NutrionalContent VARCHAR(1000),

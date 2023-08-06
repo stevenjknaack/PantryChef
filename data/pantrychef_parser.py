@@ -14,18 +14,18 @@ owners:
   Joseph Frazier
 """
 
-### TODO If a string contains "" or , then wrap the whole thing in double quotes
+### TODO ensure no duplicates in callsfor
 
 from io import open
 from csv import reader 
-from re import sub
+from re import sub, search
 from time import time
 
-# test parameters
+# test parameters 
 
 restrict_output = True # switch to false to parse entire files
-upper_bound_recipes = 45 # max recipeID to parse
-upper_bound_reviews = 20 # max reviewID to parse
+upper_bound_recipes = 60 # max recipeID to parse
+upper_bound_reviews = 40 # max reviewID to parse
 
 ### global parameters and constants
 
@@ -74,6 +74,7 @@ class Parser :
 
         self.recipe_ids = []
         self.recipe_ids_check = set()
+
         self.num_images = 0
         self.num_illustrates = 0
         self.users = set()
@@ -160,6 +161,8 @@ class Parser :
         self.last_time = time()
         self.time_start = time()
         for line in recipes_orig_reader :
+            self._update_time()
+
             if restrict_output and (int(line[0]) < 38 or int(line[0]) > upper_bound_recipes) : # TEST
                     continue
             
@@ -167,58 +170,104 @@ class Parser :
                 parse_f = self.recipe_parse_functions[i]
                 parsed_str = parse_f(line)
 
-                if (line == '') : 
+                if (parsed_str == '') : 
                     continue
 
                 writer = self.writers[i]
                 writer.write(parsed_str + LINE_END)
 
             self.lines_read += 1
-            self._update_time()
-                    
+
+        print('(recipes.csv done)')                    
         
         # parse reviews_original.csv
         reviews_orig_reader = self.readers[1]
         self.reviews_orig_keys = next(reviews_orig_reader)
         for line in reviews_orig_reader :
+            self._update_time()
             if restrict_output and (int(line[0]) < 2 or int(line[0]) > upper_bound_reviews) : # TEST
                 continue
 
             # user
             parsed_str = self._parse_user_review(line)
 
-            if (line == '') : 
-                continue
-
-            writer = self.writers[0]
-            writer.write(parsed_str + LINE_END)
+            if (parsed_str != '') : 
+                writer = self.writers[0]
+                writer.write(parsed_str + LINE_END)
 
             # review
             parsed_str = self._parse_review(line)
 
-            if (line == '') : 
-                continue
-
-            writer = self.writers[len(self.writers) - 1]
-            writer.write(parsed_str + LINE_END)
+            if (parsed_str != '') : 
+                writer = self.writers[len(self.writers) - 1]
+                writer.write(parsed_str + LINE_END)
 
             self.lines_read += 1
-            self._update_time()
+
+        print('(reviews.csv done)')
 
         print(f'Parsing complete. ({round(time() - self.time_start, 3)}s) ({self.lines_read} lines)')
         self._close_io()
 
     def _update_time(self) : 
         time_diff = time() - self.last_time
-        if time_diff >= 15 :
+        if time_diff >= 5 :
            self.last_time = time()
            print(f'parsing... ({round(self.last_time - self.time_start, 3)}s) ({self.lines_read} lines)')
 
     def _process_username(raw_username) :
         """ Processes raw_username into correct username"""
+        raw_username = sub('[^\S ]', '', raw_username)
         if len(raw_username) > 50 :
             raw_username = raw_username[:51]
         return raw_username
+    
+    def _process_split_csv_array(csv_string_array, split_re = ', ') :
+        """ 
+        remove 
+            extra newlines,
+            'c(' from beginning,
+            and ')' from end of string 
+        then split
+
+        given an array string , return a string array
+        """
+        csv_string_array = sub('\r\n', '', csv_string_array)
+        csv_string_array = sub(' +', ' ', csv_string_array)
+        csv_string_array = csv_string_array[2:-1]
+        csv_string_array = csv_string_array.split(split_re)
+
+        return csv_string_array
+    
+    def _process_string(string) :
+        """ 
+        formats a single element string 
+            a string should have opening and closing braces
+            if and only if it contains matching non-beginning/ending
+            double parenthesis, \n, or a comma.
+        """
+        string = sub('\r\n', '', string)
+        string = sub('[^\S\n ]', '', string)
+        string = sub('  +', ' ', string)
+
+        has_parenthesis = search('^".*"$', sub('\n', '', string))
+        
+        need_parenthesis = search('^[^"](.*".*".*)+[^"]$', string)
+        need_parenthesis = need_parenthesis or search('^"(.*".*".*)+"$', string)
+        need_parenthesis = need_parenthesis or search('^[^"](.*".*)+"$', string)
+        need_parenthesis = need_parenthesis or search('^"(.*".*)+[^"]$', string)
+        #need_parenthesis = search('(^[^"](.*".*".*)+[^"]$)|(^"(.*".*".*)+"$)|(^[^"](.*".*)+"$)|(^"(.*".*)+[^"]$)', string)
+        need_parenthesis = need_parenthesis or search(',', string)
+        need_parenthesis = need_parenthesis or search('\n', string)
+        
+        if need_parenthesis and not has_parenthesis :
+            string = f'"{string}"'
+        elif not need_parenthesis and has_parenthesis :
+            string = string[1:-1]
+        
+        #print(has_parenthesis, need_parenthesis)
+        return string
+        
 
     def _parse_user(self, username) :
         """
@@ -232,6 +281,7 @@ class Parser :
         user_string = ''
         
         # process username
+        username = Parser._process_string(username)
         username = Parser._process_username(username)
 
          # check for existence
@@ -307,6 +357,7 @@ class Parser :
         # Name
         name_index = ORIG_RECIPES_KEYS['Name']
         name = recipes_line[name_index]
+        name = Parser._process_string(name)
 
         # Instructions
         instructions_index = ORIG_RECIPES_KEYS['RecipeInstructions']
@@ -314,10 +365,14 @@ class Parser :
         instructions = Parser._process_split_csv_array(instructions, '", ')
         
         instructions_string = ''
-        for instruction in instructions :
-            instructions_string += f'{instruction[1:]}{DELIMINATOR}'
+        for i in range(len(instructions)) :
+            instruction = instructions[i]
+            instruction = sub('"', '', instruction)
+            instruction = sub('(^\n)|(\n$)', '', instruction)
+            instructions_string += f'{i + 1}. {instruction}\n'
         
-        instructions_string = f'"{instructions_string[:-2]}"'
+        instructions_string = f'{instructions_string[:-1]}'
+        instructions_string = Parser._process_string(instructions_string)
 
         # TimeDescription 
         cook_time_index = ORIG_RECIPES_KEYS['CookTime']
@@ -342,6 +397,8 @@ class Parser :
         time_description += f'Prep Time: {prep_time} {DELIMINATOR} '
         time_description += f'Total Time: {total_time}'
 
+        time_description = Parser._process_string(time_description)
+
         # Servings
         servings__index = ORIG_RECIPES_KEYS['RecipeServings']
         servings_ = recipes_line[servings__index]
@@ -352,6 +409,8 @@ class Parser :
         servings = f'Servings: {servings_} {DELIMINATOR} ' 
         servings += f'Yield: {yield_}'
 
+        servings = Parser._process_string(servings)
+
         # NutrionalContent
         nutrional_content = ''
         for key in NUTRIONAL_CONTENT :
@@ -360,17 +419,17 @@ class Parser :
 
             nutrional_content += f'{key}: {value} {DELIMINATOR} '
         
-        nutrional_content = nutrional_content[:-3]
+        nutrional_content = nutrional_content[:-len(DELIMINATOR) - 2]
 
         # Description
         description_index = ORIG_RECIPES_KEYS['Description']
         description = recipes_line[description_index]
-        description = sub('[^\S ]+', '', description)
-        description = f'"{description}"'
+        description = Parser._process_string(description)
 
         # AuthorUsername
         author_username_index = ORIG_RECIPES_KEYS['AuthorName']
         author_username = recipes_line[author_username_index]
+        author_username = Parser._process_string(author_username)
         author_username = Parser._process_username(author_username)
 
         # DatePublished
@@ -402,12 +461,12 @@ class Parser :
         images_string = ''
         images_index = ORIG_RECIPES_KEYS['Images']
         images = recipes_line[images_index]
-
-        if images == 'character(0)' :
-            return ''
-
+        
         # process
-        images = sub('\n', '', images)
+        images = sub('\n|\r', '', images)
+
+        if images == "character(0)":
+            return ''
 
         if images[0] == 'c' :
             images = Parser._process_split_csv_array(images)
@@ -464,7 +523,6 @@ class Parser :
 
         ingredients_index = ORIG_RECIPES_KEYS['RecipeIngredientParts']
         ingredients = recipes_line[ingredients_index]
-        
 
         quantities_index = ORIG_RECIPES_KEYS['RecipeIngredientQuantities']
         quantities = recipes_line[quantities_index]
@@ -473,10 +531,18 @@ class Parser :
         ingredients = Parser._process_split_csv_array(ingredients)
         quantities = Parser._process_split_csv_array(quantities)
 
+        ingredients_seen = set()
         for i in range(len(ingredients)) :
             # get values
             ingredient = ingredients[i]
+            ingredient = sub('"', '', ingredient)
+            ingredient = Parser._process_string(ingredient)
+
+            if ingredients_seen.__contains__(ingredient) :
+                continue
+
             self.ingredients.append(ingredient)
+            ingredients_seen.add(ingredient)
 
             quantity = None
             if i < len(quantities) :
@@ -487,8 +553,8 @@ class Parser :
                 quantity = '"NA"'
 
             # remove quotes
-            ingredient = ingredient[1:-1]
             quantity = quantity[1:-1]
+            quantity = sub(' ', '', quantity)
 
             calls_for_string += f'{recipe_id},{ingredient},{quantity}{LINE_END}'
 
@@ -508,6 +574,7 @@ class Parser :
         # get Username 
         username_index = ORIG_RECIPES_KEYS['AuthorName']
         username = recipes_line[username_index]
+        username = Parser._process_string(username)
         username = Parser._process_username(username)
 
         # check if just added, increment if it was
@@ -522,7 +589,7 @@ class Parser :
         for i in range(min(5, len(self.ingredients))) :
             ingredient_index = (i + self.ingredients_index) % len(self.ingredients)
             ingredient = self.ingredients[ingredient_index]
-            has_ingredient_string += f'{ingredient[1:-1]},{username}{LINE_END}'
+            has_ingredient_string += f'{ingredient},{username}{LINE_END}'
 
         self.ingredients_index += 5
         self.ingredients_index %= len(self.ingredients)
@@ -543,6 +610,7 @@ class Parser :
         # get Username 
         username_index = ORIG_RECIPES_KEYS['AuthorName']
         username = recipes_line[username_index]
+        username = Parser._process_string(username)
         username = Parser._process_username(username)
 
         # check if just added, increment if it was
@@ -591,7 +659,7 @@ class Parser :
         # Review
         review_index = ORIG_REVIEWS_KEYS['Review']
         review = reviews_line[review_index]
-        review = sub('\n', '', review)
+        review = Parser._process_string(review)
 
         # Rating 
         rating_index = ORIG_REVIEWS_KEYS['Rating']
@@ -603,6 +671,7 @@ class Parser :
         # AuthorUsername
         author_username_index = ORIG_REVIEWS_KEYS['AuthorName'] 
         author_username = reviews_line[author_username_index]
+        author_username = Parser._process_string(author_username)
         author_username = Parser._process_username(author_username)
 
         # DateSubmitted
@@ -619,23 +688,6 @@ class Parser :
         review_string += f'{date_submitted},{date_modified}'
                                     
         return review_string
-    
-    def _process_split_csv_array(csv_string_array, split_re = ', ') :
-        """ 
-        remove 
-            extra newlines,
-            'c(' from beginning,
-            and ')' from end of string 
-        then split
-
-        given an array string , return a string array
-        """
-        csv_string_array = sub('\r\n', '', csv_string_array)
-        csv_string_array = sub(' +', ' ', csv_string_array)
-        csv_string_array = csv_string_array[2:-1]
-        csv_string_array = csv_string_array.split(split_re)
-
-        return csv_string_array
 
 ### other methods
 def main() :
@@ -648,3 +700,4 @@ def main() :
 
 ### method calls
 main()
+
