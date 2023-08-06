@@ -125,7 +125,94 @@ public class Backend {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
-			// continue
+			String body = getBody(t);
+			JSONObject obj = null;
+			try {
+				obj = new JSONObject(body);
+			} catch (JSONException e) {
+				System.out.println(e.getMessage());
+			}
+
+			/*
+			 * JSON FROM FRONT END
+			 * 
+			 * username: "username_provided"; password: "password_provided";
+			 * 
+			 */
+
+			String username = "";
+			String password = "";
+			String response = "";
+
+			try {
+				username = (String) obj.get("username");
+				password = (String) obj.get("password");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			// remove
+			System.out.println(username);
+			System.out.println(password);
+
+			Backend b = new Backend();
+			b.Connection();
+
+			try {
+
+				String sql = "SELECT COUNT(*) AS user_count FROM User WHERE Username = ?";
+				PreparedStatement prepStatement = b.c.prepareStatement(sql);
+				prepStatement.setString(1, username);
+
+				b.resultSet = prepStatement.executeQuery();
+
+				int userExist = 0;
+
+				while (b.resultSet.next()) {
+					try {
+						userExist = b.resultSet.getInt("user_count");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (userExist == 0) {
+
+					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, ?);\n" + "";
+
+					prepStatement = b.c.prepareStatement(sql);
+					prepStatement.setString(1, username);
+					prepStatement.setString(2, password);
+					int rowsAffected = prepStatement.executeUpdate();
+					System.out.println(rowsAffected);
+
+					// Successfully inserted 
+					if (rowsAffected == 1) {
+						JSONObject responseObject = new JSONObject();
+						try {
+							responseObject.put("username", username);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						response = responseObject.toString();
+						t.sendResponseHeaders(200, response.length());
+					} else {
+						// meaning more than 1 row were inserted 
+						t.sendResponseHeaders(500, response.length());
+					}
+
+				} else {
+					t.sendResponseHeaders(401, response.length());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
 
 		}
 	}
@@ -144,8 +231,6 @@ public class Backend {
 			} catch (JSONException e) {
 				System.out.println(e.getMessage());
 			}
-
-			/* Logic begin */
 
 			/*
 			 * JSON FROM FRONT END
@@ -166,12 +251,6 @@ public class Backend {
 				e.printStackTrace();
 			}
 
-			// remove
-			System.out.println(username);
-			System.out.println(password);
-
-			// TODO: do the query and get back values
-
 			Backend b = new Backend();
 			b.Connection();
 
@@ -179,28 +258,10 @@ public class Backend {
 
 				String sql = "SELECT Username, Password FROM User WHERE Username = ? AND Password = ?";
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
-				/**
-				 * Creates and initializes a PreparedStatement for executing the provided SQL
-				 * query.
-				 * 
-				 * Key Details: - The PreparedStatement allows for efficient and repeated
-				 * execution of the SQL statement. - Parameters in the SQL query are safely set
-				 * using placeholders (?), mitigating SQL injection risks.
-				 * 
-				 * Components: - 'b': Represents our backend instance. - 'c': Represents the
-				 * database connection associated with the backend.
-				 * 
-				 * Method Insight: - 'prepareStatement': A method of the Connection object. It
-				 * precompiles the given SQL statement for optimized execution. This
-				 * precompilation aids in executing the SQL statement more efficiently later and
-				 * securely setting parameters.
-				 */
-
 				prepStatement.setString(1, username);
 				prepStatement.setString(2, password);
 
 				b.resultSet = prepStatement.executeQuery();
-
 
 //				 this will print out the headers
 //	              ResultSetMetaData metadata = b.resultSet.getMetaData();
@@ -210,8 +271,8 @@ public class Backend {
 //	  				  System.out.print(metadata.getColumnName(i)+"\t");
 //	  			  }
 //	  			 System.out.println();
-  			  
-				boolean userFound = false; 
+
+				boolean userFound = false;
 				String fetchedUsername = "";
 				String fetchedPassword = "";
 
@@ -227,8 +288,6 @@ public class Backend {
 				System.out.println(fetchedPassword);
 				System.out.println(userFound);
 
-				// set up responseHeaders and/or responseObjects
-				// TODO: update logic to work with the querying
 				if (userFound) {
 					JSONObject responseObject = new JSONObject();
 
@@ -247,8 +306,6 @@ public class Backend {
 				e.printStackTrace();
 				t.sendResponseHeaders(500, response.length());
 			}
-
-			/* Logic end */
 
 			// this part is the response from the backend back to the frontend once the
 			// querying is done

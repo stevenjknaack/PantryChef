@@ -2,12 +2,12 @@ import userLoggedIn from "../context/userLoggedIn";
 import {useContext} from 'react';
 
 // ingredients will become ingredients, recipe
-function Recipe({ ingredients }) {
+function Recipe({ ingredients, recipesData }) {
 
   const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
   console.log(loggedIn)
 
-  const addFavorite = (recipe) => {
+  const addFavorite = (recipeID) => {
 
     // what will happen is when the + button gets clicked, 
     // it will be added to the favorites in the database (recipeID, username)
@@ -16,7 +16,7 @@ function Recipe({ ingredients }) {
       method: "POST",
       body: JSON.stringify({
         username: loggedIn,
-        recipeID: "recipeID", // not a thing yet
+        recipeID: recipeID, 
       }),
 
     }).then(res => {
@@ -35,15 +35,31 @@ function Recipe({ ingredients }) {
 
   return (
     <div className="page-content">
-      <h1>WORK IN PROGRESS</h1>
-      <h3>redo this later</h3>
+      <h1>Recipes</h1>
+      
+      {/* Display the given list of ingredients */}
+      <div className="ingredients-list">
+        <h2>Your Ingredients</h2>
+        <ul>
+          {ingredients.map((ingredient, index) => (
+            <li key={index}>{ingredient}</li>
+          ))}
+        </ul>
+      </div>
+      
+      {/* Display the recipes */}
       <ul>
-        {ingredients.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
+        {recipesData.recipes && recipesData.recipes.map((recipe) => (
+          <li key={recipe.recipeID}>
+            <h2>{recipe.name}</h2>
+            <h2>{recipe.ingredient}</h2>
+            <button onClick={() => addFavorite(recipe.recipeID)}>Add to Favorites</button>
+          </li>
         ))}
       </ul>
     </div>
   );
+     
 }
 
 export default Recipe;

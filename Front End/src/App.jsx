@@ -22,7 +22,7 @@ const App = () => {
   // the array that holds the selected ingredients by the user
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   //will be filled with recipes when the recipes are returned by the backend
-  const [recipes, setRecipes] = useState({})
+  const [recipes, setRecipes] = useState([])
 
   // for setting the userName to sessionStorage
   const isLoggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -116,7 +116,7 @@ const App = () => {
       else if (res.status === 200) {
         return res.json()
 
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
         return false;
       }
@@ -131,9 +131,6 @@ const App = () => {
         // {username: 'username_of_user'}
       }
     })
-
-    // remove later just need it to work for now
-    setLoggedIn(credentials.username)
   };
 
   const logout = async () => {
@@ -194,6 +191,8 @@ const App = () => {
         // }
 
       }
+
+      
     })
 
     // will also need to then send the recipes along with ingredients to recipe.jsx
@@ -210,7 +209,7 @@ const App = () => {
             <Route path="/search" element={<Search onSubmit={submitIngredients} />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/logout" element={<Logout onLogout={logout} />} />
-            <Route path="/recipe" element={<Recipe ingredients={selectedIngredients} />} />
+            <Route path="/recipe" element={<Recipe ingredients={selectedIngredients} recipesData={recipes}/>} />
             <Route path="/add-recipe" element={<AddRecipe />} />
           </Route>
         </Routes>
