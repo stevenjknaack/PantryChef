@@ -36,25 +36,6 @@ function Favorites() {
       else {
         setFavorites(json);
       }
-
-      // expected json back
-        // {
-        //   "recipes": [
-        //     {
-        //       "name": "Recipe 1",
-        //       "recipeID": 1
-        //       "ingredients": ["Ingredient 1", "Ingredient 2"]
-        //        ...
-        //     },
-        //     {
-        //       "name": "Recipe 2",
-        //       "recipeID": 2
-        //       "ingredients": ["Ingredient 3", "Ingredient 4"]
-        //        ...
-        //     },
-        //    ...
-        //   ]
-        // }
     })
     
     // a static list for now

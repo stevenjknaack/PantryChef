@@ -10,24 +10,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class TestClass {
-	public int ID;
-	public String description;
-	public String monkey;
-
-	public TestClass(int ID, String description, String monkey) {
-		this.ID = ID;
-		this.description = description;
-		this.monkey = monkey;
-	}
-
-	public String toJSON() {
-		return "{\"ID\":" + this.ID + "\n\"description\":" + this.description + "\n\"monkey\":" + this.monkey + "}";
-	}
-}
 
 public class Backend {
 
@@ -121,7 +107,7 @@ public class Backend {
 		}
 	}
 
-	static class RegisterHandler implements HttpHandler {
+	static class SearchHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -133,12 +119,174 @@ public class Backend {
 				System.out.println(e.getMessage());
 			}
 
-			/*
-			 * JSON FROM FRONT END
-			 * 
-			 * username: "username_provided"; password: "password_provided";
-			 * 
-			 */
+			String response = "";
+
+			String[] stringArray = null;
+
+			try {
+				JSONArray stringsJsonArray = obj.getJSONArray("ingredients");
+
+				stringArray = new String[stringsJsonArray.length()];
+
+				for (int i = 0; i < stringsJsonArray.length(); i++) {
+					stringArray[i] = stringsJsonArray.getString(i);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			for (int i = 0; i < stringArray.length; i++) {
+				System.out.println(stringArray[i]);
+			}
+
+			Backend b = new Backend();
+			b.Connection();
+
+			try {
+				StringBuilder placeholders = new StringBuilder();
+
+				for (int i = 0; i < stringArray.length; i++) {
+					placeholders.append("?");
+					if (i < stringArray.length - 1) {
+						placeholders.append(", ");
+					}
+				}
+
+				String query = "SELECT DISTINCT " + "Recipe.*, " + "IM.Link, "
+						+ "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
+						+ "FROM CallsFor " + "WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients "
+						+ "FROM Recipe " + "LEFT JOIN Illustrates AS IL ON Recipe.RecipeID = IL.RecipeID "
+						+ "LEFT JOIN Image AS IM ON IL.ImageID = IM.ImageID " + "WHERE Recipe.RecipeID IN ("
+						+ "    SELECT RecipeID " + "    FROM CallsFor " + "    WHERE IngredientName IN (" + placeholders
+						+ ")" + ") LIMIT 100";
+
+				PreparedStatement prepStatement = b.c.prepareStatement(query);
+
+				for (int i = 0; i < stringArray.length; i++) {
+					prepStatement.setString(i + 1, stringArray[i]);
+				}
+
+				b.resultSet = prepStatement.executeQuery();
+
+//				 this will print out the headers
+				ResultSetMetaData metadata = b.resultSet.getMetaData();
+				int columns = metadata.getColumnCount();
+
+				for (int i = 1; i <= columns; i++) {
+					System.out.print(metadata.getColumnName(i) + "\t");
+				}
+				System.out.println();
+
+				// JSONObject responseObject = new JSONObject();
+				int RecipeID = -1;
+				String Name = "";
+				String Instructions = "";
+				String TimeDescriptionServings = "";
+				String NutrionalContent = "";
+				String Description = "";
+				String AuthorUsername = "";
+				String DatePublished = "";
+				String DateModified = "";
+				String Servings = "";
+				String Link = "";
+				String Ingredients = "";
+
+				JSONObject mainObject = new JSONObject();
+				JSONArray recipesArray = new JSONArray();
+
+				try {
+					while (b.resultSet.next()) {
+						JSONObject recipeObject = new JSONObject();
+
+						RecipeID = b.resultSet.getInt("RecipeID");
+						Name = b.resultSet.getString("Name");
+						Instructions = b.resultSet.getString("Instructions");
+						TimeDescriptionServings = b.resultSet.getString("TimeDescription");
+						Servings = b.resultSet.getString("Servings");
+						NutrionalContent = b.resultSet.getString("NutrionalContent");
+						Description = b.resultSet.getString("Description");
+						AuthorUsername = b.resultSet.getString("AuthorUsername");
+						DatePublished = b.resultSet.getString("DatePublished");
+						DateModified = b.resultSet.getString("DateModified");
+						Link = b.resultSet.getString("Link");
+						if (Link == null || Link.isEmpty()) {
+							Link = "N/A";
+						}
+						Ingredients = b.resultSet.getString("Ingredients");
+
+						recipeObject.put("RecipeID", RecipeID);
+						recipeObject.put("Name", Name);
+						recipeObject.put("Instructions", Instructions);
+						recipeObject.put("TimeDescription", TimeDescriptionServings);
+						recipeObject.put("Servings", Servings);
+						recipeObject.put("NutritionalContent", NutrionalContent);
+						recipeObject.put("Description", Description);
+						recipeObject.put("AuthorUsername", AuthorUsername);
+						recipeObject.put("DatePublished", DatePublished);
+						recipeObject.put("DateModified", DateModified);
+
+						recipeObject.put("Link", Link);
+
+						recipeObject.put("Ingredients", Ingredients);
+
+//						System.out.println(recipeObject.toString(4)); // This indents the JSON for better readability
+
+						recipesArray.put(recipeObject);
+					}
+
+					mainObject.put("recipes", recipesArray);
+					System.out.println(mainObject.toString(4));
+
+					if (!mainObject.isEmpty()) {
+						
+						
+
+						response = mainObject.toString();
+						System.out.println(mainObject.toString().length() == response.length());
+						System.out.println(mainObject.toString().length());
+						
+						byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
+						t.sendResponseHeaders(200, responseBytes.length);
+
+					} else {
+						
+						response = mainObject.toString();
+						byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
+						t.sendResponseHeaders(401, responseBytes.length);
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+					t.sendResponseHeaders(500, response.length());
+				}
+
+				// Handle the results as needed
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+			
+			byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
+
+			OutputStream os = t.getResponseBody();
+			os.write(responseBytes);
+
+			os.close();
+		}
+	}
+
+	static class RegisterHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			fixRequest(t);
+			String body = getBody(t);
+			JSONObject obj = null;
+			try {
+				obj = new JSONObject(body);
+			} catch (JSONException e) {
+				System.out.println(e.getMessage());
+			}
 
 			String username = "";
 			String password = "";
@@ -186,7 +334,7 @@ public class Backend {
 					int rowsAffected = prepStatement.executeUpdate();
 					System.out.println(rowsAffected);
 
-					// Successfully inserted 
+					// Successfully inserted
 					if (rowsAffected == 1) {
 						JSONObject responseObject = new JSONObject();
 						try {
@@ -197,7 +345,7 @@ public class Backend {
 						response = responseObject.toString();
 						t.sendResponseHeaders(200, response.length());
 					} else {
-						// meaning more than 1 row were inserted 
+						// meaning more than 1 row were inserted
 						t.sendResponseHeaders(500, response.length());
 					}
 
@@ -232,13 +380,6 @@ public class Backend {
 				System.out.println(e.getMessage());
 			}
 
-			/*
-			 * JSON FROM FRONT END
-			 * 
-			 * username: "username_provided"; password: "password_provided";
-			 * 
-			 */
-
 			String username = "";
 			String password = "";
 			String response = "";
@@ -262,15 +403,6 @@ public class Backend {
 				prepStatement.setString(2, password);
 
 				b.resultSet = prepStatement.executeQuery();
-
-//				 this will print out the headers
-//	              ResultSetMetaData metadata = b.resultSet.getMetaData();
-//	  			  int columns = metadata.getColumnCount();
-//	  			
-//	  			  for (int i = 1; i <= columns; i++) {
-//	  				  System.out.print(metadata.getColumnName(i)+"\t");
-//	  			  }
-//	  			 System.out.println();
 
 				boolean userFound = false;
 				String fetchedUsername = "";
@@ -326,6 +458,8 @@ public class Backend {
 			// TODO: add the rest of the contexts needed
 			server.createContext("/login", new LoginHandler());
 			server.createContext("/register", new RegisterHandler());
+			server.createContext("/search", new SearchHandler());
+//			server.createContext("/", new AddFavHandler());
 
 			server.setExecutor(null); // creates a default executor
 			server.start();
