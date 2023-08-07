@@ -9,7 +9,6 @@ function Recipe({ recipesData }) {
   const [favorites, setFavorites] = useState([]);
 
   console.log(loggedIn)
-
   useEffect(() => {
     // This will run when the component mounts
     const timer = setTimeout(() => {
@@ -25,48 +24,52 @@ function Recipe({ recipesData }) {
   }
 
 
-  // Function to load favorites from a server but to be held in a list to show button or not
-  const loadFavorites = () => {
-    // fetch favorites from the server when changed to favs
+  // // Function to load favorites from a server but to be held in a list to show button or not
+  // const loadFavorites = () => {
 
-    // use this query in the backend, then return array to recipe page: 
-    /**
-     * SELECT R.RecipeID 
-  FROM Recipe AS R JOIN Favorites AS F ON R.RecipeID = F.RecipeID 
-  WHERE Username = ?;
-     */
-    fetch("http://localhost:8000/getFavoritesRecipe", {
-      method: "GET",
-      body: JSON.stringify({
-        username: loggedIn,
-      }),
+  //   // use this query in the backend, then return array to recipe page: 
+  //   /**
+  //    * SELECT R.RecipeID 
+  // FROM Recipe AS R JOIN Favorites AS F ON R.RecipeID = F.RecipeID 
+  // WHERE Username = ?;
+  //    */
+  //   // this is so we have a list of the users favorites so we can use the button
+  //   fetch("http://localhost:8000/getFavoritesRecipe", {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       username: loggedIn,
+  //     }),
 
-    }).then(res => {
+  //   }).then(res => {
 
-      if (res.status === 401) {
-        alert('failed to find user')
-        return false;
-      } else if (res.status === 404) {
-        alert('no favorited recipes')
-        return false;
-      } else if (res.status === 200) {
-        return res.json()
-      } else if (res.status === 405) {
-        alert('unknown error')
-        return false;
-      }
-    }).then (json => {
-      if (json == false) {
-        return;
-      }
-      else {
-        setFavorites(json);
-      }
-    })
-    
-    // a static list for now
-    setFavorites(["Recipe 1", "Recipe 2", "Recipe 3"]);
-  };
+  //     if (res.status === 401) {
+  //       alert('failed to find user')
+  //       return false;
+  //     } else if (res.status === 404) {
+  //       alert('no favorited recipes')
+  //       return false;
+  //     } else if (res.status === 200) {
+  //       return res.json()
+  //     } else if (res.status === 405) {
+  //       alert('unknown error')
+  //       return false;
+  //     }
+  //   }).then(json => {
+  //     if (json == false) {
+  //       return;
+  //     }
+  //     else {
+  //       setFavorites(json.recipes);
+  //       console.log(json.recipes)
+  //     }
+  //   })
+
+  // };
+  // useEffect(() => {
+  //   loadFavorites();
+  // }, [loggedIn]);
+
+
   const addFavorite = (recipeID) => {
 
     fetch("http://localhost:8000/addfavorites", {
