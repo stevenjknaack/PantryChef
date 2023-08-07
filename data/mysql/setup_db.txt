@@ -7,20 +7,20 @@ USE PantryChef;
 CREATE TABLE Recipe (
   RecipeID INTEGER,
   Name VARCHAR(300),
-  Instructions VARCHAR(2000),
-  TimeDescription VARCHAR(1000),
+  Instructions VARCHAR(11000),
+  TimeDescription VARCHAR(100),
   Servings VARCHAR(100),
-  NutrionalContent VARCHAR(1000),
-  Description VARCHAR(1000),
+  NutrionalContent VARCHAR(300),
+  Description VARCHAR(3500),
   AuthorUsername VARCHAR(50),
-  DatePublished VARCHAR(30),
-  DateModified VARCHAR(30),
+  DatePublished VARCHAR(20),
+  DateModified VARCHAR(20),
   PRIMARY KEY (RecipeID)
 );
 
 CREATE TABLE Image (
   ImageID INTEGER,
-  Link VARCHAR(1000),
+  Link VARCHAR(2000),
   PRIMARY KEY (ImageID)
 );
 
@@ -57,7 +57,7 @@ CREATE TABLE Favorites (
 
 CREATE TABLE Review (
   ReviewID INTEGER,
-  Review VARCHAR(1000),
+  Review VARCHAR(10000),
   Rating INTEGER,
   RecipeID INTEGER,
   AuthorUsername VARCHAR(50),

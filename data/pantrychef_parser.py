@@ -23,9 +23,10 @@ from time import time
 
 # test parameters 
 
-restrict_output = True # switch to false to parse entire files
+restrict_output = False # switch to false to parse entire files
 upper_bound_recipes = 60 # max recipeID to parse
 upper_bound_reviews = 40 # max reviewID to parse
+blunt_string = True # speads up runtime but processes strings slightly worse
 
 ### global parameters and constants
 
@@ -72,8 +73,8 @@ class Parser :
         self.readers = []
         self.writers = []
 
-        self.recipe_ids = []
-        self.recipe_ids_check = set()
+        #self.recipe_ids = []
+        self.recipe_ids_check = {}
 
         self.num_images = 0
         self.num_illustrates = 0
@@ -166,6 +167,11 @@ class Parser :
             if restrict_output and (int(line[0]) < 38 or int(line[0]) > upper_bound_recipes) : # TEST
                     continue
             
+            #
+            #if line[ORIG_RECIPES_KEYS['AuthorName']] == 'Sarah' :
+            #    continue
+            #
+            
             for i in range(len(self.writers) - 1) :
                 parse_f = self.recipe_parse_functions[i]
                 parsed_str = parse_f(line)
@@ -187,6 +193,11 @@ class Parser :
             self._update_time()
             if restrict_output and (int(line[0]) < 2 or int(line[0]) > upper_bound_reviews) : # TEST
                 continue
+
+            #
+            #if line[ORIG_REVIEWS_KEYS['AuthorName']] == 'Sarah' :
+            #    continue
+            #
 
             # user
             parsed_str = self._parse_user_review(line)
@@ -246,24 +257,33 @@ class Parser :
             if and only if it contains matching non-beginning/ending
             double parenthesis, \n, or a comma.
         """
-        string = sub('\r\n', '', string)
-        string = sub('[^\S\n ]', '', string)
+        string = sub('(\r\n)|[^\S\n ]', '', string)
+        string = sub('\\\\', '', string)
+        #string = sub('[^\S\n ]', '', string)
         string = sub('  +', ' ', string)
 
-        has_parenthesis = search('^".*"$', sub('\n', '', string))
-        
-        need_parenthesis = search('^[^"](.*".*".*)+[^"]$', string)
-        need_parenthesis = need_parenthesis or search('^"(.*".*".*)+"$', string)
-        need_parenthesis = need_parenthesis or search('^[^"](.*".*)+"$', string)
-        need_parenthesis = need_parenthesis or search('^"(.*".*)+[^"]$', string)
-        #need_parenthesis = search('(^[^"](.*".*".*)+[^"]$)|(^"(.*".*".*)+"$)|(^[^"](.*".*)+"$)|(^"(.*".*)+[^"]$)', string)
-        need_parenthesis = need_parenthesis or search(',', string)
-        need_parenthesis = need_parenthesis or search('\n', string)
-        
-        if need_parenthesis and not has_parenthesis :
-            string = f'"{string}"'
-        elif not need_parenthesis and has_parenthesis :
-            string = string[1:-1]
+        if blunt_string :
+            if string == '' :
+                return ''
+            
+            string = sub('"', '', string)
+            
+            if len(string) == 1 or (string[0] != '"' or string[len(string) - 1] == '"') :
+                string = f'"{string}"'
+        else :
+            has_parenthesis = search('^".*"$', sub('\n', '', string))
+            need_parenthesis = search('^[^"](.*".*".*)+[^"]$', string)
+            need_parenthesis = need_parenthesis or search('^"(.*".*".*)+"$', string)
+            need_parenthesis = need_parenthesis or search('^[^"](.*".*)+"$', string)
+            need_parenthesis = need_parenthesis or search('^"(.*".*)+[^"]$', string)
+            #need_parenthesis = search('(^[^"](.*".*".*)+[^"]$)|(^"(.*".*".*)+"$)|(^[^"](.*".*)+"$)|(^"(.*".*)+[^"]$)', string)
+            need_parenthesis = need_parenthesis or search(',', string)
+            need_parenthesis = need_parenthesis or search('\n', string)
+            
+            if need_parenthesis and not has_parenthesis :
+                string = f'"{string}"'
+            elif not need_parenthesis and has_parenthesis :
+                string = string[1:-1]
         
         #print(has_parenthesis, need_parenthesis)
         return string
@@ -348,11 +368,15 @@ class Parser :
         """
         recipe_string = ''
 
-        # RecipeID
+        # RecipeID (make new one)
         recipe_id_index = ORIG_RECIPES_KEYS['RecipeId']
-        recipe_id = recipes_line[recipe_id_index]
-        self.recipe_ids.append(recipe_id)
-        self.recipe_ids_check.add(recipe_id)
+        recipe_id_orig = recipes_line[recipe_id_index]
+        
+        recipe_id = len(self.recipe_ids_check) + 1
+        recipes_line[recipe_id_index] = str(recipe_id)
+
+        #self.recipe_ids.append(recipe_id)
+        self.recipe_ids_check[recipe_id_orig] = recipe_id
 
         # Name
         name_index = ORIG_RECIPES_KEYS['Name']
@@ -369,7 +393,11 @@ class Parser :
             instruction = instructions[i]
             instruction = sub('"', '', instruction)
             instruction = sub('(^\n)|(\n$)', '', instruction)
+
             instructions_string += f'{i + 1}. {instruction}\n'
+            if len(instructions_string) >= 11000 :
+                instructions_string = instructions_string[:11000]
+                break
         
         instructions_string = f'{instructions_string[:-1]}'
         instructions_string = Parser._process_string(instructions_string)
@@ -424,6 +452,8 @@ class Parser :
         # Description
         description_index = ORIG_RECIPES_KEYS['Description']
         description = recipes_line[description_index]
+        if len(description) > 3000 :
+            description = description[:3000]
         description = Parser._process_string(description)
 
         # AuthorUsername
@@ -475,6 +505,9 @@ class Parser :
 
         # generate an ID and create a line for each image
         for image in images :
+            if len(image) > 2000 :
+                continue
+
             image_id = self.num_images + 1
             self.num_images += 1
 
@@ -586,9 +619,16 @@ class Parser :
         self.num_users_with_ingredient += 1
 
         # get 5 ingredients and add
+        used_ingredients = set()
         for i in range(min(5, len(self.ingredients))) :
             ingredient_index = (i + self.ingredients_index) % len(self.ingredients)
             ingredient = self.ingredients[ingredient_index]
+
+            if used_ingredients.__contains__(ingredient) :
+             continue
+
+            used_ingredients.add(ingredient)
+
             has_ingredient_string += f'{ingredient},{username}{LINE_END}'
 
         self.ingredients_index += 5
@@ -622,13 +662,19 @@ class Parser :
         self.num_users_with_favs += 1
 
         # get 5 ingredients and add
-        for i in range(min(5, len(self.recipe_ids))) :
-            favorite_index = (i + self.favorites_index) % len(self.recipe_ids)
-            favorite = self.recipe_ids[favorite_index]
+        used_recipeids = set()
+        for i in range(min(5, len(self.recipe_ids_check))) :
+            favorite_index = (i + self.favorites_index) % len(self.recipe_ids_check)
+            favorite = favorite_index + 1
+
+            if used_recipeids.__contains__(favorite) :
+                continue
+
+            used_recipeids.add(favorite)
             favorites_string += f'{favorite},{username}{LINE_END}'
 
         self.favorites_index += 5
-        self.favorites_index %= len(self.recipe_ids)
+        self.favorites_index %= len(self.recipe_ids_check)
 
         return favorites_string[:-len(LINE_END)]
     
@@ -647,10 +693,12 @@ class Parser :
 
          # Recipe ID; require the recipe to exist
         recipe_id_index = ORIG_REVIEWS_KEYS['RecipeId'] 
-        recipe_id = reviews_line[recipe_id_index]
+        recipe_id_orig = reviews_line[recipe_id_index]
 
-        if not self.recipe_ids_check.__contains__(recipe_id) and not restrict_output :
+        if not self.recipe_ids_check.__contains__(recipe_id_orig) and not restrict_output :
             return ''
+        
+        recipe_id = self.recipe_ids_check[recipe_id_orig]
 
         # ReviewID
         review_id_index = ORIG_REVIEWS_KEYS['ReviewId']
@@ -700,4 +748,5 @@ def main() :
 
 ### method calls
 main()
+#print(Parser._process_string('Steven \Knaack'))
 
