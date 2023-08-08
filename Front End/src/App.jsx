@@ -19,15 +19,12 @@ import userLoggedIn from './context/userLoggedIn';
 
 const App = () => {
 
-  // the array that holds the selected ingredients by the user
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
   //will be filled with recipes when the recipes are returned by the backend
-  const [recipes, setRecipes] = useState({})
+  const [recipes, setRecipes] = useState([])
 
   // for setting the userName to sessionStorage
   const isLoggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
   const [loggedIn, setLoggedIn] = useState(isLoggedIn !== null ? isLoggedIn : null);
-
 
   // for setting the userName to sessionStorage
   useEffect(() => {
@@ -57,7 +54,7 @@ const App = () => {
       }
       else if (res.status === 200) {
         return res.json()
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
         return false;
       }
@@ -69,8 +66,6 @@ const App = () => {
       else {
         console.log(json) // delete later
         setLoggedIn(json.username)
-        // expected json:
-        // {username: 'username_of_user'}
       }
     })
 
@@ -95,7 +90,7 @@ const App = () => {
     }
 
     if (credentials.username.includes(' ') || credentials.password.includes(' ')) {
-      alert("Your username and password cannot contain whitespace")
+      alert("Your username and/or password cannot contain whitespace")
       return
     }
     // I can add more checks as needed
@@ -116,7 +111,7 @@ const App = () => {
       else if (res.status === 200) {
         return res.json()
 
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
         return false;
       }
@@ -127,13 +122,8 @@ const App = () => {
       }
       else {
         setLoggedIn(json.username)
-        // expected json:
-        // {username: 'username_of_user'}
       }
     })
-
-    // remove later just need it to work for now
-    setLoggedIn(credentials.username)
   };
 
   const logout = async () => {
@@ -141,27 +131,22 @@ const App = () => {
   }
 
   function submitIngredients(ingredients) {
-
-    // for now just set the ingredients and send to recipe.jsx
-    setSelectedIngredients(ingredients);
-
     // logic to get recipes from database
-    fetch("http://localhost:8000/register", {
+    fetch("http://localhost:8000/search", {
       method: "POST",
       body: JSON.stringify({
-        ingredients: selectedIngredients, // sends array of ingredients
+        ingredients: ingredients, // sends array of ingredients
       }),
 
     }).then(res => {
 
-      if (res.status === 401) {
-        alert('no recipes with these ingredients')
-        return false;
+      if (res.status === 401) { // no recipes found
+        return res.json;
       }
       else if (res.status === 200) {
         return res.json()
 
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
         return false;
       }
@@ -171,32 +156,11 @@ const App = () => {
         return;
       }
       else {
-        // get the recipes and send them to the recipe page
         setRecipes(json.recipes)
-
-        // expected json back
-        // {
-        //   "recipes": [
-        //     {
-        //       "name": "Recipe 1",
-        //       "recipeID": 1
-        //       "ingredients": ["Ingredient 1", "Ingredient 2"]
-        //        ...
-        //     },
-        //     {
-        //       "name": "Recipe 2",
-        //       "recipeID": 2
-        //       "ingredients": ["Ingredient 3", "Ingredient 4"]
-        //        ...
-        //     },
-        //    ...
-        //   ]
-        // }
-
-      }
+        console.log(recipes)
+      }  
     })
 
-    // will also need to then send the recipes along with ingredients to recipe.jsx
   };
 
   return (
@@ -210,7 +174,7 @@ const App = () => {
             <Route path="/search" element={<Search onSubmit={submitIngredients} />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/logout" element={<Logout onLogout={logout} />} />
-            <Route path="/recipe" element={<Recipe ingredients={selectedIngredients} />} />
+            <Route path="/recipe" element={<Recipe  recipesData={recipes}/>} />
             <Route path="/add-recipe" element={<AddRecipe />} />
           </Route>
         </Routes>

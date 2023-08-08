@@ -10,92 +10,56 @@ function Favorites() {
   const loadFavorites = () => {
     // fetch favorites from the server when changed to favs
     fetch("http://localhost:8000/getfavorites", {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({
         username: loggedIn,
       }),
 
     }).then(res => {
-
-      if (res.status === 401) {
-        alert('failed to find user')
+      if (res.status === 401) { // no favs found
         return false;
-      } else if (res.status === 404) {
-        alert('no favorited recipes')
-        return false;
-      } else if (res.status === 200) {
+      } else if (res.status === 200) { // favs found
         return res.json()
       } else if (res.status === 405) {
         alert('unknown error')
         return false;
       }
-    }).then (json => {
+    }).then(json => {
       if (json == false) {
         return;
       }
       else {
-        setFavorites(json);
+        setFavorites(json.recipes);
       }
-
-      // expected json back
-        // {
-        //   "recipes": [
-        //     {
-        //       "name": "Recipe 1",
-        //       "recipeID": 1
-        //       "ingredients": ["Ingredient 1", "Ingredient 2"]
-        //        ...
-        //     },
-        //     {
-        //       "name": "Recipe 2",
-        //       "recipeID": 2
-        //       "ingredients": ["Ingredient 3", "Ingredient 4"]
-        //        ...
-        //     },
-        //    ...
-        //   ]
-        // }
     })
-    
-    // a static list for now
-    setFavorites(["Recipe 1", "Recipe 2", "Recipe 3"]);
   };
 
   useEffect(() => {
     loadFavorites();
-  }, [loggedIn]); // reload favorites when the user changes
+  }, [loggedIn]);
 
+  const removeFavorite = (recipeID) => {
+    
+    console.log(recipeID)
 
-  const removeFavorite = (recipe) => {
-    // remove the favorite from the list for now
-    setFavorites(favorites.filter(favorite => favorite !== recipe));
-
-    // what will happen is when the - button gets clicked
-    // it will be removed from the favorites in the database (recipeID, username)
-    // and site will reload the favorites when action occurs
     fetch("http://localhost:8000/deletefavorites", {
       method: "DELETE",
       body: JSON.stringify({
         username: loggedIn,
-        recipeID: "recipeID", // this right now isn't a thing since I don't have the returned json
+        recipeID: recipeID, 
       }),
-
     }).then(res => {
-
-      if (res.status === 401) {
-        alert('failed to find user')
-        return false;
-      } else if (res.status === 404) {
-        alert('failed to remove')
-        return false;
-      } else if (res.status === 200) {
+      if (res.status === 200) {
         alert('recipe removed!')
         return true;
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
         return false;
+      } else if (res.status === 404) {
+        alert('recipe was NOT removed!')
+        return false;
       }
-    }).then (success => {
+    }).then(success => {
       if (success == false) {
         return;
       }
@@ -104,20 +68,34 @@ function Favorites() {
         loadFavorites();
       }
     })
-
-    console.log(loggedIn)
   };
 
   return (
     <div className="page-content">
-      <h1>Your Favorites</h1>
-      <ul>
-        {favorites.map((favorite, index) => (
-          <li key={index}>
-            {favorite} <button onClick={() => removeFavorite(favorite)}>Remove</button>
-          </li>
-        ))}
-      </ul>
+      <h1>Favorites:</h1>
+      {favorites && favorites.length > 0 ? (
+        <ul>
+          {favorites.map((fav) => (
+            <li key={fav.RecipeID}>
+              <h2>{fav.Name}</h2>
+              {/* Uncomment the following line after setting up the CSS */}
+              {/* <img src={recipe.Link.replace(/"/g, '')} alt={recipe.Name} /> */}
+              <p><strong>Description:</strong> {fav.Description}</p>
+              <p><strong>Ingredients:</strong> {fav.Ingredients}</p>
+              <p><strong>Servings:</strong> {fav.Servings}</p>
+              <p><strong>Instructions:</strong> {fav.Instructions}</p>
+              <p><strong>Time:</strong> {fav.TimeDescription}</p>
+              <p><strong>Nutritional Content:</strong> {fav.NutritionalContent}</p>
+              <p><strong>Author:</strong> {fav.AuthorUsername}</p>
+              <p><strong>Date Modified:</strong> {fav.DateModified}</p>
+              <p><strong>Date Published:</strong> {fav.DatePublished}</p>
+              <button onClick={() => removeFavorite(fav.RecipeID)}>Remove From Favorites</button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No favorites found.</p>
+      )}
     </div>
   );
 };

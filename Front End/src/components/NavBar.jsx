@@ -16,7 +16,7 @@ function NavBar(props) {
                 <Navbar.Brand as={Link} to="/"> Pantry Chef </Navbar.Brand>
                 <Container>
                     <Nav className="me-auto ">
-                        <Nav.Link as={Link} to="/search"> Search </Nav.Link>
+                        
 
                         {(loggedIn === null) && (
                             <>
@@ -27,6 +27,7 @@ function NavBar(props) {
 
                         {(loggedIn !== null) && (
                             <>
+                                <Nav.Link as={Link} to="/search"> Search </Nav.Link>
                                 <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link>
                                 <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
                                 <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
