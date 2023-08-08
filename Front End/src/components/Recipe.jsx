@@ -42,7 +42,7 @@ function Recipe({ recipesData }) {
         alert('failed to add recipe')
       } else if (res.status === 200) {
         alert('recipe successfully added to favorites!')
-      } else if (res.status === 405) {
+      } else if (res.status === 500) {
         alert('unknown error')
       }
     })
