@@ -94,7 +94,7 @@ function Favorites() {
           ))}
         </ul>
       ) : (
-        <p>No results found.</p>
+        <p>No favorites found.</p>
       )}
     </div>
   );

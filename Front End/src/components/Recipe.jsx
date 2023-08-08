@@ -24,53 +24,10 @@ function Recipe({ recipesData }) {
   }
 
 
-  // // Function to load favorites from a server but to be held in a list to show button or not
-  // const loadFavorites = () => {
-
-  //   // use this query in the backend, then return array to recipe page: 
-  //   /**
-  //    * SELECT R.RecipeID 
-  // FROM Recipe AS R JOIN Favorites AS F ON R.RecipeID = F.RecipeID 
-  // WHERE Username = ?;
-  //    */
-  //   // this is so we have a list of the users favorites so we can use the button
-  //   fetch("http://localhost:8000/getFavoritesRecipe", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       username: loggedIn,
-  //     }),
-
-  //   }).then(res => {
-
-  //     if (res.status === 401) {
-  //       alert('failed to find user')
-  //       return false;
-  //     } else if (res.status === 404) {
-  //       alert('no favorited recipes')
-  //       return false;
-  //     } else if (res.status === 200) {
-  //       return res.json()
-  //     } else if (res.status === 405) {
-  //       alert('unknown error')
-  //       return false;
-  //     }
-  //   }).then(json => {
-  //     if (json == false) {
-  //       return;
-  //     }
-  //     else {
-  //       setFavorites(json.recipes);
-  //       console.log(json.recipes)
-  //     }
-  //   })
-
-  // };
-  // useEffect(() => {
-  //   loadFavorites();
-  // }, [loggedIn]);
-
 
   const addFavorite = (recipeID) => {
+
+    console.log(recipeID)
 
     fetch("http://localhost:8000/addfavorites", {
       method: "POST",
@@ -78,13 +35,11 @@ function Recipe({ recipesData }) {
         username: loggedIn,
         recipeID: recipeID,
       }),
-
     }).then(res => {
-
       if (res.status === 401) {
         alert('already in favorites')
       } else if (res.status === 404) {
-        alert('failed to find recipe')
+        alert('failed to add recipe')
       } else if (res.status === 200) {
         alert('recipe successfully added to favorites!')
       } else if (res.status === 405) {
@@ -116,6 +71,7 @@ function Recipe({ recipesData }) {
               {/* {!addedFavorites.includes(recipe.RecipeID) && (
                 <button onClick={() => addFavorite(recipe.RecipeID)}>Add to Favorites</button>
               )} */}
+              <button onClick={() => addFavorite(recipe.RecipeID)}>Add To Favorites</button>
             </li>
           ))}
         </ul>

@@ -119,7 +119,6 @@ public class Backend {
 			}
 
 			String response = "";
-
 			String[] stringArray = null;
 
 			try {
@@ -223,16 +222,11 @@ public class Backend {
 					System.out.println(mainObject.toString(4));
 
 					if (!mainObject.isEmpty()) {
-
 						response = mainObject.toString();
-						System.out.println(mainObject.toString().length() == response.length());
-						System.out.println(mainObject.toString().length());
-
 						byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
 						t.sendResponseHeaders(200, responseBytes.length);
 
 					} else {
-
 						response = mainObject.toString();
 						byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
 						t.sendResponseHeaders(401, responseBytes.length);
@@ -243,18 +237,14 @@ public class Backend {
 					t.sendResponseHeaders(500, response.length());
 				}
 
-				// Handle the results as needed
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 				t.sendResponseHeaders(500, response.length());
 			}
 
 			byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
-
 			OutputStream os = t.getResponseBody();
 			os.write(responseBytes);
-
 			os.close();
 		}
 	}
@@ -282,10 +272,6 @@ public class Backend {
 				e.printStackTrace();
 			}
 
-			// remove
-			System.out.println(username);
-			System.out.println(password);
-
 			Backend b = new Backend();
 			b.Connection();
 
@@ -310,12 +296,10 @@ public class Backend {
 				if (userExist == 0) {
 
 					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, ?);\n" + "";
-
 					prepStatement = b.c.prepareStatement(sql);
 					prepStatement.setString(1, username);
 					prepStatement.setString(2, password);
 					int rowsAffected = prepStatement.executeUpdate();
-					System.out.println(rowsAffected);
 
 					// Successfully inserted
 					if (rowsAffected == 1) {
@@ -340,39 +324,6 @@ public class Backend {
 				e.printStackTrace();
 				t.sendResponseHeaders(500, response.length());
 			}
-
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
-
-		}
-	}
-
-	static class loadFavsRecipeIDHandler implements HttpHandler {
-		@Override
-		public void handle(HttpExchange t) throws IOException {
-			fixRequest(t);
-			String body = getBody(t);
-			JSONObject obj = null;
-
-			try {
-				obj = new JSONObject(body);
-			} catch (JSONException e) {
-				System.out.println(e.getMessage());
-			}
-
-			String username = "";
-			String response = "";
-
-			// parsing JSON from frontend into variables
-			try {
-				username = (String) obj.get("username");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-			Backend b = new Backend();
-			b.Connection();
 
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
@@ -409,6 +360,43 @@ public class Backend {
 			Backend b = new Backend();
 			b.Connection();
 
+			try {
+				PreparedStatement favorited = b.c.prepareStatement(
+						"SELECT COUNT(*) AS favorited FROM Favorites WHERE RecipeID = ? AND Username = ?");
+				favorited.setInt(1, recipeID);
+				favorited.setString(2, username);
+				b.resultSet = favorited.executeQuery();
+
+				int add = -1;
+
+				while (b.resultSet.next()) {
+					add = b.resultSet.getInt("favorited");
+				}
+
+				if (add == 0) {
+					PreparedStatement sql = b.c
+							.prepareStatement("INSERT INTO Favorites (RecipeID, Username)\n" + "Values (?, ?);\n" + "");
+
+					sql.setInt(1, recipeID);
+					sql.setString(2, username);
+					int rowsAffected = sql.executeUpdate();
+
+					// Successfully inserted
+					if (rowsAffected == 1) {
+						t.sendResponseHeaders(200, response.length());
+					} else {
+						t.sendResponseHeaders(404, response.length());
+					}
+
+				} else {
+					t.sendResponseHeaders(401, response.length());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
 			os.close();
@@ -420,7 +408,7 @@ public class Backend {
 	static class loadFavsHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			
+
 			fixRequest(t);
 			String body = getBody(t);
 			JSONObject obj = null;
@@ -454,16 +442,7 @@ public class Backend {
 
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
 				prepStatement.setString(1, username);
-
 				b.resultSet = prepStatement.executeQuery();
-
-				ResultSetMetaData metadata = b.resultSet.getMetaData();
-				int columns = metadata.getColumnCount();
-
-				for (int i = 1; i <= columns; i++) {
-					System.out.print(metadata.getColumnName(i) + "\t");
-				}
-				System.out.println();
 
 				int RecipeID = -1;
 				String Name = "";
@@ -518,10 +497,8 @@ public class Backend {
 				}
 
 				mainObject.put("recipes", recipesArray);
-				System.out.println(mainObject.toString(4));
 
 				if (!mainObject.isEmpty()) {
-
 					response = mainObject.toString();
 					byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
 					t.sendResponseHeaders(200, responseBytes.length);
@@ -545,12 +522,11 @@ public class Backend {
 	static class deleteFavsHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			
+
 			fixRequest(t);
 			String body = getBody(t);
 			JSONObject obj = null;
-			
-			
+
 			try {
 				obj = new JSONObject(body);
 			} catch (JSONException e) {
@@ -573,28 +549,28 @@ public class Backend {
 
 			Backend b = new Backend();
 			b.Connection();
-			
+
 			try {
 				String sql = "DELETE FROM Favorites \n" + "WHERE Username = ? and RecipeID = ?;\n" + "";
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
-
 				prepStatement = b.c.prepareStatement(sql);
 				prepStatement.setString(1, username);
 				prepStatement.setInt(2, recipeID);
 				int rowsAffected = prepStatement.executeUpdate();
+				System.out.println(rowsAffected);
 
-				// Successfully removed 
+				// Successfully removed
 				if (rowsAffected >= 1) { // there could be two of the same recipe ID added
 					t.sendResponseHeaders(200, response.length());
-				} else if ( rowsAffected < 1){
-					// meaning less than 1 row were removed
+				} else if (rowsAffected < 1) {
+					// meaning not removed
 					t.sendResponseHeaders(404, response.length());
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 				t.sendResponseHeaders(500, response.length());
 			}
-			
+
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
 			os.close();
@@ -609,7 +585,8 @@ public class Backend {
 			String body = getBody(t);
 			JSONObject obj = null;
 
-			// this part is getting the body sent from the front end and passing it into JSON
+			// this part is getting the body sent from the front end and passing it into
+			// JSON
 			try {
 				obj = new JSONObject(body);
 			} catch (JSONException e) {
@@ -652,10 +629,6 @@ public class Backend {
 					fetchedPassword = b.resultSet.getString("Password");
 				}
 
-				System.out.println(fetchedUsername);
-				System.out.println(fetchedPassword);
-				System.out.println(userFound);
-
 				if (userFound) {
 					JSONObject responseObject = new JSONObject();
 
@@ -675,13 +648,13 @@ public class Backend {
 				t.sendResponseHeaders(500, response.length());
 			}
 
-			// this part is the response from the backend back to the frontend once the querying is done
+			// this part is the response from the backend back to the frontend once the
+			// querying is done
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
 			os.close();
 
 		}
-
 	}
 
 	public static void main(String[] args) {
@@ -694,10 +667,11 @@ public class Backend {
 			server.createContext("/login", new LoginHandler());
 			server.createContext("/register", new RegisterHandler());
 			server.createContext("/search", new SearchHandler());
-//			server.createContext("/", new AddFavHandler());
+			server.createContext("/addfavorites", new AddFavHandler());
 			server.createContext("/getfavorites", new loadFavsHandler());
-//			server.createContext("/getFavoritesRecipe", new loadFavsRecipeIDHandler());
 			server.createContext("/deletefavorites", new deleteFavsHandler());
+
+			// add add-recipe handler
 
 			server.setExecutor(null); // creates a default executor
 			server.start();
