@@ -568,7 +568,7 @@ class Parser :
         for i in range(len(ingredients)) :
             # get values
             ingredient = ingredients[i].lower()
-            ingredient = sub('"', '', ingredient)
+            ingredient = sub('[",\\\\]', '', ingredient)
             ingredient = Parser._process_string(ingredient)
 
             if ingredients_seen.__contains__(ingredient) :
@@ -587,11 +587,11 @@ class Parser :
 
             # remove quotes
             quantity = quantity[1:-1]
-            quantity = sub(' ', '', quantity)
-            if len(quantity) > 10:
-                quantity = quantity[:11]
+            quantity = sub('[ ,\\\\]', '', quantity)
+            if len(quantity) > 8:
+                quantity = quantity[:8 + 1]
 
-            calls_for_string += f'{recipe_id},{ingredient},{quantity}{LINE_END}'
+            calls_for_string += f'{recipe_id},{ingredient},"{quantity}"{LINE_END}'
 
         return calls_for_string[:-len(LINE_END)]
     
