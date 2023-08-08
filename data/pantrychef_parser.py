@@ -26,7 +26,7 @@ from time import time
 restrict_output = False # switch to false to parse entire files
 upper_bound_recipes = 60 # max recipeID to parse
 upper_bound_reviews = 40 # max reviewID to parse
-blunt_string = True # speads up runtime but processes strings slightly worse
+blunt_string = True # speeds up runtime but processes strings slightly worse
 
 ### global parameters and constants
 
@@ -228,7 +228,7 @@ class Parser :
 
     def _process_username(raw_username) :
         """ Processes raw_username into correct username"""
-        raw_username = sub('[^\S ]', '', raw_username)
+        raw_username = sub('[^\S ]|"|,', '', raw_username)
         if len(raw_username) > 50 :
             raw_username = raw_username[:51]
         return raw_username
@@ -268,7 +268,7 @@ class Parser :
             
             string = sub('"', '', string)
             
-            if len(string) == 1 or (string[0] != '"' or string[len(string) - 1] == '"') :
+            if len(string) == 1 or (string[0] != '"' or string[len(string) - 1] != '"') :
                 string = f'"{string}"'
         else :
             has_parenthesis = search('^".*"$', sub('\n', '', string))
@@ -305,10 +305,10 @@ class Parser :
         username = Parser._process_username(username)
 
          # check for existence
-        if self.users.__contains__(username) :
+        if self.users.__contains__(username.lower()) :
             return ''
 
-        self.users.add(username)
+        self.users.add(username.lower())
         
         # create password
         user_num = len(self.users)
@@ -567,7 +567,7 @@ class Parser :
         ingredients_seen = set()
         for i in range(len(ingredients)) :
             # get values
-            ingredient = ingredients[i]
+            ingredient = ingredients[i].lower()
             ingredient = sub('"', '', ingredient)
             ingredient = Parser._process_string(ingredient)
 
@@ -588,6 +588,8 @@ class Parser :
             # remove quotes
             quantity = quantity[1:-1]
             quantity = sub(' ', '', quantity)
+            if len(quantity) > 10:
+                quantity = quantity[:11]
 
             calls_for_string += f'{recipe_id},{ingredient},{quantity}{LINE_END}'
 
