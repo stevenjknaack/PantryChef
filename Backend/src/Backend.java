@@ -150,13 +150,19 @@ public class Backend {
 					}
 				}
 
-				String query = "SELECT DISTINCT " + "Recipe.*, " + "IM.Link, "
-						+ "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
-						+ "FROM CallsFor " + "WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients "
-						+ "FROM Recipe " + "LEFT JOIN Illustrates AS IL ON Recipe.RecipeID = IL.RecipeID "
-						+ "LEFT JOIN Image AS IM ON IL.ImageID = IM.ImageID " + "WHERE Recipe.RecipeID IN ("
-						+ "    SELECT RecipeID " + "    FROM CallsFor " + "    WHERE IngredientName IN (" + placeholders
-						+ ")" + ") LIMIT 100";
+				String query = "SELECT Recipe.*, " 
+	                    + "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
+	                    + "FROM CallsFor WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients, "
+	                    + "(SELECT IM.Link FROM Illustrates AS IL "
+	                    + "JOIN Image AS IM ON IL.ImageID = IM.ImageID "
+	                    + "WHERE IL.RecipeID = Recipe.RecipeID LIMIT 1) AS Link "
+	                    + "FROM Recipe WHERE Recipe.RecipeID IN ("
+	                    + "SELECT RecipeID FROM CallsFor "
+	                    + "WHERE IngredientName IN (" + placeholders + ") "
+	                    + "GROUP BY RecipeID "
+	                    + "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") "
+	                    + "LIMIT 100";
+				
 
 				PreparedStatement prepStatement = b.c.prepareStatement(query);
 
@@ -165,6 +171,8 @@ public class Backend {
 				}
 
 				b.resultSet = prepStatement.executeQuery();
+				
+				
 
 				int RecipeID = -1;
 				String Name = "";

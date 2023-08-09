@@ -12,8 +12,8 @@ function Recipe({ recipesData }) {
   useEffect(() => {
     // This will run when the component mounts
     const timer = setTimeout(() => {
-      setIsLoading(false); // After 5 seconds, set isLoading to false
-    }, 4000);
+      setIsLoading(false); // After 10 seconds, set isLoading to false
+    }, 10000);
 
     return () => clearTimeout(timer); // Cleanup timer if the component is unmounted
   }, []);
