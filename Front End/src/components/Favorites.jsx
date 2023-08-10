@@ -78,8 +78,9 @@ function Favorites() {
           {favorites.map((fav) => (
             <li key={fav.RecipeID}>
               <h2>{fav.Name}</h2>
-              {/* Uncomment the following line after setting up the CSS */}
-              {/* <img src={recipe.Link.replace(/"/g, '')} alt={recipe.Name} /> */}
+              {fav.Link.split(" | ").map((imgLink, imgIndex) => (
+                <img key={imgIndex} className="small-image" src={imgLink.replace(/"/g, '')}/>
+              ))}
               <p><strong>Description:</strong> {fav.Description}</p>
               <p><strong>Ingredients:</strong> {fav.Ingredients}</p>
               <p><strong>Servings:</strong> {fav.Servings}</p>

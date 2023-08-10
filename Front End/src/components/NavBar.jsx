@@ -30,8 +30,10 @@ function NavBar(props) {
                                 <Nav.Link as={Link} to="/search"> Search </Nav.Link>
                                 <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link>
                                 <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
+                                <Nav.Link as={Link} to="/your-recipes">Your Recipes</Nav.Link>
                                 <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
                                 <Nav.Link as={Link} to="/recipe"></Nav.Link>
+                                
                             </>
                         )}
                     </Nav>

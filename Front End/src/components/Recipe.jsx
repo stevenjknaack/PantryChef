@@ -67,10 +67,6 @@ function Recipe({ recipesData }) {
               <p><strong>Author:</strong> {recipe.AuthorUsername}</p>
               <p><strong>Date Modified:</strong> {recipe.DateModified}</p>
               <p><strong>Date Published:</strong> {recipe.DatePublished}</p>
-              {/* Uncomment the following lines if you want the "Add to Favorites" button */}
-              {/* {!addedFavorites.includes(recipe.RecipeID) && (
-                <button onClick={() => addFavorite(recipe.RecipeID)}>Add to Favorites</button>
-              )} */}
               <button onClick={() => addFavorite(recipe.RecipeID)}>Add To Favorites</button>
             </li>
           ))}

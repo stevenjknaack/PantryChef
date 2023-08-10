@@ -388,12 +388,13 @@ public class Backend {
 
 			try {
 
-				String sql = "SELECT DISTINCT      " + "Recipe.*, " + "IM.Link,      "
-						+ "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')'))     "
-						+ "FROM CallsFor       " + "WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients "
-						+ "FROM Recipe  JOIN Favorites AS F ON Recipe.RecipeID = F.RecipeID  "
+				String sql = "SELECT DISTINCT " + "Recipe.*, " + "GROUP_CONCAT(IM.Link SEPARATOR ' | ') AS Link, "
+						+ "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
+						+ " FROM CallsFor " + " WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients "
+						+ "FROM Recipe " + "JOIN Favorites AS F ON Recipe.RecipeID = F.RecipeID "
 						+ "LEFT JOIN Illustrates AS IL ON Recipe.RecipeID = IL.RecipeID "
-						+ "LEFT JOIN Image AS IM ON IL.ImageID = IM.ImageID " + "WHERE F.Username = ?;";
+						+ "LEFT JOIN Image AS IM ON IL.ImageID = IM.ImageID " + "WHERE F.Username = ? "
+						+ "GROUP BY Recipe.RecipeID;";
 
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
 				prepStatement.setString(1, username);
@@ -433,6 +434,8 @@ public class Backend {
 					if (Link == null || Link.isEmpty()) {
 						Link = "N/A";
 					}
+					System.out.println(Link);
+					
 					Ingredients = b.resultSet.getString("Ingredients");
 
 					recipeObject.put("RecipeID", RecipeID);
@@ -563,7 +566,7 @@ public class Backend {
 			String response = "";
 			List<Ingredient> ingredientsList = new ArrayList<>();
 			try {
-				
+
 				Title = obj.getString("Title").trim();
 				Servings = obj.getString("Servings").trim();
 				Instructions = obj.getString("Instructions").trim();
@@ -576,12 +579,11 @@ public class Backend {
 				Image = obj.getString("Image").trim();
 
 				for (int i = 0; i < ingredientsArray.length(); i++) {
-				    JSONObject ingredientObj = ingredientsArray.getJSONObject(i);
-				    String ingredientName = ingredientObj.getString("IngredientName").trim();
-				    String quantity = ingredientObj.getString("Quantity").trim();
-				    ingredientsList.add(new Ingredient(ingredientName, quantity));
+					JSONObject ingredientObj = ingredientsArray.getJSONObject(i);
+					String ingredientName = ingredientObj.getString("IngredientName").trim();
+					String quantity = ingredientObj.getString("Quantity").trim();
+					ingredientsList.add(new Ingredient(ingredientName, quantity));
 				}
-
 
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -671,8 +673,6 @@ public class Backend {
 					b.resultSet = prepStatement.executeQuery();
 
 					int imgMaxID = -1;
-					
-					
 
 					while (b.resultSet.next()) {
 						imgMaxID = b.resultSet.getInt("imgMaxID");
@@ -681,7 +681,7 @@ public class Backend {
 					int newImgID = imgMaxID + 1;
 					System.out.println(imgMaxID);
 					System.out.println(newImgID);
-					
+
 					PreparedStatement prepsql = b.c
 							.prepareStatement("INSERT INTO Illustrates (ImageID, RecipeID)  VALUES (?, ?);");
 
