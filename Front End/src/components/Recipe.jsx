@@ -57,7 +57,7 @@ function Recipe({ recipesData }) {
             <li key={recipe.RecipeID}>
               <h2>{recipe.Name}</h2>
               {/* Uncomment the following line after setting up the CSS */}
-              {/* <img src={recipe.Link.replace(/"/g, '')} alt={recipe.Name} /> */}
+              <img className="small-image" src={recipe.Link.replace(/"/g, '')}  />
               <p><strong>Description:</strong> {recipe.Description}</p>
               <p><strong>Ingredients:</strong> {recipe.Ingredients}</p>
               <p><strong>Servings:</strong> {recipe.Servings}</p>

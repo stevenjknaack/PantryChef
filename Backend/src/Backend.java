@@ -1,8 +1,9 @@
 import java.net.InetSocketAddress;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.sun.net.httpserver.HttpServer;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -40,53 +41,6 @@ public class Backend {
 			e.printStackTrace();
 		}
 
-	}
-
-	public void simpleQuery(String sqlQuery) {
-		try {
-			statement = c.createStatement();
-			resultSet = statement.executeQuery(sqlQuery);
-
-			ResultSetMetaData metadata = resultSet.getMetaData();
-			int columns = metadata.getColumnCount();
-
-			for (int i = 1; i <= columns; i++) {
-				System.out.print(metadata.getColumnName(i) + "\t");
-			}
-			System.out.println();
-
-			while (resultSet.next()) {
-				int ID;
-				String description;
-				String monkey;
-//				for (int i = 1; i <= columns; i++) {
-//					//TestClass test = (TestClass)(resultSet.getObject(i));
-//					//resultSet.get
-//					//System.out.print(resultSet.getObject(i) + "\t\t");
-//				}
-				ID = (int) resultSet.getObject("tableKey");
-				description = (String) resultSet.getObject("description");
-				monkey = (String) resultSet.getObject("monkey");
-//				TestClass test = new TestClass(ID, description, monkey);
-//				System.out.println(test.toJSON());
-				System.out.println();
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-	}
-
-	public void simpleUpdate(String sqlQuery) {
-		try {
-			statement = c.createStatement();
-			statement.executeUpdate(sqlQuery);
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
 	}
 
 	// this gets the string of the body from the frontend
@@ -150,19 +104,14 @@ public class Backend {
 					}
 				}
 
-				String query = "SELECT Recipe.*, " 
-	                    + "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
-	                    + "FROM CallsFor WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients, "
-	                    + "(SELECT IM.Link FROM Illustrates AS IL "
-	                    + "JOIN Image AS IM ON IL.ImageID = IM.ImageID "
-	                    + "WHERE IL.RecipeID = Recipe.RecipeID LIMIT 1) AS Link "
-	                    + "FROM Recipe WHERE Recipe.RecipeID IN ("
-	                    + "SELECT RecipeID FROM CallsFor "
-	                    + "WHERE IngredientName IN (" + placeholders + ") "
-	                    + "GROUP BY RecipeID "
-	                    + "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") "
-	                    + "LIMIT 100";
-				
+				String query = "SELECT Recipe.*, "
+						+ "(SELECT GROUP_CONCAT(CONCAT(CallsFor.IngredientName, ' (', CallsFor.Quantity, ')')) "
+						+ "FROM CallsFor WHERE CallsFor.RecipeID = Recipe.RecipeID) AS Ingredients, "
+						+ "(SELECT IM.Link FROM Illustrates AS IL " + "JOIN Image AS IM ON IL.ImageID = IM.ImageID "
+						+ "WHERE IL.RecipeID = Recipe.RecipeID LIMIT 1) AS Link "
+						+ "FROM Recipe WHERE Recipe.RecipeID IN (" + "SELECT RecipeID FROM CallsFor "
+						+ "WHERE IngredientName IN (" + placeholders + ") " + "GROUP BY RecipeID "
+						+ "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") " + "LIMIT 100";
 
 				PreparedStatement prepStatement = b.c.prepareStatement(query);
 
@@ -171,8 +120,6 @@ public class Backend {
 				}
 
 				b.resultSet = prepStatement.executeQuery();
-				
-				
 
 				int RecipeID = -1;
 				String Name = "";
@@ -586,6 +533,186 @@ public class Backend {
 		}
 	}
 
+	static class AddRecipeHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			fixRequest(t);
+			String body = getBody(t);
+			JSONObject obj = null;
+
+			// this part is getting the body sent from the front end and passing it into
+			// JSON
+			try {
+				obj = new JSONObject(body);
+			} catch (JSONException e) {
+				System.out.println(e.getMessage());
+			}
+
+			String Title = "";
+			String Servings = "";
+			String Instructions = "";
+			String Time = "";
+			String NutritionalContent = "";
+			String Author = "";
+			String DateModified = "";
+			String DatePublished = "";
+			String Description = "";
+			String Image = "";
+			JSONArray ingredientsArray = obj.getJSONArray("Ingredients");
+
+			String response = "";
+			List<Ingredient> ingredientsList = new ArrayList<>();
+			try {
+				
+				Title = obj.getString("Title").trim();
+				Servings = obj.getString("Servings").trim();
+				Instructions = obj.getString("Instructions").trim();
+				Time = obj.getString("Time").trim();
+				NutritionalContent = obj.getString("NutritionalContent").trim();
+				Author = obj.getString("Author").trim();
+				DateModified = obj.getString("DateModified").trim();
+				DatePublished = obj.getString("DatePublished").trim();
+				Description = obj.getString("Description").trim();
+				Image = obj.getString("Image").trim();
+
+				for (int i = 0; i < ingredientsArray.length(); i++) {
+				    JSONObject ingredientObj = ingredientsArray.getJSONObject(i);
+				    String ingredientName = ingredientObj.getString("IngredientName").trim();
+				    String quantity = ingredientObj.getString("Quantity").trim();
+				    ingredientsList.add(new Ingredient(ingredientName, quantity));
+				}
+
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Title " + Title);
+			System.out.println("Description" + Description);
+			System.out.println("Servings: " + Servings);
+			System.out.println("Instructions: " + Instructions);
+			System.out.println("Time: " + Time);
+			System.out.println("NutritionalContent: " + NutritionalContent);
+			System.out.println("Author: " + Author);
+			System.out.println("DateModified: " + DateModified);
+			System.out.println("DatePublished: " + DatePublished);
+			System.out.println("Image: " + Image);
+
+			Backend b = new Backend();
+			b.Connection();
+
+			try {
+
+				String sql = "SELECT MAX(RecipeID) AS maxID FROM Recipe;";
+				System.out.println(sql);
+
+				PreparedStatement prepStatement = b.c.prepareStatement(sql);
+
+				// No need to set a parameter for this SQL statement. So, remove the line below.
+				// prepStatement.setString(1, Author);
+
+				b.resultSet = prepStatement.executeQuery();
+
+				int maxID = -1;
+
+				while (b.resultSet.next()) {
+
+					maxID = b.resultSet.getInt("maxID");
+
+				}
+
+				System.out.println("MaxID " + maxID);
+
+				int newID = maxID + 1;
+				System.out.println("newID " + newID);
+
+				sql = "INSERT INTO Recipe (RecipeID, Name, Instructions, TimeDescription, Servings, NutrionalContent, Description, AuthorUsername, DatePublished, DateModified) "
+						+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+				prepStatement = b.c.prepareStatement(sql);
+
+				prepStatement.setInt(1, newID); // Set RecipeID as the new incremented value
+				prepStatement.setString(2, Title);
+				prepStatement.setString(3, Instructions);
+				prepStatement.setString(4, Time); // I'm assuming Time refers to TimeDescription in your DB.
+				prepStatement.setString(5, Servings);
+				prepStatement.setString(6, NutritionalContent);
+				prepStatement.setString(7, Description);
+				prepStatement.setString(8, Author); // This assumes the database expects a username string.
+				prepStatement.setString(9, DatePublished); // You might need to parse and convert this string to a
+															// proper Date type.
+				prepStatement.setString(10, DateModified); // Same note as for DatePublished.
+
+				int rowsInserted = prepStatement.executeUpdate();
+
+				if (rowsInserted > 0) {
+
+					// Insert ingredients into CallsFor table
+					for (var ingredient : ingredientsList) {
+						sql = "INSERT INTO CallsFor (RecipeID, IngredientName, Quantity) VALUES (?, ?, ?);";
+						prepStatement = b.c.prepareStatement(sql);
+
+						// Loop through each ingredient and bind to the prepared statement parameters
+
+						prepStatement.setInt(1, newID);
+						prepStatement.setString(2, ingredient.getName());
+						prepStatement.setString(3, ingredient.getQuantity());
+						prepStatement.addBatch();
+
+						System.out.println(prepStatement.toString());
+
+						// Execute the batch to insert all ingredients at once
+						prepStatement.executeBatch();
+					}
+
+					// insert image if it contains http in it
+					sql = "SELECT MAX(ImageID) imgMaxID FROM Illustrates;";
+					prepStatement = b.c.prepareStatement(sql);
+					b.resultSet = prepStatement.executeQuery();
+
+					int imgMaxID = -1;
+					
+					
+
+					while (b.resultSet.next()) {
+						imgMaxID = b.resultSet.getInt("imgMaxID");
+					}
+
+					int newImgID = imgMaxID + 1;
+					System.out.println(imgMaxID);
+					System.out.println(newImgID);
+					
+					PreparedStatement prepsql = b.c
+							.prepareStatement("INSERT INTO Illustrates (ImageID, RecipeID)  VALUES (?, ?);");
+
+					prepsql.setInt(1, newImgID);
+					prepsql.setInt(2, newID);
+					prepsql.executeUpdate();
+
+					prepsql = b.c.prepareStatement("INSERT INTO Image (ImageID, Link)  VALUES (?, ?);");
+
+					prepsql.setInt(1, newImgID);
+					prepsql.setString(2, Image);
+					prepsql.executeUpdate();
+
+					t.sendResponseHeaders(200, response.length());
+				} else {
+					System.out.println("Failed to insert the new recipe.");
+					t.sendResponseHeaders(401, response.length());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+
+		}
+	}
+
 	static class LoginHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
@@ -678,7 +805,7 @@ public class Backend {
 			server.createContext("/addfavorites", new AddFavHandler());
 			server.createContext("/getfavorites", new loadFavsHandler());
 			server.createContext("/deletefavorites", new deleteFavsHandler());
-
+			server.createContext("/", new AddRecipeHandler());
 			// add add-recipe handler
 
 			server.setExecutor(null); // creates a default executor
