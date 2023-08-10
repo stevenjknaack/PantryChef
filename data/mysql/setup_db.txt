@@ -19,6 +19,21 @@ CREATE TABLE Recipe (
 );
 
 
+CREATE INDEX RecipeIndex
+ON Recipe (RecipeID);
+
+CREATE TABLE Image (
+  ImageID INTEGER,
+  Link VARCHAR(2000),
+  PRIMARY KEY (ImageID)
+);
+
+CREATE TABLE Illustrates (
+  ImageID INTEGER,
+  RecipeID INTEGER,
+  PRIMARY KEY (ImageID, RecipeID)
+);
+
 CREATE TABLE CallsFor (
   RecipeID INTEGER,
   IngredientName VARCHAR(100),
@@ -26,9 +41,12 @@ CREATE TABLE CallsFor (
   PRIMARY KEY (RecipeID, IngredientName)
 );
 
+CREATE INDEX IngredientIndex
+ON CallsFor (IngredientName);
+
 CREATE TABLE User (
   Username VARCHAR(50),
-  Password VARCHAR(50),
+  Password VARBINARY(50),
   PRIMARY KEY (Username)
 );
 
