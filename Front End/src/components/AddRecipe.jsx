@@ -161,10 +161,11 @@ function AddRecipe() {
                     datePublished: '', // You might want to leave this if you're setting the date upon creation
                     dateModified: 'N/A'
                 });
-
             }
         })
     };
+
+    
 
     return (
         <div className="page-content">
@@ -194,7 +195,7 @@ function AddRecipe() {
                                 <input type="text" value={ingredientTuple[1]} onChange={(e) => handleIngredientChange(e, index, 1)} required />
                             </label>
                             {recipe.ingredients.length !== 1 && <button onClick={() => handleRemoveClick(index)}>Remove</button>}
-                            {recipe.ingredients.length - 1 === index && <button onClick={handleAddClick}>Add</button>}
+                            {recipe.ingredients.length - 1 === index && <button onClick={handleAddClick}>Add More Ingredients</button>}
                         </div>
                     ))
                 }

@@ -9,7 +9,6 @@ import userLoggedIn from '../context/userLoggedIn';
 function NavBar(props) {
 
     const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
-
     return (
         <div>
             <Navbar bg="primary" data-bs-theme="dark" fixed="top" className="navbar-custom" >

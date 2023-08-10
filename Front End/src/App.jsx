@@ -13,7 +13,7 @@ import NavBar from './components/NavBar';
 import Logout from './components/Logout';
 import Recipe from './components/Recipe';
 import AddRecipe from './components/AddRecipe';
-import ModifyRecipe from './components/ModifyRecipe';
+import YourRecipes from './components/YourRecipes';
 
 // Contexts
 import userLoggedIn from './context/userLoggedIn';
@@ -177,7 +177,7 @@ const App = () => {
             <Route path="/logout" element={<Logout onLogout={logout} />} />
             <Route path="/recipe" element={<Recipe  recipesData={recipes}/>} />
             <Route path="/add-recipe" element={<AddRecipe />} />
-            <Route path="/your-recipes" element={<ModifyRecipe />} />
+            <Route path="/your-recipes" element={<YourRecipes />} />
           </Route>
         </Routes>
       </BrowserRouter>

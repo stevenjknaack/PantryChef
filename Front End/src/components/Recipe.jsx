@@ -6,7 +6,6 @@ function Recipe({ recipesData }) {
 
   const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
   const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
-  const [favorites, setFavorites] = useState([]);
 
   console.log(loggedIn)
   useEffect(() => {
@@ -22,8 +21,6 @@ function Recipe({ recipesData }) {
   if (isLoading) {
     return <div className="page-content">Loading Recipe Page...</div>;
   }
-
-
 
   const addFavorite = (recipeID) => {
 
@@ -67,6 +64,7 @@ function Recipe({ recipesData }) {
               <p><strong>Author:</strong> {recipe.AuthorUsername}</p>
               <p><strong>Date Modified:</strong> {recipe.DateModified}</p>
               <p><strong>Date Published:</strong> {recipe.DatePublished}</p>
+
               <button onClick={() => addFavorite(recipe.RecipeID)}>Add To Favorites</button>
             </li>
           ))}

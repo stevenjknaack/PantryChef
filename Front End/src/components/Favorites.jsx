@@ -5,6 +5,7 @@ function Favorites() {
 
   const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
   const [favorites, setFavorites] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
 
   // Function to load favorites from a server
   const loadFavorites = () => {
@@ -29,6 +30,7 @@ function Favorites() {
         return;
       }
       else {
+        setIsLoading(false);
         setFavorites(json.recipes);
       }
     })
@@ -37,6 +39,10 @@ function Favorites() {
   useEffect(() => {
     loadFavorites();
   }, [loggedIn]);
+
+  if (isLoading) {
+    return <div className="page-content">Loading Favorites Page...</div>;
+  }
 
   const removeFavorite = (recipeID) => {
     
