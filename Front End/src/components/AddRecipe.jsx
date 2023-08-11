@@ -2,7 +2,14 @@ import userLoggedIn from "../context/userLoggedIn";
 import React, { useState, useContext } from 'react';
 
 function AddRecipe() {
+
+    // Get the current logged-in user status using the 'userLoggedIn' context
     const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+
+    // Date object to capture the current date/time
+    const d = new Date();
+
+    // useState hook to manage the recipe details
     const [recipe, setRecipe] = useState({
         title: '',
         cookTime: '',
@@ -29,6 +36,7 @@ function AddRecipe() {
         // recipeID is sent using the backend
     });
 
+    // Handler to update a specific attribute of the recipe object
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRecipe({
@@ -37,12 +45,14 @@ function AddRecipe() {
         });
     };
 
+    // Handler to update specific ingredient within the ingredients list
     const handleIngredientChange = (e, index, position) => {
         const list = [...recipe.ingredients];
         list[index][position] = e.target.value;
         setRecipe(prevState => ({ ...prevState, ingredients: list }));
     };
 
+    // Handler to add a new ingredient field to the form
     const handleAddClick = () => {
         const list = [...recipe.ingredients];
         list.push(['', '']); // push a new tuple
@@ -50,21 +60,16 @@ function AddRecipe() {
         console.log(recipe.ingredients)
     };
 
+    // Handler to remove an ingredient field from the form
     const handleRemoveClick = index => {
         const list = [...recipe.ingredients];
         list.splice(index, 1);
         setRecipe(prevState => ({ ...prevState, ingredients: list }));
     };
 
-    const d = new Date();
-
-    // console.log(d.toISOString()); 
-
+    // Handler to submit the form and save the recipe details
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // logic to save the recipe to your server/database
-        // will need all the attributes from above, + username + a generated recipeID (from the backend) + a way to get the date
 
         const defaultNAFields = [
             'calories', 'fatContent', 'saturatedFatContent', 'cholesterolContent',
@@ -84,9 +89,7 @@ function AddRecipe() {
             Quantity: ingredientTuple[1]
         }))
 
-        console.log(ingreds);
-        console.log(recipe.image);
-
+        // HTTP request to save the recipe details to the server
         fetch("http://localhost:8000/addrecipe", {
             method: "POST",
             body: JSON.stringify({
@@ -135,7 +138,6 @@ function AddRecipe() {
                 return;
             }
             else {
-                // make each thing in the const back to the orignal value
                 setRecipe({
                     title: '',
                     cookTime: '',
@@ -156,14 +158,15 @@ function AddRecipe() {
                     proteinContent: '',
                     recipeServings: '',
                     recipeYield: '',
-                    username: '', // you had 'loggedIn' for this, but if you want to reset, it should be empty or default value
-                    datePublished: '', // You might want to leave this if you're setting the date upon creation
+                    username: loggedIn,
+                    datePublished: '', 
                     dateModified: 'N/A'
                 });
             }
         })
     };
 
+    // Return the form's JSX to be rendered
     return (
         <div className="page-content">
             <h1>Add a New Recipe</h1>
