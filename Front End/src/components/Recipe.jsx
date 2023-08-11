@@ -13,7 +13,7 @@ function Recipe({ recipesData }) {
     // This will run when the component mounts
     const timer = setTimeout(() => {
       setIsLoading(false); // After 10 seconds, set isLoading to false
-    }, 15000);
+    }, 8000);
 
     return () => clearTimeout(timer); // Cleanup timer if the component is unmounted
   }, []);

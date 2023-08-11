@@ -24,10 +24,19 @@ public class Backend {
 	String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false";
 	String password = "TRYMEy0uidiot!"; // don't steal my identity so change to your password
 	Connection c = null;
-	private Statement statement = null;
 	private ResultSet resultSet = null;
 
-	// this builds a connection to the database
+	/**
+	 * Establishes a connection to the database using the predefined databaseURL, netID, and password.
+	 * 
+	 * This method initializes the MySQL JDBC driver and attempts to create a connection 
+	 * to the database. If the connection is successful, a confirmation message is printed 
+	 * to the console. If there are any exceptions during this process, they are caught 
+	 * and their stack traces are printed to the console.
+	 * 
+	 * @throws ClassNotFoundException if the JDBC driver class is not found.
+	 * @throws SQLException if there's a database access error.
+	 */
 	public void Connection() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -43,12 +52,27 @@ public class Backend {
 
 	}
 
-	// this gets the string of the body from the frontend
+	/**
+	 * Retrieves the request body from the given HttpExchange as a string.
+	 * 
+	 * @param t the HttpExchange from which to retrieve the request body.
+	 * @return a String representation of the request body.
+	 * @throws IOException if an I/O error occurs while reading from the request's InputStream.
+	 */
 	private static String getBody(HttpExchange t) throws IOException {
 		return new String(t.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
 	}
 
-	// this deals with permissions
+	/**
+	 * Handles CORS (Cross-Origin Resource Sharing) permissions for the given HttpExchange.
+	 * 
+	 * This method modifies the response headers to allow cross-origin requests. If the request method 
+	 * is an "OPTIONS" request (pre-flight request), it sets the appropriate CORS headers and sends a 
+	 * 204 No Content response.
+	 * 
+	 * @param t the HttpExchange whose headers will be modified.
+	 * @throws IOException if an I/O error occurs.
+	 */
 	private static void fixRequest(HttpExchange t) throws IOException {
 		t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
 
@@ -60,7 +84,34 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles search requests made to the server by processing ingredient data 
+	 * sent from the frontend, querying a backend database to retrieve recipes 
+	 * containing those ingredients, and sending the recipes back to the frontend.
+	 * 
+	 * Upon receiving an HTTP request, the handler first extracts the body of 
+	 * the request to retrieve a list of ingredients sent from the frontend. 
+	 * It then constructs an SQL query to fetch recipes containing those ingredients 
+	 * from the backend database. The recipes are then formatted into a JSON 
+	 * response and sent back to the frontend.
+	 */
 	static class SearchHandler implements HttpHandler {
+		
+		/**
+	     * Handles an HTTP request made to the server by processing the provided 
+	     * {@code HttpExchange}.
+	     * 
+	     * The method first ensures proper CORS headers are set for the exchange. 
+	     * It then processes the request body to extract the list of ingredients. 
+	     * An SQL query is constructed and executed to retrieve recipes from the 
+	     * database. The resulting recipes are packaged into a JSON object and 
+	     * sent back as the response to the client.
+	     * 
+	     * @param t The {@code HttpExchange} object representing the HTTP request 
+	     * and response.
+	     * @throws IOException If there's an error reading the request or writing 
+	     * the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -204,7 +255,34 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles registration requests made to the server by processing user data 
+	 * sent from the frontend, and performing the user registration on the backend.
+	 * <
+	 * Upon receiving an HTTP request, the handler extracts the body of the 
+	 * request to retrieve user registration details (i.e., username and password) 
+	 * sent from the frontend. It then checks if the user already exists in the 
+	 * backend database. If the user does not exist, their details are stored in 
+	 * the database. Appropriate response status is then sent back to the frontend 
+	 * based on the success or failure of the registration process.
+	 */
 	static class RegisterHandler implements HttpHandler {
+		
+		/**
+	     * Handles an HTTP registration request made to the server by processing the 
+	     * provided {@code HttpExchange}.
+	     * 
+	     * The method first ensures proper CORS headers are set for the exchange. 
+	     * It then processes the request body to extract user registration details. 
+	     * Checks in the database are made to ensure the user doesn't already exist. 
+	     * If the user does not exist, their details are stored in the database and 
+	     * an appropriate response status is sent back to the client.
+	     * 
+	     * @param t The {@code HttpExchange} object representing the HTTP request 
+	     * and response.
+	     * @throws IOException If there's an error reading the request or writing 
+	     * the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -287,7 +365,33 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles the addition of favorite recipes for users.
+	 * 
+	 * When a user wants to add a particular recipe to their list of favorites, 
+	 * this handler processes the request by checking if the recipe has already 
+	 * been marked as a favorite for that user. If it hasn't, the handler adds 
+	 * the recipe to the user's favorites in the backend database and sends 
+	 * an appropriate response back to the frontend.
+	 */
 	static class AddFavHandler implements HttpHandler {
+		
+		/**
+	     * Processes an HTTP request to add a recipe to a user's list of favorites.
+	     * 
+	     * The method first prepares the request by ensuring appropriate CORS headers 
+	     * are set. It then processes the request body to extract details of the user 
+	     * and the recipe they wish to favorite. The database is then checked to 
+	     * see if the user has already favorited the recipe. If not, the recipe is 
+	     * added to their list of favorites and an appropriate HTTP status code is 
+	     * sent back to the frontend.
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request 
+	     * and response.
+	     * @throws IOException If there's an error reading the request or writing 
+	     * the response.
+	     */
+		
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -360,7 +464,32 @@ public class Backend {
 
 	}
 
+	/**
+	 * Handles the retrieval of favorite recipes for a specific user.
+	 * 
+	 * When a user wishes to view their list of favorite recipes, this handler 
+	 * processes the request. It fetches the details of all recipes that the 
+	 * user has marked as favorites from the backend database. The handler then 
+	 * prepares a comprehensive list in JSON format and sends it back to the 
+	 * frontend.
+	 */
 	static class loadFavsHandler implements HttpHandler {
+		
+		/**
+	     * Processes an HTTP request to retrieve the list of favorite recipes for a user.
+	     * 
+	     * The method first prepares the request by ensuring proper headers. It then 
+	     * processes the request body to extract the username whose favorite recipes 
+	     * are to be fetched. A complex SQL query is then executed to fetch all 
+	     * details of the user's favorite recipes, including name, instructions, 
+	     * ingredients, images, and more. The resulting list of recipes is formatted 
+	     * into a JSON string and sent back to the frontend as the response.
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request 
+	     * and response.
+	     * @throws IOException If there's an error reading the request or writing 
+	     * the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
@@ -477,7 +606,27 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles the removal of recipes from a user's favorites list.
+	 * 
+	 * When a user wants to remove a recipe from their list of favorites, this handler processes the request.
+	 * The handler communicates with the backend database to delete the specified recipe for the user from the 
+	 * Favorites table. The result of the operation is then sent back to the frontend.
+	 */
 	static class deleteFavsHandler implements HttpHandler {
+		
+		/**
+	     * Processes an HTTP request to remove a specific recipe from a user's list of favorites.
+	     * 
+	     * After preparing the request and extracting the necessary details (username and recipeID) from 
+	     * the request body, the handler formulates an SQL delete statement. The database is then queried 
+	     * and the recipe is removed from the user's favorites. A successful removal results in a 200 
+	     * HTTP response, while failures lead to a 404 or 500 response, depending on the nature of the error.
+	     * 
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
@@ -536,7 +685,32 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles the addition of new recipes to the system.
+	 * 
+	 * This handler processes requests to add a new recipe, parsing the required data from the request body 
+	 * and storing it in the appropriate backend database tables. The handler is responsible for ensuring 
+	 * that the necessary information about the recipe, including ingredients and associated images, is correctly
+	 * captured and stored.
+	 * 
+	 */
 	static class AddRecipeHandler implements HttpHandler {
+		
+		
+		/**
+	     * Processes an HTTP request to add a new recipe to the system.
+	     * 
+	     * After parsing the request body, the handler extracts all the necessary details about the recipe, such as 
+	     * title, description, instructions, time required, nutritional content, author, modification and publication dates, 
+	     * and associated images. It then formulates the appropriate SQL statements to add the new recipe and its associated 
+	     * information to the database. Successful addition of the recipe results in a 200 HTTP response, 
+	     * while any issues or errors result in either a 401 (unauthorized) or 500 (server error) response, 
+	     * depending on the nature of the error.
+	     *
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -779,8 +953,30 @@ public class Backend {
 
 		}
 	}
-
+	
+	/**
+	 * Handles the user authentication and login process.
+	 * 
+	 * This handler processes requests to authenticate a user based on their provided credentials (username and password). 
+	 * It extracts the credentials from the request body and checks the backend database to see if a matching user 
+	 * record exists. Depending on the result of the authentication check, the handler sends the appropriate 
+	 * HTTP response back to the client.
+	 */
 	static class LoadYourRecipesHandler implements HttpHandler {
+		
+		
+		/**
+	     * Processes an HTTP request for user authentication and login.
+	     * 
+	     * After parsing the request body, the handler extracts the provided username and password and verifies 
+	     * their authenticity against the backend database. If a matching user record is found, the handler sends 
+	     * a 200 HTTP response containing the authenticated user's information. If the authentication fails, a 401 
+	     * (unauthorized) response is sent. Any issues or errors that occur during the authentication process result 
+	     * in a 500 (server error) response.
+	     * 
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 			fixRequest(t);
@@ -900,7 +1096,28 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles the deletion of a recipe based on the given credentials.
+	 * 
+	 * This handler processes requests to delete a recipe. It expects the request body to contain 
+	 * the username of the recipe author and the unique recipe ID of the recipe to be deleted. 
+	 * It first attempts to delete the recipe from the backend database. If the deletion is successful,
+	 * the handler then proceeds to remove any related data such as ingredients associated with the recipe 
+	 * and any images linked to the recipe.
+	 * 
+	 */
 	static class DeleteRecipeHandler implements HttpHandler {
+		
+		/**
+	     * Processes an HTTP request to delete a recipe.
+	     * 
+	     * After parsing the request body, the handler extracts the provided username and recipe ID. 
+	     * It then verifies and attempts to delete the recipe from the database. If the recipe is deleted 
+	     * successfully, related data such as ingredients and images linked to the recipe are also deleted.
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
@@ -992,8 +1209,27 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Handles modification requests for existing recipes.
+	 * 
+	 * This handler processes requests to modify the details of a given recipe. The request body is expected 
+	 * to contain the updated details of the recipe, including title, servings, instructions, and more.
+	 * Furthermore, the handler supports updating the ingredients associated with the recipe as well as the 
+	 * linked image.
+	 */
 	static class ModRecipeHandler implements HttpHandler {
 
+		/**
+	     * Processes an HTTP request to modify a given recipe.
+	     * 
+	     * After parsing the request body, the handler extracts the updated details of the recipe 
+	     * and the provided recipe ID. The handler then attempts to update the recipe's details 
+	     * in the backend database. After successfully updating the main details, it proceeds to 
+	     * handle the associated ingredients and linked image.
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
@@ -1143,8 +1379,27 @@ public class Backend {
 
 	}
 
+	
+	/**
+	 * Handles requests to retrieve reviews for a given recipe.
+	 * 
+	 * This handler processes requests to fetch the reviews associated with a specific recipe identified 
+	 * by its recipe ID. The reviews for the specified recipe are retrieved from the backend database.
+	 * The response body will contain a JSON object with the aggregated reviews for the given recipe.
+	 */
 	static class ReviewsHandler implements HttpHandler {
 
+		
+		/**
+	     * Processes an HTTP request to retrieve the reviews for a specified recipe.
+	     * 
+	     * The handler parses the request body to extract the recipe ID. Using the provided recipe ID,
+	     * it attempts to retrieve the associated reviews from the backend database. The aggregated reviews
+	     * are then returned as a concatenated string in the response.
+	     *
+	     * @param t The {@code HttpExchange} object representing the HTTP request and response.
+	     * @throws IOException If there's an error reading the request or writing the response.
+	     */
 		@Override
 		public void handle(HttpExchange t) throws IOException {
 
@@ -1217,6 +1472,31 @@ public class Backend {
 		}
 	}
 
+	/**
+	 * Main entry point for the HTTP server application.
+	 * 
+	 * This method initializes an HTTP server listening on port 8000. It defines various endpoints and
+	 * associates them with specific handler classes to process incoming requests.
+	 * 
+	 * The supported endpoints include:
+	 * 
+	 *     /login - for user login operations
+	 *     /register - for user registration operations
+	 *     /search - for searching recipes
+	 *     /addfavorites - for adding recipes to a user's favorites
+	 *     /getfavorites - for retrieving a user's favorite recipes
+	 *     /deletefavorites - for removing recipes from a user's favorites
+	 *     /addrecipe - for adding a new recipe
+	 *     /loadYourRecipes - for retrieving a user's added recipes
+	 *     /deleteRecipe - for deleting a user's recipe
+	 *     /modRecipe - for modifying a user's recipe
+	 *     /reviews - for fetching reviews for a recipe
+	 * 
+	 * On successfully starting the server, a message indicating its start will be printed to the console.
+	 * Any exceptions during the server initialization will also be printed.
+	 *
+	 * @param args The command-line arguments. (Not utilized in this context)
+	 */
 	public static void main(String[] args) {
 		try {
 
