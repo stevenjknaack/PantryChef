@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import userLoggedIn from '../context/userLoggedIn';
+import { useNavigate } from 'react-router-dom';
 
 
-function YourRecipes() {
+function YourRecipes({ onModifyRecipe }) {
 
     const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
     const [yourRecipes, setYourRecipes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
+    const navigate = useNavigate();
+
+    
 
     const loadYourRecipes = () => {
         // fetch favorites from the server when changed to favs
@@ -76,6 +80,14 @@ function YourRecipes() {
 
     }
 
+    const modifyRecipe = (recipe) => {
+        // navigate to "/mod-recipe" which is the modifyRecipe component and send th e
+        console.log("recipe chosen: ")
+        console.log(recipe)
+        navigate("/mod-recipe", { state: { selectedRecipe: recipe } })
+        
+    }
+
     return (
         <div className="page-content">
             <h1>YOUR RECIPES</h1>
@@ -96,7 +108,9 @@ function YourRecipes() {
                             <p><strong>Author:</strong> {recipe.AuthorUsername}</p>
                             <p><strong>Date Modified:</strong> {recipe.DateModified}</p>
                             <p><strong>Date Published:</strong> {recipe.DatePublished}</p>
+                            <button onClick={()=> modifyRecipe(recipe)}>Modify Recipe</button>
                             <button onClick={() => removeRecipe(recipe.RecipeID)}>Remove Recipe</button>
+                            
                         </li>
                     ))}
                 </ul>

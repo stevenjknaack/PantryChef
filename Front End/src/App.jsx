@@ -14,6 +14,7 @@ import Logout from './components/Logout';
 import Recipe from './components/Recipe';
 import AddRecipe from './components/AddRecipe';
 import YourRecipes from './components/YourRecipes';
+import ModifyRecipe from './components/ModifyRecipe';
 
 // Contexts
 import userLoggedIn from './context/userLoggedIn';
@@ -22,6 +23,9 @@ const App = () => {
 
   //will be filled with recipes when the recipes are returned by the backend
   const [recipes, setRecipes] = useState([])
+
+  // will be filled with a recipe to be modified
+  const [recipe, setRecipe] = useState({})
 
   // for setting the userName to sessionStorage
   const isLoggedIn = JSON.parse(sessionStorage.getItem("loggedIn"));
@@ -164,6 +168,8 @@ const App = () => {
 
   };
 
+
+
   return (
     <userLoggedIn.Provider value={[loggedIn, setLoggedIn]}>
       <BrowserRouter>
@@ -177,7 +183,8 @@ const App = () => {
             <Route path="/logout" element={<Logout onLogout={logout} />} />
             <Route path="/recipe" element={<Recipe  recipesData={recipes}/>} />
             <Route path="/add-recipe" element={<AddRecipe />} />
-            <Route path="/your-recipes" element={<YourRecipes />} />
+            <Route path="/your-recipes" element={<YourRecipes/>} />
+            <Route path="/mod-recipe" element={<ModifyRecipe />} />
           </Route>
         </Routes>
       </BrowserRouter>

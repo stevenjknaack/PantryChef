@@ -1,32 +1,62 @@
-import userLoggedIn from "../context/userLoggedIn";
-import React, { useState, useContext } from 'react';
+// make it look like AddRecipe
+// except it will be for a single recipe
+// it will be very looking to addRecipe
+// some fields regrading the creation time will not be displayed
+// username and recipeID and date published wont be displayed
 
-function AddRecipe() {
+// use the input placeholder tag
+// ex: <input placeholder="apple pie"></input>
+
+// send the backend everything
+// the datamodified using isodate string
+// the recipeID
+// the auhtorID
+// the datapublished
+// anything chnaged
+// anything unchanged
+// will modify the recipe in place with all the attributes
+// even if they are the same
+
+import React, { useState, useContext, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import userLoggedIn from '../context/userLoggedIn';
+
+function ModifyRecipe() {
+
+    const location = useLocation();
+    const recipeToModify = location.state?.selectedRecipe;
+    const ingredientsToBeModified = parseIngredients(recipeToModify.Ingredients);
+    const nutritionValues = parseNutritionValues(recipeToModify.NutritionalContent);
+    const servingValues = parseServingsAndYield(recipeToModify.Servings);
+    const times = parseTimes(recipeToModify.TimeDescription);
+    const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+    const d = new Date();
+
     const [recipe, setRecipe] = useState({
-        title: '',
-        cookTime: '',
-        prepTime: '',
-        totalTime: '',
-        description: '',
-        ingredients: [['', '']],
-        instructions: '',
-        calories: '',
-        fatContent: '',
-        saturatedFatContent: '',
-        cholesterolContent: '',
-        sodiumContent: '',
-        carbohydrateContent: '',
-        fiberContent: '',
-        sugarContent: '',
-        proteinContent: '',
-        recipeServings: '',
-        recipeYield: '',
-        image: '',
-        username: loggedIn,
-        datePublished: '',
-        dateModified: 'N/A',
-        // recipeID is sent using the backend
+        title: recipeToModify.Name,
+        cookTime: times.cookTime,
+        prepTime: times.prepTime,
+        totalTime: times.totalTime,
+        description: recipeToModify.Description,
+        ingredients: ingredientsToBeModified,
+        instructions: recipeToModify.Instructions,
+        calories: nutritionValues.calories,
+        fatContent: nutritionValues.fatContent,
+        saturatedFatContent: nutritionValues.saturatedFatContent,
+        cholesterolContent: nutritionValues.cholesterolContent,
+        sodiumContent: nutritionValues.sodiumContent,
+        carbohydrateContent: nutritionValues.carbohydrateContent,
+        fiberContent: nutritionValues.fiberContent,
+        sugarContent: nutritionValues.sugarContent,
+        proteinContent: nutritionValues.proteinContent,
+        recipeServings: servingValues.recipeServings,
+        recipeYield: servingValues.recipeYield,
+        image: recipeToModify.Images,
+        username: recipeToModify.AuthorUsername,
+        datePublished: recipeToModify.DatePublished,
+        dateModified: recipeToModify.DateModified,
+        recipeID: recipeToModify.RecipeID,
     });
 
     const handleChange = (e) => {
@@ -56,15 +86,66 @@ function AddRecipe() {
         setRecipe(prevState => ({ ...prevState, ingredients: list }));
     };
 
-    const d = new Date();
+    function parseIngredients(str) {
+        const regex = /([a-zA-Z\s]+)\s\((\d+)\)/g;
+        let match;
+        const result = [];
+        while ((match = regex.exec(str)) !== null) {
+            result.push([match[1].trim(), match[2]]);
+        }
+        return result;
+    }
 
-    // console.log(d.toISOString()); 
 
-    const handleSubmit = (e) => {
+    function parseNutritionValues(input) {
+        const parseValue = (name) => {
+            const regex = new RegExp(name + ':\\s([^|]+)');
+            const match = input.match(regex);
+            return match ? match[1].trim() : '';
+        };
+
+        return {
+            calories: parseValue('Calories'),
+            fatContent: parseValue('FatContent'),
+            saturatedFatContent: parseValue('SaturatedFatContent'),
+            cholesterolContent: parseValue('CholesterolContent'),
+            sodiumContent: parseValue('SodiumContent'),
+            carbohydrateContent: parseValue('CarbohydrateContent'),
+            fiberContent: parseValue('FiberContent'),
+            sugarContent: parseValue('SugarContent'),
+            proteinContent: parseValue('ProteinContent')
+        };
+    }
+
+    function parseServingsAndYield(input) {
+        const parseValue = (name) => {
+            const regex = new RegExp(name + ':\\s([^|]+)');
+            const match = input.match(regex);
+            return match ? match[1].trim() : '';
+        };
+
+        return {
+            recipeServings: parseValue('Servings'),
+            recipeYield: parseValue('Yield')
+        };
+    }
+
+    function parseTimes(input) {
+        const parseValue = (name) => {
+            const regex = new RegExp(name + ':\\s([^|]+)');
+            const match = input.match(regex);
+            return match ? match[1].trim() : '';
+        };
+        return {
+            cookTime: parseValue('Cook Time'),
+            prepTime: parseValue("Prep Time"),
+            totalTime: parseValue("Total Time"),
+        }
+    }
+    const handleMod = (e) => {
         e.preventDefault();
 
-        // logic to save the recipe to your server/database
-        // will need all the attributes from above, + username + a generated recipeID (from the backend) + a way to get the date
+        console.log(recipe)
 
         const defaultNAFields = [
             'calories', 'fatContent', 'saturatedFatContent', 'cholesterolContent',
@@ -84,12 +165,13 @@ function AddRecipe() {
             Quantity: ingredientTuple[1]
         }))
 
-        console.log(ingreds);
-        console.log(recipe.image);
+        console.log(recipe.ingredients)
+        console.log(ingreds)
 
-        fetch("http://localhost:8000/addrecipe", {
-            method: "POST",
+        fetch("http://localhost:8000/modRecipe", {
+            method: "PUT",
             body: JSON.stringify({
+                // every recipe attribute
 
                 Title: `${recipe.title}`,
 
@@ -107,78 +189,52 @@ function AddRecipe() {
 
                 Author: recipe.username,
 
-                DateModified: recipe.dateModified,
+                DateModified: d.toISOString(),
 
-                DatePublished: d.toISOString(),
+                DatePublished: recipe.datePublished,
 
                 Image: recipe.image,
-
+                
+                RecipeID: recipe.recipeID,
             }),
-
         }).then(res => {
-
-            if (res.status === 401) {
-                alert('recipe failed to add!')
-                return false;
-            }
-            else if (res.status === 200) {
-                alert('recipe successfully added!')
+            if (res.status === 200) {
+                alert('recipe modified!')
                 return true;
-
             } else if (res.status === 500) {
                 alert('unknown error')
                 return false;
+            } else if (res.status === 404) {
+                alert('recipe was NOT modified!')
+                return false;
             }
-
         }).then(success => {
             if (success == false) {
                 return;
             }
             else {
-                // make each thing in the const back to the orignal value
-                setRecipe({
-                    title: '',
-                    cookTime: '',
-                    prepTime: '',
-                    totalTime: '',
-                    description: '',
-                    ingredients: [['', '']],
-                    instructions: '',
-                    recipeIngredientQuantities: '',
-                    calories: '',
-                    fatContent: '',
-                    saturatedFatContent: '',
-                    cholesterolContent: '',
-                    sodiumContent: '',
-                    carbohydrateContent: '',
-                    fiberContent: '',
-                    sugarContent: '',
-                    proteinContent: '',
-                    recipeServings: '',
-                    recipeYield: '',
-                    username: '', // you had 'loggedIn' for this, but if you want to reset, it should be empty or default value
-                    datePublished: '', // You might want to leave this if you're setting the date upon creation
-                    dateModified: 'N/A'
-                });
+                navigate("/your-recipes")
             }
         })
-    };
+    }
 
     return (
         <div className="page-content">
-            <h1>Add a New Recipe</h1>
+            <h1>Modify Recipe</h1>
+
             <h6>Write 'N/A' for anything that is not applicable for a required field (*)</h6>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleMod}>
+                {/* The form fields similar to AddRecipe with placeholders and pre-filled values from recipeToModify */}
                 <label>
                     Title*:
-                    <input type="text" name="title" value={recipe.title} onChange={handleChange} required />
+                    <input type="text" name="title" value={recipe.title} onChange={handleChange} />
                 </label>
-                <br></br>
+                <br>
+                </br>
                 <label>
                     Description*:
-                    <textarea name="description" value={recipe.description} onChange={handleChange} required />
+                    <input type="text" name="description" value={recipe.description} onChange={handleChange} />
                 </label>
-                <br></br>
                 <br></br>
                 {
                     recipe.ingredients.map((ingredientTuple, index) => (
@@ -196,7 +252,7 @@ function AddRecipe() {
                         </div>
                     ))
                 }
-                <br></br>
+
                 <label>
                     Instructions*:
                     <textarea name="instructions" value={recipe.instructions} onChange={handleChange} required />
@@ -275,14 +331,16 @@ function AddRecipe() {
                 <br></br>
                 <label>
                     Image:
-                    <textarea name="image" value={recipe.image} onChange={handleChange} maxLength="2000"  />
+                    <textarea name="image" value={recipe.image} onChange={handleChange} maxLength="2000" />
                 </label>
                 <br></br>
 
-                <button type="submit">Add Recipe</button>
+                <button type="submit">Modify Recipe</button>
             </form>
+
+
         </div>
     );
-}
+};
 
-export default AddRecipe;
+export default ModifyRecipe;

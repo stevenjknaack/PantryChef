@@ -902,7 +902,7 @@ public class Backend {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				t.sendResponseHeaders(500, response.length());
-				
+
 			}
 
 			OutputStream os = t.getResponseBody();
@@ -911,11 +911,11 @@ public class Backend {
 
 		}
 	}
-	
+
 	static class DeleteRecipeHandler implements HttpHandler {
 		@Override
 		public void handle(HttpExchange t) throws IOException {
-			
+
 			fixRequest(t);
 			String body = getBody(t);
 			JSONObject obj = null;
@@ -950,11 +950,47 @@ public class Backend {
 				prepStatement.setString(1, username);
 				prepStatement.setInt(2, recipeID);
 				int rowsAffected = prepStatement.executeUpdate();
-				System.out.println(rowsAffected);
+				System.out.println("deleted recipe " + rowsAffected);
 
 				// Successfully removed
-				if (rowsAffected >= 1) { // there could be two of the same recipe ID added
+				if (rowsAffected >= 1) { 
+					
+					String ingredientSql = "DELETE FROM CallsFor WHERE RecipeID = ?;";
+					prepStatement = b.c.prepareStatement(ingredientSql);
+					prepStatement.setInt(1, recipeID);
+					rowsAffected = prepStatement.executeUpdate();
+					System.out.println("delted ingredeitns " +rowsAffected);
+//					
+//					 get the imageID
+//					 remove the from image and illustrates using the imageID
+//					
+					String imageSQL = "SELECT ImageID FROM Illustrates WHERE RecipeID = ?";
+					
+					prepStatement = b.c.prepareStatement(imageSQL);
+					prepStatement.setInt(1, recipeID);
+					b.resultSet = prepStatement.executeQuery();
+					System.out.print("RecipeId " + recipeID);
+					
+					int imageID = -1;
+					while (b.resultSet.next()) {
+						imageID = b.resultSet.getInt("ImageID");
+						System.out.println(imageID);
+					}
+					
+					String imageSql = "DELETE FROM Image WHERE ImageID = ?;";
+					String illustrateSql = "DELETE FROM Illustrates WHERE ImageID = ? OR RecipeID = ?;";
+					
+					prepStatement = b.c.prepareStatement(imageSql);
+					prepStatement.setInt(1, imageID);
+					prepStatement.executeUpdate();
+					
+					prepStatement = b.c.prepareStatement(illustrateSql);
+					prepStatement.setInt(1, imageID);
+					prepStatement.setInt(2, recipeID);
+					prepStatement.executeUpdate();
+					
 					t.sendResponseHeaders(200, response.length());
+					
 				} else if (rowsAffected < 1) {
 					// meaning not removed
 					t.sendResponseHeaders(404, response.length());
@@ -967,10 +1003,169 @@ public class Backend {
 			OutputStream os = t.getResponseBody();
 			os.write(response.getBytes());
 			os.close();
-			
+
 		}
 	}
-	
+
+	static class ModRecipeHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+
+			fixRequest(t);
+			String body = getBody(t);
+			JSONObject obj = null;
+
+			try {
+				obj = new JSONObject(body);
+			} catch (JSONException e) {
+				System.out.println(e.getMessage());
+			}
+
+			String Title = "";
+			String Servings = "";
+			String Instructions = "";
+			String Time = "";
+			String NutritionalContent = "";
+			String Author = "";
+			String DateModified = "";
+			String DatePublished = "";
+			String Description = "";
+			String Image = "";
+			int RecipeID = -1;
+			JSONArray ingredientsArray = obj.getJSONArray("Ingredients");
+
+			String response = "";
+			List<Ingredient> ingredientsList = new ArrayList<>();
+			try {
+
+				Title = obj.getString("Title").trim();
+				Servings = obj.getString("Servings").trim();
+				Instructions = obj.getString("Instructions").trim();
+				Time = obj.getString("Time").trim();
+				NutritionalContent = obj.getString("NutritionalContent").trim();
+				Author = obj.getString("Author").trim();
+				DateModified = obj.getString("DateModified").trim();
+				DatePublished = obj.getString("DatePublished").trim();
+				Description = obj.getString("Description").trim();
+				Image = obj.getString("Image").trim();
+				RecipeID = obj.getInt("RecipeID");
+
+				for (int i = 0; i < ingredientsArray.length(); i++) {
+					JSONObject ingredientObj = ingredientsArray.getJSONObject(i);
+					String ingredientName = ingredientObj.getString("IngredientName").trim();
+					String quantity = ingredientObj.getString("Quantity").trim();
+					ingredientsList.add(new Ingredient(ingredientName, quantity));
+				}
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Title: " + Title);
+			System.out.println("Description: " + Description);
+			System.out.println("Servings: " + Servings);
+			System.out.println("Instructions: " + Instructions);
+			System.out.println("Time: " + Time);
+			System.out.println("NutritionalContent: " + NutritionalContent);
+			System.out.println("Author: " + Author);
+			System.out.println("DateModified: " + DateModified);
+			System.out.println("DatePublished: " + DatePublished);
+			System.out.println("Image: " + Image);
+
+			/*
+			 * RecipeID INTEGER, Name VARCHAR(300), Instructions VARCHAR(11000),
+			 * TimeDescription VARCHAR(100), Servings VARCHAR(100), NutrionalContent
+			 * VARCHAR(300), Description VARCHAR(3500), AuthorUsername VARCHAR(50),
+			 * DatePublished VARCHAR(30), DateModified VARCHAR(30),
+			 */
+
+			Backend b = new Backend();
+			b.Connection();
+
+			try {
+				String sql = "UPDATE Recipe "
+						+ "SET Name = ?, Instructions = ?, TimeDescription = ?, Servings = ?, NutrionalContent = ?, Description = ?, DateModified = ?"
+						+ "WHERE AuthorUsername = ? AND RecipeID = ?";
+
+				PreparedStatement prepStatement = b.c.prepareStatement(sql);
+				prepStatement = b.c.prepareStatement(sql);
+				prepStatement.setString(1, Title);
+				prepStatement.setString(2, Instructions);
+				prepStatement.setString(3, Time);
+				prepStatement.setString(4, Servings);
+				prepStatement.setString(5, NutritionalContent);
+				prepStatement.setString(6, Description);
+				prepStatement.setString(7, DateModified);
+				prepStatement.setString(8, Author);
+				prepStatement.setInt(9, RecipeID);
+
+				int rowsAffected = prepStatement.executeUpdate();
+				if (rowsAffected == 1) {
+
+					String sqlIngreds = "DELETE FROM CallsFor where RecipeID = ?";
+					PreparedStatement p = b.c.prepareStatement(sqlIngreds);
+					p.setInt(1, RecipeID);
+					int deleted = p.executeUpdate();
+					System.out.println(deleted);
+
+					for (var ingredient : ingredientsList) {
+						sql = "INSERT INTO CallsFor (RecipeID, IngredientName, Quantity) VALUES (?, ?, ?);";
+						prepStatement = b.c.prepareStatement(sql);
+
+						// Loop through each ingredient and bind to the prepared statement parameters
+
+						prepStatement.setInt(1, RecipeID);
+						prepStatement.setString(2, ingredient.getName());
+						prepStatement.setString(3, ingredient.getQuantity());
+						prepStatement.addBatch();
+
+						System.out.println(prepStatement.toString());
+
+						// Execute the batch to insert all ingredients at once
+						prepStatement.executeBatch();
+					}
+
+					// insert image if it contains http in it
+					// get the image id associted with the recipe ID
+					
+					String imageSQL = "SELECT ImageID FROM Illustrates WHERE RecipeID = ?";
+					
+					prepStatement = b.c.prepareStatement(imageSQL);
+					prepStatement.setInt(1, RecipeID);
+					b.resultSet = prepStatement.executeQuery();
+					
+					int imageID = -1;
+					while (b.resultSet.next()) {
+						imageID = b.resultSet.getInt("ImageID");
+						System.out.println(imageID);
+					}
+					
+					String updateImage = "UPDATE Image\n"
+							+ "SET Link = ?\n"
+							+ "WHERE ImageID = ?;";
+					prepStatement = b.c.prepareStatement(updateImage);
+					prepStatement.setString(1, Image);
+					prepStatement.setInt(2, imageID);
+					rowsAffected = prepStatement.executeUpdate();
+
+					t.sendResponseHeaders(200, response.length());
+				} else {
+					t.sendResponseHeaders(404, response.length());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+
+		}
+
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -985,9 +1180,10 @@ public class Backend {
 			server.createContext("/addfavorites", new AddFavHandler());
 			server.createContext("/getfavorites", new loadFavsHandler());
 			server.createContext("/deletefavorites", new deleteFavsHandler());
-			server.createContext("/", new AddRecipeHandler());
+			server.createContext("/addrecipe", new AddRecipeHandler());
 			server.createContext("/loadYourRecipes", new LoadYourRecipesHandler());
 			server.createContext("/deleteRecipe", new DeleteRecipeHandler());
+			server.createContext("/modRecipe", new ModRecipeHandler());
 			// add handler to deal with modifying parts of recipe
 
 			server.setExecutor(null); // creates a default executor
