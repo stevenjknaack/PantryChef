@@ -18,7 +18,6 @@ CREATE TABLE Recipe (
   PRIMARY KEY (RecipeID)
 );
 
-
 CREATE INDEX RecipeIndex
 ON Recipe (RecipeID);
 
@@ -72,3 +71,6 @@ CREATE TABLE Review (
   DateModified VARCHAR(30),
   PRIMARY KEY (ReviewID)
 );
+
+CREATE INDEX ReviewIndex
+ON Review (RecipeID);
