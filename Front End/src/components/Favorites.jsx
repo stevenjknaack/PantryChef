@@ -3,9 +3,12 @@ import userLoggedIn from '../context/userLoggedIn';
 
 function Favorites() {
 
+  // Obtain the logged-in user context
   const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+  // State for storing favorite recipes
   const [favorites, setFavorites] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
+  // State for checking if data is still being loaded
+  const [isLoading, setIsLoading] = useState(true);
 
   // Function to load favorites from a server
   const loadFavorites = () => {
@@ -30,24 +33,26 @@ function Favorites() {
         return;
       }
       else {
-        setIsLoading(false);
-        setFavorites(json.recipes);
+        setIsLoading(false); // Set loading to false since data is fetched
+        setFavorites(json.recipes); // Update the favorites state
       }
     })
   };
 
+  // UseEffect to load favorites when the component mounts or when the logged-in user changes
   useEffect(() => {
     loadFavorites();
   }, [loggedIn]);
 
+  // Display a loading message while data is being fetched
   if (isLoading) {
     return <div className="page-content">Loading Favorites Page...</div>;
   }
 
+  // Function to remove a favorite recipe
   const removeFavorite = (recipeID) => {
-    
-    console.log(recipeID)
 
+    // Request to delete a favorite from the server
     fetch("http://localhost:8000/deletefavorites", {
       method: "DELETE",
       body: JSON.stringify({
@@ -70,12 +75,13 @@ function Favorites() {
         return;
       }
       else {
-        // reload displayed favorites if successful
+        // Reload displayed favorites if deletion was successful
         loadFavorites();
       }
     })
   };
 
+  // Render the favorites list
   return (
     <div className="page-content">
       <h1>Favorites:</h1>
