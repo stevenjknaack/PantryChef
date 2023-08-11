@@ -5,10 +5,12 @@ import Review from "./Review";
 // ingredients will become ingredients, recipe
 function Recipe({ recipesData }) {
 
+  // Get the user's logged in status from context
   const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+  // State to manage the loading screen display
   const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
 
-  console.log(loggedIn)
+  // Hook that runs after the component is mounted
   useEffect(() => {
     // This will run when the component mounts
     const timer = setTimeout(() => {
@@ -19,14 +21,15 @@ function Recipe({ recipesData }) {
   }, []);
 
 
+  // Show a loading message while the content is being prepared
   if (isLoading) {
     return <div className="page-content">Loading Recipe Page...</div>;
   }
 
+  // Function to add a recipe to the user's favorites
   const addFavorite = (recipeID) => {
 
-    console.log(recipeID)
-
+    // Send a POST request to add the selected recipe to favorites
     fetch("http://localhost:8000/addfavorites", {
       method: "POST",
       body: JSON.stringify({
@@ -46,6 +49,7 @@ function Recipe({ recipesData }) {
     })
   };
 
+  // Render the list of recipes and their details
   return (
     <div className="page-content">
       <h1>Recipes:</h1>

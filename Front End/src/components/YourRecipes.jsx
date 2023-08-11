@@ -3,15 +3,17 @@ import userLoggedIn from '../context/userLoggedIn';
 import { useNavigate } from 'react-router-dom';
 
 
-function YourRecipes({ onModifyRecipe }) {
+function YourRecipes() {
 
+    // Extract the login status and the setter from the context
     const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+    // State to hold the recipes
     const [yourRecipes, setYourRecipes] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);  // Add this line to initialize loading state
+    // State to hold the loading status
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    
-
+    // This function fetches the recipes of the logged-in user from the server
     const loadYourRecipes = () => {
         // fetch favorites from the server when changed to favs
         fetch("http://localhost:8000/loadYourRecipes", {
@@ -40,14 +42,16 @@ function YourRecipes({ onModifyRecipe }) {
         })
     };
 
+    // Use effect to load the recipes when the user's logged-in status changes
     useEffect(() => {
         loadYourRecipes();
     }, [loggedIn]);
 
-    if (isLoading) {
+    if (isLoading) { // If the data is still being fetched, display a loading message
         return <div className="page-content">Loading Your Recipes ...</div>;
     }
 
+    // This function removes a recipe based on its ID
     const removeRecipe = (recipeID) => {
         console.log(recipeID)
 
@@ -80,14 +84,15 @@ function YourRecipes({ onModifyRecipe }) {
 
     }
 
+     // This function navigates the user to the modifyRecipe component with the selected recipe
     const modifyRecipe = (recipe) => {
-        // navigate to "/mod-recipe" which is the modifyRecipe component and send th e
         console.log("recipe chosen: ")
         console.log(recipe)
         navigate("/mod-recipe", { state: { selectedRecipe: recipe } })
-        
+
     }
 
+    // Render the component
     return (
         <div className="page-content">
             <h1>YOUR RECIPES</h1>
@@ -108,9 +113,9 @@ function YourRecipes({ onModifyRecipe }) {
                             <p><strong>Author:</strong> {recipe.AuthorUsername}</p>
                             <p><strong>Date Modified:</strong> {recipe.DateModified}</p>
                             <p><strong>Date Published:</strong> {recipe.DatePublished}</p>
-                            <button onClick={()=> modifyRecipe(recipe)}>Modify Recipe</button>
+                            <button onClick={() => modifyRecipe(recipe)}>Modify Recipe</button>
                             <button onClick={() => removeRecipe(recipe.RecipeID)}>Remove Recipe</button>
-                            
+
                         </li>
                     ))}
                 </ul>

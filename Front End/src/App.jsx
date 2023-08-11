@@ -36,6 +36,7 @@ const App = () => {
     sessionStorage.setItem("loggedIn", JSON.stringify(loggedIn))
   }, [loggedIn])
 
+  // Function to handle user login
   const login = async (credentials) => {
 
     if (credentials.username === '' || credentials.password === '') {
@@ -76,6 +77,7 @@ const App = () => {
 
   };
 
+  // Function to handle user registration
   const register = async (credentials) => {
 
     if (credentials.password === '' || credentials.username === '') {
@@ -98,7 +100,6 @@ const App = () => {
       alert("Your username and/or password cannot contain whitespace")
       return
     }
-    // I can add more checks as needed
 
     fetch("http://localhost:8000/register", {
       method: "POST",
@@ -131,10 +132,12 @@ const App = () => {
     })
   };
 
+  // Function to handle user logout
   const logout = async () => {
     setLoggedIn(null)
   }
 
+  // Function to submit ingredients and get recipes from the database
   function submitIngredients(ingredients) {
     // logic to get recipes from database
     fetch("http://localhost:8000/search", {
@@ -163,13 +166,12 @@ const App = () => {
       else {
         setRecipes(json.recipes)
         console.log(recipes)
-      }  
+      }
     })
 
   };
 
-
-
+  // Rendering the main app component
   return (
     <userLoggedIn.Provider value={[loggedIn, setLoggedIn]}>
       <BrowserRouter>
@@ -181,9 +183,9 @@ const App = () => {
             <Route path="/search" element={<Search onSubmit={submitIngredients} />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/logout" element={<Logout onLogout={logout} />} />
-            <Route path="/recipe" element={<Recipe  recipesData={recipes}/>} />
+            <Route path="/recipe" element={<Recipe recipesData={recipes} />} />
             <Route path="/add-recipe" element={<AddRecipe />} />
-            <Route path="/your-recipes" element={<YourRecipes/>} />
+            <Route path="/your-recipes" element={<YourRecipes />} />
             <Route path="/mod-recipe" element={<ModifyRecipe />} />
           </Route>
         </Routes>

@@ -1,38 +1,25 @@
-// make it look like AddRecipe
-// except it will be for a single recipe
-// it will be very looking to addRecipe
-// some fields regrading the creation time will not be displayed
-// username and recipeID and date published wont be displayed
-
-// use the input placeholder tag
-// ex: <input placeholder="apple pie"></input>
-
-// send the backend everything
-// the datamodified using isodate string
-// the recipeID
-// the auhtorID
-// the datapublished
-// anything chnaged
-// anything unchanged
-// will modify the recipe in place with all the attributes
-// even if they are the same
-
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import userLoggedIn from '../context/userLoggedIn';
 
 function ModifyRecipe() {
 
+    // Get the current location object which might contain state from a previous navigation
     const location = useLocation();
+    // Extracting the recipe that we wish to modify from the location's state
     const recipeToModify = location.state?.selectedRecipe;
+
+    // Parsing various attributes of the recipe into a more digestible format
     const ingredientsToBeModified = parseIngredients(recipeToModify.Ingredients);
     const nutritionValues = parseNutritionValues(recipeToModify.NutritionalContent);
     const servingValues = parseServingsAndYield(recipeToModify.Servings);
     const times = parseTimes(recipeToModify.TimeDescription);
+    // Hook for programmatic navigation
     const navigate = useNavigate();
-    const [loggedIn, setLoggedIn] = useContext(userLoggedIn);
+
+    // Get the current date
     const d = new Date();
 
+    // Initial state for the recipe that we're modifying
     const [recipe, setRecipe] = useState({
         title: recipeToModify.Name,
         cookTime: times.cookTime,
@@ -59,6 +46,7 @@ function ModifyRecipe() {
         recipeID: recipeToModify.RecipeID,
     });
 
+    // Handler for updating the recipe state when input values change
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRecipe({
@@ -67,12 +55,14 @@ function ModifyRecipe() {
         });
     };
 
+    // Handler for updating specific ingredient at a particular index and position
     const handleIngredientChange = (e, index, position) => {
         const list = [...recipe.ingredients];
         list[index][position] = e.target.value;
         setRecipe(prevState => ({ ...prevState, ingredients: list }));
     };
 
+    // Add a new ingredient tuple to the ingredients list
     const handleAddClick = () => {
         const list = [...recipe.ingredients];
         list.push(['', '']); // push a new tuple
@@ -80,12 +70,14 @@ function ModifyRecipe() {
         console.log(recipe.ingredients)
     };
 
+    // Remove a specific ingredient tuple from the ingredients list
     const handleRemoveClick = index => {
         const list = [...recipe.ingredients];
         list.splice(index, 1);
         setRecipe(prevState => ({ ...prevState, ingredients: list }));
     };
 
+    // Parses a string to extract ingredient names and quantities using regex
     function parseIngredients(str) {
         const regex = /([a-zA-Z\s]+)\s\((\d+)\)/g;
         let match;
@@ -96,7 +88,7 @@ function ModifyRecipe() {
         return result;
     }
 
-
+     // Extracts nutrition values from the input string
     function parseNutritionValues(input) {
         const parseValue = (name) => {
             const regex = new RegExp(name + ':\\s([^|]+)');
@@ -117,6 +109,7 @@ function ModifyRecipe() {
         };
     }
 
+    // Extracts servings and yield information from the input string
     function parseServingsAndYield(input) {
         const parseValue = (name) => {
             const regex = new RegExp(name + ':\\s([^|]+)');
@@ -130,6 +123,7 @@ function ModifyRecipe() {
         };
     }
 
+    // Extracts different time-related values from the input string
     function parseTimes(input) {
         const parseValue = (name) => {
             const regex = new RegExp(name + ':\\s([^|]+)');
@@ -142,6 +136,8 @@ function ModifyRecipe() {
             totalTime: parseValue("Total Time"),
         }
     }
+
+    // Handler for the modification logic
     const handleMod = (e) => {
         e.preventDefault();
 
@@ -218,6 +214,7 @@ function ModifyRecipe() {
         })
     }
 
+    // Render the form to modify the recipe
     return (
         <div className="page-content">
             <h1>Modify Recipe</h1>
