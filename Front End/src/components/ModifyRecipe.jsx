@@ -337,8 +337,6 @@ function ModifyRecipe() {
 
                 <button type="submit">Modify Recipe</button>
             </form>
-
-
         </div>
     );
 };

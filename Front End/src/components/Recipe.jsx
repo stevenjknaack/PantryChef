@@ -1,5 +1,6 @@
 import userLoggedIn from "../context/userLoggedIn";
 import { useContext, useState, useEffect } from 'react';
+import Review from "./Review";
 
 // ingredients will become ingredients, recipe
 function Recipe({ recipesData }) {
@@ -12,7 +13,7 @@ function Recipe({ recipesData }) {
     // This will run when the component mounts
     const timer = setTimeout(() => {
       setIsLoading(false); // After 10 seconds, set isLoading to false
-    }, 10000);
+    }, 15000);
 
     return () => clearTimeout(timer); // Cleanup timer if the component is unmounted
   }, []);
@@ -53,8 +54,7 @@ function Recipe({ recipesData }) {
           {recipesData.map((recipe) => (
             <li key={recipe.RecipeID}>
               <h2>{recipe.Name}</h2>
-              {/* Uncomment the following line after setting up the CSS */}
-              <img className="small-image" src={recipe.Link.replace(/"/g, '')}  />
+              <img className="small-image" src={recipe.Link.replace(/"/g, '')} />
               <p><strong>Description:</strong> {recipe.Description}</p>
               <p><strong>Ingredients:</strong> {recipe.Ingredients}</p>
               <p><strong>Servings:</strong> {recipe.Servings}</p>
@@ -64,7 +64,7 @@ function Recipe({ recipesData }) {
               <p><strong>Author:</strong> {recipe.AuthorUsername}</p>
               <p><strong>Date Modified:</strong> {recipe.DateModified}</p>
               <p><strong>Date Published:</strong> {recipe.DatePublished}</p>
-
+              <Review RecipeID={recipe.RecipeID}></Review>
               <button onClick={() => addFavorite(recipe.RecipeID)}>Add To Favorites</button>
             </li>
           ))}

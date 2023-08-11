@@ -609,10 +609,6 @@ public class Backend {
 				System.out.println(sql);
 
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
-
-				// No need to set a parameter for this SQL statement. So, remove the line below.
-				// prepStatement.setString(1, Author);
-
 				b.resultSet = prepStatement.executeQuery();
 
 				int maxID = -1;
@@ -633,41 +629,33 @@ public class Backend {
 
 				prepStatement = b.c.prepareStatement(sql);
 
-				prepStatement.setInt(1, newID); // Set RecipeID as the new incremented value
+				prepStatement.setInt(1, newID);
 				prepStatement.setString(2, Title);
 				prepStatement.setString(3, Instructions);
-				prepStatement.setString(4, Time); // I'm assuming Time refers to TimeDescription in your DB.
+				prepStatement.setString(4, Time);
 				prepStatement.setString(5, Servings);
 				prepStatement.setString(6, NutritionalContent);
 				prepStatement.setString(7, Description);
-				prepStatement.setString(8, Author); // This assumes the database expects a username string.
-				prepStatement.setString(9, DatePublished); // You might need to parse and convert this string to a
-															// proper Date type.
-				prepStatement.setString(10, DateModified); // Same note as for DatePublished.
+				prepStatement.setString(8, Author);
+				prepStatement.setString(9, DatePublished);
+				prepStatement.setString(10, DateModified);
 
 				int rowsInserted = prepStatement.executeUpdate();
 
 				if (rowsInserted > 0) {
 
-					// Insert ingredients into CallsFor table
 					for (var ingredient : ingredientsList) {
 						sql = "INSERT INTO CallsFor (RecipeID, IngredientName, Quantity) VALUES (?, ?, ?);";
 						prepStatement = b.c.prepareStatement(sql);
-
-						// Loop through each ingredient and bind to the prepared statement parameters
 
 						prepStatement.setInt(1, newID);
 						prepStatement.setString(2, ingredient.getName());
 						prepStatement.setString(3, ingredient.getQuantity());
 						prepStatement.addBatch();
-
 						System.out.println(prepStatement.toString());
-
-						// Execute the batch to insert all ingredients at once
 						prepStatement.executeBatch();
 					}
 
-					// insert image if it contains http in it
 					sql = "SELECT MAX(ImageID) imgMaxID FROM Illustrates;";
 					prepStatement = b.c.prepareStatement(sql);
 					b.resultSet = prepStatement.executeQuery();
@@ -953,44 +941,41 @@ public class Backend {
 				System.out.println("deleted recipe " + rowsAffected);
 
 				// Successfully removed
-				if (rowsAffected >= 1) { 
-					
+				if (rowsAffected >= 1) {
+
 					String ingredientSql = "DELETE FROM CallsFor WHERE RecipeID = ?;";
 					prepStatement = b.c.prepareStatement(ingredientSql);
 					prepStatement.setInt(1, recipeID);
 					rowsAffected = prepStatement.executeUpdate();
-					System.out.println("delted ingredeitns " +rowsAffected);
-//					
-//					 get the imageID
-//					 remove the from image and illustrates using the imageID
-//					
+					System.out.println("delted ingredeitns " + rowsAffected);
+
 					String imageSQL = "SELECT ImageID FROM Illustrates WHERE RecipeID = ?";
-					
+
 					prepStatement = b.c.prepareStatement(imageSQL);
 					prepStatement.setInt(1, recipeID);
 					b.resultSet = prepStatement.executeQuery();
 					System.out.print("RecipeId " + recipeID);
-					
+
 					int imageID = -1;
 					while (b.resultSet.next()) {
 						imageID = b.resultSet.getInt("ImageID");
 						System.out.println(imageID);
 					}
-					
+
 					String imageSql = "DELETE FROM Image WHERE ImageID = ?;";
 					String illustrateSql = "DELETE FROM Illustrates WHERE ImageID = ? OR RecipeID = ?;";
-					
+
 					prepStatement = b.c.prepareStatement(imageSql);
 					prepStatement.setInt(1, imageID);
 					prepStatement.executeUpdate();
-					
+
 					prepStatement = b.c.prepareStatement(illustrateSql);
 					prepStatement.setInt(1, imageID);
 					prepStatement.setInt(2, recipeID);
 					prepStatement.executeUpdate();
-					
+
 					t.sendResponseHeaders(200, response.length());
-					
+
 				} else if (rowsAffected < 1) {
 					// meaning not removed
 					t.sendResponseHeaders(404, response.length());
@@ -1073,13 +1058,6 @@ public class Backend {
 			System.out.println("DatePublished: " + DatePublished);
 			System.out.println("Image: " + Image);
 
-			/*
-			 * RecipeID INTEGER, Name VARCHAR(300), Instructions VARCHAR(11000),
-			 * TimeDescription VARCHAR(100), Servings VARCHAR(100), NutrionalContent
-			 * VARCHAR(300), Description VARCHAR(3500), AuthorUsername VARCHAR(50),
-			 * DatePublished VARCHAR(30), DateModified VARCHAR(30),
-			 */
-
 			Backend b = new Backend();
 			b.Connection();
 
@@ -1128,22 +1106,20 @@ public class Backend {
 
 					// insert image if it contains http in it
 					// get the image id associted with the recipe ID
-					
+
 					String imageSQL = "SELECT ImageID FROM Illustrates WHERE RecipeID = ?";
-					
+
 					prepStatement = b.c.prepareStatement(imageSQL);
 					prepStatement.setInt(1, RecipeID);
 					b.resultSet = prepStatement.executeQuery();
-					
+
 					int imageID = -1;
 					while (b.resultSet.next()) {
 						imageID = b.resultSet.getInt("ImageID");
 						System.out.println(imageID);
 					}
-					
-					String updateImage = "UPDATE Image\n"
-							+ "SET Link = ?\n"
-							+ "WHERE ImageID = ?;";
+
+					String updateImage = "UPDATE Image\n" + "SET Link = ?\n" + "WHERE ImageID = ?;";
 					prepStatement = b.c.prepareStatement(updateImage);
 					prepStatement.setString(1, Image);
 					prepStatement.setInt(2, imageID);
@@ -1167,13 +1143,86 @@ public class Backend {
 
 	}
 
+	static class ReviewsHandler implements HttpHandler {
+
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+
+			fixRequest(t);
+			String body = getBody(t);
+			JSONObject obj = null;
+
+			try {
+				obj = new JSONObject(body);
+			} catch (JSONException e) {
+				System.out.println(e.getMessage());
+			}
+
+			int recipeID = -1;
+			String response = "";
+
+			try {
+				recipeID = obj.getInt("recipeID");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println(recipeID);
+
+			Backend b = new Backend();
+			b.Connection();
+
+			try {
+
+				String sql = "SELECT GROUP_CONCAT(Review.Review SEPARATOR '|') AS review_texts FROM Recipe LEFT JOIN Review ON Recipe.RecipeID = Review.RecipeID WHERE Recipe.RecipeID =?";
+				PreparedStatement prepStatement = b.c.prepareStatement(sql);
+				prepStatement = b.c.prepareStatement(sql);
+				prepStatement.setInt(1, recipeID);
+				b.resultSet = prepStatement.executeQuery();
+
+				String fetchedReviews = "";
+
+				while (b.resultSet.next()) {
+
+					fetchedReviews = b.resultSet.getString("review_texts");
+				}
+
+				System.out.println(fetchedReviews);
+
+				if (fetchedReviews == null) {
+					t.sendResponseHeaders(401, response.length());
+				} else if (fetchedReviews.length() >= 1) {
+					JSONObject responseObject = new JSONObject();
+					try {
+						responseObject.put("reviews", fetchedReviews);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					response = responseObject.toString();
+					t.sendResponseHeaders(200, response.length());
+
+				} else {
+					t.sendResponseHeaders(500, response.length());
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+				t.sendResponseHeaders(500, response.length());
+			}
+
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+
+		}
+	}
+
 	public static void main(String[] args) {
 		try {
 
 			// set up the HTTP server to connect front to back
 			HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 
-			// TODO: add the rest of the contexts needed
 			server.createContext("/login", new LoginHandler());
 			server.createContext("/register", new RegisterHandler());
 			server.createContext("/search", new SearchHandler());
@@ -1184,7 +1233,7 @@ public class Backend {
 			server.createContext("/loadYourRecipes", new LoadYourRecipesHandler());
 			server.createContext("/deleteRecipe", new DeleteRecipeHandler());
 			server.createContext("/modRecipe", new ModRecipeHandler());
-			// add handler to deal with modifying parts of recipe
+			server.createContext("/reviews", new ReviewsHandler());
 
 			server.setExecutor(null); // creates a default executor
 			server.start();
