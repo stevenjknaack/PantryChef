@@ -12,6 +12,7 @@ run npm run dev
 copy link to browser
 
 4. open up the backend folder in eclipse or intellij
+change the password to your mysql password in the code
 press the run button
 
 then it should all work together :)
