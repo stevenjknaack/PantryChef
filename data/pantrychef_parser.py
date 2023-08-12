@@ -18,6 +18,7 @@ owners:
 ### TODO find max length of all fields
 ### TODO separete fields?
 ### TODO allow for parsing only certain files
+### TODO implement sha2 hashing
 
 from io import open
 from csv import reader 

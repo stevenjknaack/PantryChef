@@ -31,7 +31,8 @@ code {
 .main-title {
   color: #FFF;
   font-family: Khmer MN;
-  font-size: 220px;
+  /*font-size: 220px;*/
+  font-size: 150px;
   font-style: normal;
   font-weight: 400;
   line-height: normal; 
@@ -43,3 +44,6 @@ code {
   height: 230px;
   flex-shrink: 0; 
 }*/
+
+
+

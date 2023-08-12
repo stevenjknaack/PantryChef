@@ -20,29 +20,25 @@ function NavBar() {
                     <Navbar.Brand as={Link} to="/" className="main-title"> PANTRY CHEF </Navbar.Brand>
                 </div>
                 <Container>
-                    <Nav className="me-auto ">
+                    {/* Check if user is not logged in */}
+                    {(loggedIn === null) && (
+                        <Nav className="nav-links">
+                            <Nav.Link as={Link} to="/login" className='nav-link'><p>Login</p></Nav.Link>
+                            <Nav.Link as={Link} to="/register" className='nav-link'><p>Register</p></Nav.Link>
+                        </Nav>
+                    )}
 
-                        {/* Check if user is not logged in */}
-                        {(loggedIn === null) && (
-                            <>
-                                <Nav.Link as={Link} to="/login"> Login </Nav.Link>
-                                <Nav.Link as={Link} to="/register"> Register </Nav.Link>
-                            </>
-                        )}
-
-                        {/* Check if user is logged in */}
-                        {(loggedIn !== null) && (
-                            <>
-                                <Nav.Link as={Link} to="/search"> Search </Nav.Link>
-                                <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link>
-                                <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
-                                <Nav.Link as={Link} to="/your-recipes">Your Recipes</Nav.Link>
-                                <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
-                                <Nav.Link as={Link} to="/recipe"></Nav.Link>
-
-                            </>
-                        )}
-                    </Nav>
+                    {/* Check if user is logged in */}
+                    {(loggedIn !== null) && (
+                        <Nav className="nav-links column">
+                            <Nav.Link as={Link} to="/search"> Search </Nav.Link>
+                            <Nav.Link as={Link} to="/favorites"> Favorites </Nav.Link>
+                            <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
+                            <Nav.Link as={Link} to="/your-recipes">Your Recipes</Nav.Link>
+                            <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
+                            <Nav.Link as={Link} to="/recipe"></Nav.Link>
+                        </Nav>
+                    )}
                 </Container>
             </Navbar>
             <div>
