@@ -22,7 +22,7 @@ public class Backend {
 	static final String netID = "root";
 	static final String hostName = "localhost";
 	static final String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false";
-	static final String password = "TRYMEy0uidiot!"; // don't steal my identity so change to your password
+	static final String password = "Pokemon2012!"; // don't steal my identity so change to your password
     static final int portValue = 8000;
     
 	Connection c = null;

@@ -16,7 +16,9 @@ function NavBar() {
             {/* Define a Navbar component with bootstrap */}
             <Navbar bg="primary" data-bs-theme="dark" fixed="top" className="navbar-custom" >
                 {/* Brand name of the navbar which redirects to homepage when clicked */}
-                <Navbar.Brand as={Link} to="/"> Pantry Chef </Navbar.Brand>
+                <div className='main-title-container'>
+                    <Navbar.Brand as={Link} to="/" className="main-title"> PANTRY CHEF </Navbar.Brand>
+                </div>
                 <Container>
                     <Nav className="me-auto ">
 

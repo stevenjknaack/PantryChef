@@ -14,7 +14,6 @@ LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/User.csv" INTO T
 
 # for hashing passwords
 UPDATE User SET Password = UNHEX(SHA(Password));
-# for checking SELECT COUNT(*) AS UserFound FROM User WHERE Username = 'username' AND Password = UNHEX(SHA('typed_password'));
 
 LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/HasIngredient.csv" INTO TABLE HasIngredient FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
 

@@ -15,6 +15,9 @@ owners:
 """
 
 ### TODO ensure no duplicates in callsfor
+### TODO find max length of all fields
+### TODO separete fields?
+### TODO allow for parsing only certain files
 
 from io import open
 from csv import reader 
@@ -27,7 +30,7 @@ restrict_output = False # switch to false to parse entire files
 upper_bound_recipes = 60 # max recipeID to parse
 upper_bound_reviews = 40 # max reviewID to parse
 blunt_string = True # speeds up runtime but processes strings slightly worse
-windows = True
+windows = True # true if running on windows
 
 ### global parameters and constants
 

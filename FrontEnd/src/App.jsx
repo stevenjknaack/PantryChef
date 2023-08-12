@@ -99,7 +99,7 @@ const App = () => {
     if (credentials.username.includes(' ') || credentials.password.includes(' ')) {
       alert("Your username and/or password cannot contain whitespace")
       return
-    }
+    } // TODO we do allow whitespace in username
 
     fetch("http://localhost:8000/register", {
       method: "POST",
