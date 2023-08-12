@@ -330,7 +330,7 @@ public class Backend {
 
 				if (userExist == 0) {
 
-					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, ?);\n" + "";
+					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, UNHEX(SHA(?)));\n" + "";
 					prepStatement = b.c.prepareStatement(sql);
 					prepStatement.setString(1, username);
 					prepStatement.setString(2, password);
@@ -909,26 +909,24 @@ public class Backend {
 
 			try {
 
-				String sql = "SELECT Username, Password FROM User WHERE Username = ? AND Password = ?";
+				String sql = "SELECT COUNT(*) AS UserFound FROM User WHERE Username = ? AND Password = UNHEX(SHA(?))";
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
 				prepStatement.setString(1, username);
 				prepStatement.setString(2, password);
 
 				b.resultSet = prepStatement.executeQuery();
 
-				boolean userFound = false;
-				String fetchedUsername = "";
-				String fetchedPassword = "";
+				int userFound = 0;
 
 				while (b.resultSet.next()) {
-
-					userFound = true;
-
-					fetchedUsername = b.resultSet.getString("Username");
-					fetchedPassword = b.resultSet.getString("Password");
+					try {
+						userFound = b.resultSet.getInt("UserFound");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
 
-				if (userFound) {
+				if (userFound == 1) {
 					JSONObject responseObject = new JSONObject();
 
 					try {
