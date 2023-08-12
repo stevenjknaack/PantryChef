@@ -22,7 +22,7 @@ public class Backend {
 	String netID = "root";
 	String hostName = "localhost";
 	String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false";
-	String password = "TRYMEy0uidiot!"; // don't steal my identity so change to your password
+	String password = ""; // don't steal my identity so change to your password
 	Connection c = null;
 	private ResultSet resultSet = null;
 
