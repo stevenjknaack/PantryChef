@@ -45,7 +45,7 @@ ON CallsFor (IngredientName);
 
 CREATE TABLE User (
   Username VARCHAR(50),
-  Password VARBINARY(50),
+  Password VARCHAR(50),
   PRIMARY KEY (Username)
 );
 
