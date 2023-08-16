@@ -9,6 +9,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10rem;
+}
+
+.centered {
+  padding-top: 40rem;
 }
 
 /*.navbar-custom .navbar-brand {
@@ -37,6 +42,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  gap: 10rem;
 }
 
 .column {
@@ -68,6 +74,7 @@
 .nav-link p {
   display: block;
   margin: auto auto;
-  height: 100px;
-  width: 200px;
+  height: 10rem;
+  width: 20rem;
+  padding-top: 2rem;
 }
