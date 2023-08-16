@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 
 function Register({ onRegister }) {
 
+  // push up main title
+  const navBar = document.querySelector('.navbar-custom');
+  if (navBar !== null) {
+    navBar.classList.remove('centered');
+
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.add('hidden');
+  }
+
   // useRef hooks to capture form input values
   const username = useRef("");
   const password = useRef("");
@@ -26,27 +35,26 @@ function Register({ onRegister }) {
 
   // Render the registration form
   return (
-    <div className="page-content">
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input id="USERNAME" type="text" ref={username} />
+    <form onSubmit={handleSubmit} className="page-content login-form register">
+      <div>
+        <label className='text-entry'>
+          <p>Username</p>
+          <input id="USERNAME" type="text" ref={username} placeholder='John Doe' />
         </label>
         <br />
-        <label>
-          Password:
-          <input id="PASSWORD" type={"text"} ref={password} />
+        <label className='text-entry'>
+          <p>Password</p>
+          <input id="PASSWORD" type={"text"} ref={password} placeholder='Powerful Password'/>
         </label>
         <br />
-        <label>
-          Confirm Password:
-          <input id="DUP-PASSWORD" type={"text"} ref={passwordConfirm} />
+        <label className='text-entry'>
+          <p>Confirm Password</p>
+          <input id="DUP-PASSWORD" type={"text"} ref={passwordConfirm} placeholder='Powerful Password'/>
         </label>
-        <br />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+      </div>
+      <br />
+      <button type="submit" className='nav-link'>Register</button>
+    </form>
   );
 };
 

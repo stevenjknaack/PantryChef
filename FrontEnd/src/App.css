@@ -5,46 +5,9 @@ Normal Font: Karla
 
 Main Color: #2B2B2B
 Secondary Color: #4E5A68
+Light-background color: #C5CFDB
 
 **********************************/
-
-/**********************
- RESUABLE           
-**********************/
-
-.centered {
-  padding-top: 40rem;
-}
-
-.page-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* height: 100vh; */
-} 
-
-.column {
-  flex-direction: column;
-}
-
-svg  {
-  background-color: #2B2B2B;
-}
-
-button {
-  background-color: #2B2B2B;
-  text-decoration: none;
-  border: none;
-}
-
-.flex {
-  display: flex;
-  align-items: center;
-  gap: 10rem;
-}
-
-
 
 /**********************
  HOME           
@@ -70,11 +33,18 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 10rem;
+  padding-top: 10rem;
+  transition: all 10;
+}
+
+.nav-btn {
+  background-color: #2B2B2B;
+  text-decoration: none;
+  border: none;
 }
 
 .nav-links {
   display: flex;
-  flex-direction: row;
   justify-content: space-around;
   gap: 10rem;
 }
@@ -104,7 +74,6 @@ button {
 .nav-link p {
   display: block;
   margin: auto auto;
-  
   padding-top: 2rem;
 }
 
@@ -112,9 +81,54 @@ button {
  LOGIN           
 **********************/
 
+.login-form {
+  gap: 3rem;
+}
+
+.text-entry {
+ display: flex;
+ gap: 2rem;
+ align-items: center;
+ font-size: 3rem;
+}
+
+.text-entry input {
+  width: 100rem;
+  height: 10rem; 
+  border-radius: 30px;
+  font-size: 3rem;
+  padding-left: 3rem;
+  background-color: #C5CFDB;
+}
+
+/*.text-entry:nth-child(3) {
+  margin-left: 1rem;
+} */
+
+.top {
+  margin-bottom: 3rem;
+}
+
+.login-form button {
+  text-decoration: none;
+  border: none;
+}
+
+.text-entry p {
+  width: 15rem;
+  text-align: center;
+}
+
+
 /**********************
  REGISTER           
 **********************/
+
+.register div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
 /**********************
  RECIPE          
@@ -153,3 +167,36 @@ button {
  MODIFY RECIPE          
 **********************/
 
+/**********************
+ RESUABLE           
+**********************/
+
+.centered {
+  padding-top: 40rem;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
+} 
+
+.column {
+  flex-direction: column;
+}
+
+svg  {
+  background-color: #2B2B2B;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+}
+
+.hidden {
+  display: none;
+}

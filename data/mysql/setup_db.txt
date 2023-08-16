@@ -18,8 +18,11 @@ CREATE TABLE Recipe (
   PRIMARY KEY (RecipeID)
 );
 
-CREATE INDEX RecipeIndex
+CREATE INDEX RecipeIDIndex
 ON Recipe (RecipeID);
+
+CREATE INDEX RecipeAuthorIndex
+ON Recipe (AuthorUsername);
 
 CREATE TABLE Image (
   ImageID INTEGER,

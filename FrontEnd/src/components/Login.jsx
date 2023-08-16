@@ -4,6 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 function Login ({ onLogin }) {
 
+  // push up main title
+  const navBar = document.querySelector('.navbar-custom');
+  if (navBar !== null) {
+    navBar.classList.remove('centered');
+
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.add('hidden');
+  }
+
   // Initialize useRef hooks to manage and reference username and password input elements
   const username = useRef("");
   const password = useRef("");
@@ -27,22 +36,21 @@ function Login ({ onLogin }) {
   }
 
   return (
-    <div className="page-content">
-      <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
-            <label>
-                Username:
-                <input id="USERNAME" type="text" ref={username} />
+      <form onSubmit={handleSubmit} className="page-content login-form">
+        <div>
+            <label className='text-entry top'>
+                <p>Username</p>
+                <input id="USERNAME" type="text" ref={username} placeholder='John Doe'/>
             </label>
             <br />
-            <label>
-                Password:
-                <input id="PASSWORD" type={"text"} ref={password} />
+            <label className='text-entry'>
+                <p>Password</p>
+                <input id="PASSWORD" type={"text"} ref={password} placeholder='Secure Password' />
             </label>
-            <br />
-            <button type="submit">Login</button>
-        </form>
-    </div>
+          </div>
+          <br />
+          <button type="submit" className='nav-link'>Login</button>
+      </form>
   );
 };
 
