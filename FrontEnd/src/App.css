@@ -1,28 +1,19 @@
-/*.navbar a {
-  display: inline;
-  padding: 10px;
-}*/
+/********************************
 
-/* CSS */
+Special Font: Khmer MN
+Normal Font: Karla
 
-.navbar-custom {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10rem;
-}
+Main Color: #2B2B2B
+Secondary Color: #4E5A68
+
+**********************************/
+
+/**********************
+ RESUABLE           
+**********************/
 
 .centered {
   padding-top: 40rem;
-}
-
-/*.navbar-custom .navbar-brand {
-  font-size: 2em;
-}*/
-
-.navbar-custom .navbar-nav {
-  width: 100%;
-  justify-content: space-evenly;
 }
 
 .page-content {
@@ -33,9 +24,52 @@
   /* height: 100vh; */
 } 
 
-.small-image {
-  max-width: 200px;
-  max-height: 200px;
+.column {
+  flex-direction: column;
+}
+
+svg  {
+  background-color: #2B2B2B;
+}
+
+button {
+  background-color: #2B2B2B;
+  text-decoration: none;
+  border: none;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+}
+
+
+
+/**********************
+ HOME           
+**********************/
+
+.main-title {
+  color: #FFF;
+  font-family: Khmer MN;
+  /*font-size: 220px;*/
+  font-size: 22rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal; 
+  text-decoration: none; 
+}
+
+/**********************
+ NAVBAR           
+**********************/
+
+.navbar-custom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rem;
 }
 
 .nav-links {
@@ -43,10 +77,6 @@
   flex-direction: row;
   justify-content: space-around;
   gap: 10rem;
-}
-
-.column {
-  flex-direction: column;
 }
 
 .nav-link {
@@ -58,7 +88,7 @@
 
   color: #FFF;
   font-family: Karla;
-  font-size: 45px;
+  font-size: 4.5rem;
   font-style: normal;
   font-weight: 400;
   text-decoration: none;
@@ -74,7 +104,52 @@
 .nav-link p {
   display: block;
   margin: auto auto;
-  height: 10rem;
-  width: 20rem;
+  
   padding-top: 2rem;
 }
+
+/**********************
+ LOGIN           
+**********************/
+
+/**********************
+ REGISTER           
+**********************/
+
+/**********************
+ RECIPE          
+**********************/
+
+.small-image {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+/**********************
+ ADD RECIPE          
+**********************/
+
+/**********************
+ MODIFY RECIPE           
+**********************/
+
+/**********************
+ REVIEW           
+**********************/
+
+/**********************
+ SEARCH           
+**********************/
+
+/**********************
+ FAVORITES           
+**********************/
+
+/**********************
+ YOUR RECIPES           
+**********************/
+
+/**********************
+ MODIFY RECIPE          
+**********************/
+

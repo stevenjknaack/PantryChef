@@ -1,12 +1,4 @@
-/*
-
-Special Font: Khmer MN
-Normal Font: Karla
-
-Main Color: #2B2B2B
-Secondary Color: #4E5A68
-
-*/
+/* BASIC PAGE SETUP */
 
 html {
   font-size: 62.5%;
@@ -28,35 +20,11 @@ body {
   background-color: #2B2B2B;
   color: #fff;
   box-sizing:border-box;
-  overflow-x: hidden;
+  /*overflow-x: hidden;*/
   line-height: 1;
 }
 
-/*code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-} */
 
-/*.body-spacer {
-  margin: 1rem;
-}*/
-
-.main-title {
-  color: #FFF;
-  font-family: Khmer MN;
-  /*font-size: 220px;*/
-  font-size: 22rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal; 
-  text-decoration: none; 
-}
-
-/*.main-title-container {
-  width: 1245px;
-  height: 230px;
-  flex-shrink: 0; 
-}*/
 
 
 
