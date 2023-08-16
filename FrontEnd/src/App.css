@@ -33,8 +33,8 @@ Light-background color: #C5CFDB
   flex-direction: column;
   align-items: center;
   gap: 10rem;
-  padding-top: 10rem;
-  transition: all 10;
+  padding-top: 12rem;
+  transition: all 0.3s;
 }
 
 .nav-btn {
@@ -49,7 +49,7 @@ Light-background color: #C5CFDB
   gap: 10rem;
 }
 
-.nav-link {
+.nav-link, .nav-link:link, .link:visited {
   width: 367px;
   height: 99px;
   flex-shrink: 0; 
@@ -69,6 +69,12 @@ Light-background color: #C5CFDB
   /*width: 1245px;
   height: 230px;*/
   text-align: center;
+  transition: all 0.3s;
+}
+
+.nav-link:hover, .link:active {
+  background-color: #606b77;
+  
 }
 
 .nav-link p {
