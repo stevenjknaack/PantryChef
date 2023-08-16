@@ -28,7 +28,7 @@ function NavBar() {
                         </Nav>
                     )}
 
-                    {/* Check if user is logged in */}
+                    {/* Check if user is logged in <Nav.Link as={Link} to="/recipe"></Nav.Link>*/}
                     {(loggedIn !== null) && (
                         <Nav className="nav-links column">
                             <Nav.Link as={Link} to="/search"> Search </Nav.Link>
@@ -36,7 +36,6 @@ function NavBar() {
                             <Nav.Link as={Link} to="/add-recipe"> Add Recipe </Nav.Link>
                             <Nav.Link as={Link} to="/your-recipes">Your Recipes</Nav.Link>
                             <Nav.Link as={Link} to="/logout"> Logout </Nav.Link>
-                            <Nav.Link as={Link} to="/recipe"></Nav.Link>
                         </Nav>
                     )}
                 </Container>

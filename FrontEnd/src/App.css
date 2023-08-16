@@ -58,7 +58,7 @@
   text-decoration: none;
   line-height: normal; 
   
-  border-radius: 20%;
+  border-radius: 35px;
   
   /*width: 1245px;
   height: 230px;*/
@@ -66,6 +66,8 @@
 }
 
 .nav-link p {
+  display: block;
   margin: auto auto;
-  padding: auto auto;
+  height: 100px;
+  width: 200px;
 }

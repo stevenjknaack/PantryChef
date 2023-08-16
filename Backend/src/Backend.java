@@ -164,7 +164,7 @@ public class Backend {
 						+ "WHERE IL.RecipeID = Recipe.RecipeID LIMIT 1) AS Link "
 						+ "FROM Recipe WHERE Recipe.RecipeID IN (" + "SELECT RecipeID FROM CallsFor "
 						+ "WHERE IngredientName IN (" + placeholders + ") " + "GROUP BY RecipeID "
-						+ "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") " + "LIMIT 100";
+						+ "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") " + "LIMIT 20";
 
 				PreparedStatement prepStatement = b.c.prepareStatement(query);
 

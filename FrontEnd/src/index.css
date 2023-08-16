@@ -17,6 +17,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #2B2B2B;
   color: #fff;
+  box-sizing:border-box;
 }
 
 code {
