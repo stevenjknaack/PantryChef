@@ -77,7 +77,7 @@ function NavBar() {
                                 </svg></button>
                             </div>
                             <Container>
-                                <Nav className="nav-links column">
+                                <Nav className="nav-links">
                                     <Nav.Link as={Link} to="/search" className='nav-link' onClick={handleButtonClick}><p> Search</p></Nav.Link>
                                     <Nav.Link as={Link} to="/favorites" className='nav-link' onClick={handleButtonClick}><p>Favorites</p></Nav.Link>
                                     <Nav.Link as={Link} to="/add-recipe" className='nav-link' onClick={handleButtonClick}><p>Add Recipe</p></Nav.Link>

@@ -47,6 +47,8 @@ Light-background color: #C5CFDB
   display: flex;
   justify-content: space-around;
   gap: 10rem;
+  flex-wrap: wrap;
+  /*position: fixed;*/
 }
 
 .nav-link, .nav-link:link, .link:visited {
@@ -205,4 +207,56 @@ svg  {
 
 .hidden {
   display: none;
+}
+
+
+/***************************************************
+ MEDIA QUERIES        
+****************************************************/
+
+/* REM and EM do not depend on html font-size in media queries */
+/* in media queries always assume 1rem = 1em = 16px */
+
+/**************************/
+/* BELOW 1344px (SMALLER DESKTOPS) */
+/**************************/
+
+@media (max-width: 90em) {
+  /*html { /* TODO CHANGE THIS SO THAT REST OF SITE WORKS
+    overflow-y: hidden;
+  } */
+
+  .main-title {
+    font-size: 16rem;
+  }
+
+  .nav-links {
+    gap: 2rem;
+  }
+
+  .navbar-custom {
+    padding-top: 0;
+    gap: 3rem;
+  }
+
+  .login-form {
+    gap: 1.5rem;
+  }
+
+  .text-entry input {
+    width: 90rem;
+    height: 7rem; 
+  }
+
+  .register div {
+    gap: 0.5rem;
+  }
+
+  .centered {
+    padding-top: 14rem;
+  }
+
+  .flex {
+    gap: 4rem;
+  }
 }
