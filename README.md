@@ -1,5 +1,5 @@
 # Pantry-Chef
-
+Authored by Steven Knack and Neha Talluri
 # instructions 
 
 1. clone repo 
