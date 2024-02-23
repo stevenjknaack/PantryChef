@@ -18,11 +18,13 @@ import org.json.JSONObject;
 public class Backend {
 
 	// used to build a connection to the database when called
-	String dataBaseName = "PantryChef";
-	String netID = "root";
-	String hostName = "localhost";
-	String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false";
-	String password = ""; // don't steal my identity so change to your password
+  static final String dataBaseName = "PantryChef";
+	static final String netID = "root";
+	static final String hostName = "localhost";
+	static final String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=True"; // change allowPublicKeyRetrieval when not testing
+	static final String password = Config.getDbPassword();
+  static final int portValue = 8000;
+    
 	Connection c = null;
 	private ResultSet resultSet = null;
 
@@ -162,7 +164,7 @@ public class Backend {
 						+ "WHERE IL.RecipeID = Recipe.RecipeID LIMIT 1) AS Link "
 						+ "FROM Recipe WHERE Recipe.RecipeID IN (" + "SELECT RecipeID FROM CallsFor "
 						+ "WHERE IngredientName IN (" + placeholders + ") " + "GROUP BY RecipeID "
-						+ "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") " + "LIMIT 100";
+						+ "HAVING COUNT(DISTINCT IngredientName) = " + stringArray.length + ") " + "LIMIT 20";
 
 				PreparedStatement prepStatement = b.c.prepareStatement(query);
 
@@ -328,7 +330,7 @@ public class Backend {
 
 				if (userExist == 0) {
 
-					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, ?);\n" + "";
+					sql = "INSERT INTO User(Username, Password)\n" + "VALUES (?, UNHEX(SHA(?)));\n" + "";
 					prepStatement = b.c.prepareStatement(sql);
 					prepStatement.setString(1, username);
 					prepStatement.setString(2, password);
@@ -907,26 +909,24 @@ public class Backend {
 
 			try {
 
-				String sql = "SELECT Username, Password FROM User WHERE Username = ? AND Password = ?";
+				String sql = "SELECT COUNT(*) AS UserFound FROM User WHERE Username = ? AND Password = UNHEX(SHA(?))";
 				PreparedStatement prepStatement = b.c.prepareStatement(sql);
 				prepStatement.setString(1, username);
 				prepStatement.setString(2, password);
 
 				b.resultSet = prepStatement.executeQuery();
 
-				boolean userFound = false;
-				String fetchedUsername = "";
-				String fetchedPassword = "";
+				int userFound = 0;
 
 				while (b.resultSet.next()) {
-
-					userFound = true;
-
-					fetchedUsername = b.resultSet.getString("Username");
-					fetchedPassword = b.resultSet.getString("Password");
+					try {
+						userFound = b.resultSet.getInt("UserFound");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
 
-				if (userFound) {
+				if (userFound == 1) {
 					JSONObject responseObject = new JSONObject();
 
 					try {
@@ -1499,9 +1499,8 @@ public class Backend {
 	 */
 	public static void main(String[] args) {
 		try {
-
 			// set up the HTTP server to connect front to back
-			HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+			HttpServer server = HttpServer.create(new InetSocketAddress(portValue), 0);
 
 			server.createContext("/login", new LoginHandler());
 			server.createContext("/register", new RegisterHandler());
@@ -1517,7 +1516,7 @@ public class Backend {
 
 			server.setExecutor(null); // creates a default executor
 			server.start();
-			System.out.println("Started Server at http://localhost:8000");
+			System.out.println("Started Server at http://localhost:" + portValue);
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

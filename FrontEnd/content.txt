@@ -1,13 +1,5 @@
-// Import necessary React library
-import React from 'react';
-
-// Define the Home component
-function Home () {
-  return (
-    <div className="page-content">
+{/* Introductory content about Pantry Chef */}
       <h1>Welcome to Pantry Chef!</h1>
-      
-      {/* Introductory content about Pantry Chef */}
       <p>
         Pantry Chef is your ultimate kitchen companion. We aim to help individuals discover 
         recipes and explore your pantry inventory
@@ -23,9 +15,4 @@ function Home () {
         Our mission is to make cooking hassle-free and enjoyable for everyone.
       </p>
 
-    </div>
-  );
-};
-
-// Export the Home component for use in other parts of the application
-export default Home;
+from Home.jsx

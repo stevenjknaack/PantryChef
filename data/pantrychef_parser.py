@@ -15,6 +15,10 @@ owners:
 """
 
 ### TODO ensure no duplicates in callsfor
+### TODO find max length of all fields
+### TODO separete fields?
+### TODO allow for parsing only certain files
+### TODO implement sha2 hashing
 
 from io import open
 from csv import reader 
@@ -27,6 +31,7 @@ restrict_output = False # switch to false to parse entire files
 upper_bound_recipes = 60 # max recipeID to parse
 upper_bound_reviews = 40 # max reviewID to parse
 blunt_string = True # speeds up runtime but processes strings slightly worse
+windows = True # true if running on windows
 
 ### global parameters and constants
 
@@ -113,8 +118,12 @@ class Parser :
             raise IOError('Files already open when trying to open IO')
         
         # open input files and readers 
+        prefix = ''
+        if windows :
+            prefix = 'data/'
+
         for input_name in INPUTS:
-            input_file = open(f'data/original_data/{input_name}.csv', 
+            input_file = open(f'{prefix}original_data/{input_name}.csv', 
                               'r', encoding='utf8', newline='')
             self.input_files.append(input_file) 
 
@@ -123,7 +132,7 @@ class Parser :
 
         # open output files (writers) 
         for output_name in OUTPUTS :
-            output_file = open(f'data/csv_tables/{output_name}.csv', 'w', encoding='utf8', newline='')
+            output_file = open(f'{prefix}csv_tables/{output_name}.csv', 'w', encoding='utf8', newline='')
             self.writers.append(output_file)
 
     def _close_io(self) :
