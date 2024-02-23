@@ -18,12 +18,12 @@ import org.json.JSONObject;
 public class Backend {
 
 	// used to build a connection to the database when called
-    static final String dataBaseName = "PantryChef";
+  static final String dataBaseName = "PantryChef";
 	static final String netID = "root";
 	static final String hostName = "localhost";
-	static final String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false";
-	static final String password = ""; // don't steal my identity so change to your password
-    static final int portValue = 8000;
+	static final String databaseURL = "jdbc:mysql://" + hostName + "/" + dataBaseName + "?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=True"; // change allowPublicKeyRetrieval when not testing
+	static final String password = Config.getDbPassword();
+  static final int portValue = 8000;
     
 	Connection c = null;
 	private ResultSet resultSet = null;
@@ -1499,7 +1499,6 @@ public class Backend {
 	 */
 	public static void main(String[] args) {
 		try {
-
 			// set up the HTTP server to connect front to back
 			HttpServer server = HttpServer.create(new InetSocketAddress(portValue), 0);
 

@@ -30,7 +30,7 @@
 4. open up the backend folder in eclipse
 - go to "project/properties/java build path"
 - ensure json.20230618.jar and mysql-connector-j-8.0.33.jar in Backend folder are properly added to path
-- change the password to your mysql password in the code
+- change the password to your mysql password in Config.java
 - press the run button
 - should see "Started Server at http://localhost:8000" in console
 
