@@ -35,5 +35,5 @@
 - should see "Started Server at http://localhost:8000" in console
 
 then it should all work together :)
-just navigate back to the front end server in browser!
+just navigate back to the front end server in browser!!
 
