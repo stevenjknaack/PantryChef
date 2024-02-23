@@ -1,0 +1,28 @@
+# populates PantryChef database for MAC
+
+IN TERMINAL 
+mysql -u root -p --local-infile PantryChef
+
+IN MYSQL
+
+SET GLOBAL local_infile=true;
+USE PantryChef;
+
+
+MAIN IDEA: LOAD DATA LOCAL INFILE ‘<filepath>’ INTO TABLE <table> FIELDS TERMINATED BY “<“what it is terminated by> ENCLOSED BY '"' LINES TERMINATED BY “<what is it terminated by>”;
+
+LOAD DATA LOCAL INFILE "<filepath>/Recipe.csv" INTO TABLE Recipe FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/Image.csv" INTO TABLE Image FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/Illustrates.csv" INTO TABLE Illustrates FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/CallsFor.csv" INTO TABLE CallsFor FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/User.csv" INTO TABLE User FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/HasIngredient.csv" INTO TABLE HasIngredient FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/Favorites.csv" INTO TABLE Favorites FIELDS TERMINATED BY "," ENCLOSED BY '"' LINES TERMINATED BY "\r\n";
+
+LOAD DATA LOCAL INFILE "<filepath>/Review.csv" INTO TABLE Review FIELDS TERMINATED BY "," ENCLOSED BY '"'LINES TERMINATED BY "\r\n";
