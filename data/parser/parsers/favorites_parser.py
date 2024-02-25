@@ -1,6 +1,6 @@
-from .. import *
 from ..cache import Cache
 from ..config import Config
+from ..util import Util
 
 class FavoritesParser :
   def parse(recipes_line, cache: Cache) :

@@ -1,6 +1,6 @@
-from .. import *
 from ..cache import Cache
 from ..config import Config
+from ..util import Util
 
 class ReviewParser :
   def parse(reviews_line, cache: Cache) :

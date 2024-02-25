@@ -1,6 +1,6 @@
-from .. import *
-from ..cache import Cache
+from ..util import Util
 from ..config import Config
+from ..cache import Cache
 from re import sub
 
 class UserParser :
@@ -51,7 +51,7 @@ class UserParser :
         username_index = Config.ORIG_RECIPES_KEYS['AuthorName']
         username = recipes_line[username_index]
 
-        return UserParser._parse_user(username)
+        return UserParser._parse_user(username, cache)
     
     def parse_review(reviews_line, cache: Cache) :
         """
@@ -66,4 +66,4 @@ class UserParser :
         username_index = Config.ORIG_REVIEWS_KEYS['AuthorName']
         username = reviews_line[username_index]
 
-        return UserParser._parse_user(username)
+        return UserParser._parse_user(username, cache)

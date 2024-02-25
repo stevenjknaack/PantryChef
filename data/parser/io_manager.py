@@ -1,4 +1,3 @@
-from . import *
 from .cache import Cache
 from io import open
 from csv import reader 

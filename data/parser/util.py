@@ -1,4 +1,3 @@
-from . import *
 from .config import Config
 from re import sub, search
 

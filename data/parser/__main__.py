@@ -1,5 +1,5 @@
-from . import *
 from .cache import Cache
+from .main_parser import Parser
 
 def main() :
     """ 

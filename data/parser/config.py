@@ -1,5 +1,3 @@
-from . import *
-
 class Config:
     # test parameters 
     restrict_output = False # switch to false to parse entire files
@@ -40,17 +38,3 @@ class Config:
     NUTRIONAL_CONTENT = ['Calories', 'FatContent', 'SaturatedFatContent', 
                         'CholesterolContent', 'SodiumContent', 'CarbohydrateContent',
                         'FiberContent', 'SugarContent', 'ProteinContent']
-    
-    from .parsers.user_parser import UserParser
-    from .parsers.recipe_parser import RecipeParser
-    from .parsers.image_parser import ImageParser
-    from .parsers.illustrates_parser import IllustratesParser
-    from .parsers.calls_for_parser import CallsForParser
-    from .parsers.has_ingredient_parser import HasIngredientParser
-    from .parsers.favorites_parser import FavoritesParser
-
-    recipe_parse_functions = [UserParser.parse_recipe, RecipeParser.parse, 
-                                    ImageParser.parse, IllustratesParser.parse, 
-                                    CallsForParser.parse, HasIngredientParser.parse,
-                                    FavoritesParser.parse]
-    

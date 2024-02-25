@@ -1,7 +1,15 @@
-from . import *
 from .cache import Cache
 from time import time
 from .config import Config
+from .io_manager import IOManager
+from .parsers.user_parser import UserParser
+from .parsers.recipe_parser import RecipeParser
+from .parsers.image_parser import ImageParser
+from .parsers.illustrates_parser import IllustratesParser
+from .parsers.calls_for_parser import CallsForParser
+from .parsers.has_ingredient_parser import HasIngredientParser
+from .parsers.favorites_parser import FavoritesParser
+from .parsers.review_parser import ReviewParser
 
 class Parser :
     """
@@ -38,9 +46,13 @@ class Parser :
             #if line[ORIG_RECIPES_KEYS['AuthorName']] == 'Sarah' :
             #    continue
             #
-            
+            recipe_parse_functions = [UserParser.parse_recipe, RecipeParser.parse, 
+                                    ImageParser.parse, IllustratesParser.parse, 
+                                    CallsForParser.parse, HasIngredientParser.parse,
+                                    FavoritesParser.parse]
+    
             for i in range(len(cache.writers) - 1) :
-                parse_f = Config.recipe_parse_functions[i]
+                parse_f = recipe_parse_functions[i]
                 parsed_str = parse_f(line, cache)
 
                 if (parsed_str == '') : 
