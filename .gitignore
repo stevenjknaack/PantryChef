@@ -27,3 +27,6 @@ dist-ssr
 .env
 bin
 Config.java 
+
+#remove later
+application.properties

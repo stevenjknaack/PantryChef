@@ -758,6 +758,8 @@ def main() :
     parser.parse()
 
 ### method calls
-main()
+if __name__ == '__main__':
+    main()
 #print(Parser._process_string('Steven \Knaack'))
+
 

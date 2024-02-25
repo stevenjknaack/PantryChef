@@ -1,0 +1,262 @@
+/********************************
+
+Special Font: Khmer MN
+Normal Font: Karla
+
+Main Color: #2B2B2B
+Secondary Color: #4E5A68
+Light-background color: #C5CFDB
+
+**********************************/
+
+/**********************
+ HOME           
+**********************/
+
+.main-title {
+  color: #FFF;
+  font-family: Khmer MN;
+  /*font-size: 220px;*/
+  font-size: 22rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal; 
+  text-decoration: none; 
+}
+
+/**********************
+ NAVBAR           
+**********************/
+
+.navbar-custom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rem;
+  padding-top: 12rem;
+  transition: all 0.3s;
+}
+
+.nav-btn {
+  background-color: #2B2B2B;
+  text-decoration: none;
+  border: none;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: space-around;
+  gap: 10rem;
+  flex-wrap: wrap;
+  /*position: fixed;*/
+}
+
+.nav-link, .nav-link:link, .link:visited {
+  width: 367px;
+  height: 99px;
+  flex-shrink: 0; 
+  flex-grow: 0;
+  background-color: #4E5A68;
+
+  color: #FFF;
+  font-family: Karla;
+  font-size: 4.5rem;
+  font-style: normal;
+  font-weight: 400;
+  text-decoration: none;
+  line-height: normal; 
+  
+  border-radius: 35px;
+  
+  /*width: 1245px;
+  height: 230px;*/
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.nav-link:hover, .link:active {
+  background-color: #606b77;
+  
+}
+
+.nav-link p {
+  display: block;
+  margin: auto auto;
+  padding-top: 2rem;
+}
+
+/**********************
+ LOGIN           
+**********************/
+
+.login-form {
+  gap: 3rem;
+}
+
+.text-entry {
+ display: flex;
+ gap: 2rem;
+ align-items: center;
+ font-size: 3rem;
+}
+
+.text-entry input {
+  width: 100rem;
+  height: 10rem; 
+  border-radius: 30px;
+  font-size: 3rem;
+  padding-left: 3rem;
+  background-color: #C5CFDB;
+}
+
+/*.text-entry:nth-child(3) {
+  margin-left: 1rem;
+} */
+
+.top {
+  margin-bottom: 3rem;
+}
+
+.login-form button {
+  text-decoration: none;
+  border: none;
+}
+
+.text-entry p {
+  width: 15rem;
+  text-align: center;
+}
+
+
+/**********************
+ REGISTER           
+**********************/
+
+.register div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/**********************
+ RECIPE          
+**********************/
+
+.small-image {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+/**********************
+ ADD RECIPE          
+**********************/
+
+/**********************
+ MODIFY RECIPE           
+**********************/
+
+/**********************
+ REVIEW           
+**********************/
+
+/**********************
+ SEARCH           
+**********************/
+
+/**********************
+ FAVORITES           
+**********************/
+
+/**********************
+ YOUR RECIPES           
+**********************/
+
+/**********************
+ MODIFY RECIPE          
+**********************/
+
+/**********************
+ RESUABLE           
+**********************/
+
+.centered {
+  padding-top: 40rem;
+}
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* height: 100vh; */
+} 
+
+.column {
+  flex-direction: column;
+}
+
+svg  {
+  background-color: #2B2B2B;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 10rem;
+}
+
+.hidden {
+  display: none;
+}
+
+
+/***************************************************
+ MEDIA QUERIES        
+****************************************************/
+
+/* REM and EM do not depend on html font-size in media queries */
+/* in media queries always assume 1rem = 1em = 16px */
+
+/**************************/
+/* BELOW 1344px (SMALLER DESKTOPS) */
+/**************************/
+
+@media (max-width: 90em) {
+  /*html { /* TODO CHANGE THIS SO THAT REST OF SITE WORKS
+    overflow-y: hidden;
+  } */
+
+  .main-title {
+    font-size: 16rem;
+  }
+
+  .nav-links {
+    gap: 2rem;
+  }
+
+  .navbar-custom {
+    padding-top: 0;
+    gap: 3rem;
+  }
+
+  .login-form {
+    gap: 1.5rem;
+  }
+
+  .text-entry input {
+    width: 90rem;
+    height: 7rem; 
+  }
+
+  .register div {
+    gap: 0.5rem;
+  }
+
+  .centered {
+    padding-top: 14rem;
+  }
+
+  .flex {
+    gap: 4rem;
+  }
+}
