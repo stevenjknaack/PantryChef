@@ -30,3 +30,4 @@ Config.java
 
 #remove later
 application.properties
+__pycache__

@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 //TODO add bulk method for each one
 //TODO Implement searching by recipeId and authorUsername
 @RestController
-@RequestMapping(path="/review")
+@RequestMapping(path="/reviews")
 public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    @PostMapping(path="/create") // Map ONLY POST Requests
+    @PostMapping(path="") // Map ONLY POST Requests
     public Review addReview (@RequestBody Review review) throws Exception {
         if (review.getId() != null) {
             throw new Exception("Addition failed: Cannot set a Review's Id");
@@ -32,7 +32,7 @@ public class ReviewController {
         return reviewRepository.save(review);
     }
 
-    @GetMapping(path="/read/{id}")
+    @GetMapping(path="/{id}")
     public Review getReviewById(@PathVariable Integer id) throws Exception {
         Optional<Review> review = reviewRepository.findById(id);
 
@@ -42,7 +42,7 @@ public class ReviewController {
         return review.get();
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public Review updateReview(@PathVariable Integer id, @RequestBody Review update) throws Exception { 
         //TODO throw if trying to change "final" values
         if (!reviewRepository.existsById(id)) {
@@ -59,14 +59,14 @@ public class ReviewController {
         return reviewRepository.findById(id).get();
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public String deleteReview(@PathVariable Integer id) { //TODO validate existence
         Review r = reviewRepository.findById(id).get();
         reviewRepository.delete(r);
         return "Deleted";
     }
 
-    @GetMapping(path="/read/all")
+    @GetMapping(path="")
     public Iterable<Review> getAllReviews() {
         // This returns a JSON or XML with the users
         return reviewRepository.findAll();
