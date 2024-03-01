@@ -36,7 +36,7 @@ public class ReviewController {
     public Review getReviewById(@PathVariable Integer id) throws Exception {
         Optional<Review> review = reviewRepository.findById(id);
 
-        if (!review.isPresent()) {
+        if (review.isEmpty()) {
             throw new Exception("Get Failed: Review with id(" + id + ") not found");
         }
         return review.get();

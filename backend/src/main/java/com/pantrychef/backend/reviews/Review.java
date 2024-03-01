@@ -19,8 +19,14 @@ public class Review {
 
     private String review;
     private Integer rating;
-    private Integer recipeId;
-    private String authorUsername;
+
+
     private String dateSubmitted;
     private String dateModified;
+
+    private Integer recipeId;
+//   private Recipe recipe;
+
+    private String authorUsername;
+//    private User author;
 }
