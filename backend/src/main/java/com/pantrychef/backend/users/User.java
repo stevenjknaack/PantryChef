@@ -1,4 +1,4 @@
-package com.pantrychef.backend.images;
+package com.pantrychef.backend.users;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,11 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Image {
+public class User {
     @Id
     private Integer id;
 
-    private String url;
-    private String altText;
-    // Width/height?
+    private String username;
+    private String email;
+    private String hashedPassword;
+
+    // recipes?
+    // reviews?
+    // Likes/Saves?
 }

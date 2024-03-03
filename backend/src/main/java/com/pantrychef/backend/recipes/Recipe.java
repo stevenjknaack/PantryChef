@@ -1,5 +1,6 @@
 package com.pantrychef.backend.recipes;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -20,15 +21,20 @@ public class Recipe {
 
     private String category;
 
+    @Embedded
+    private NutritionalContent nutritionalContent;
 
+    @Embedded
+    private PortionFacts portionFacts;
+
+    @Embedded
+    private TimeFacts timeFacts;
 
     /*
-    private RecipeTimes times;
     private User author;
     private List<Image> images;
-    keywords;
+    private List<String> keywords;
     private List<Ingredient>
-    private RecipeNutritionalContent nutritionalContent;
     private List<String> instructions;
      */
 
