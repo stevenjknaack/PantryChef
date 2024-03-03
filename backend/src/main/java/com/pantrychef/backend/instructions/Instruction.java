@@ -1,4 +1,4 @@
-package com.pantrychef.backend.images;
+package com.pantrychef.backend.instructions;
 
 import com.pantrychef.backend.recipes.Recipe;
 import jakarta.persistence.*;
@@ -12,24 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "image")
-public class Image {
+@Table(name = "Instruction")
+public class Instruction {
     @Id
     @Column(
-            name = "id",
+            name = "step_number",
             nullable = false
     )
-    private Integer id;
+    private Integer stepNumber;
 
-    @Column(
-            name = "url",
-            nullable = false
-    )
-    private String url;
-
-    @Column(name = "alt_text")
-    private String altText;
-
+    @Id
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
@@ -39,4 +31,10 @@ public class Image {
             referencedColumnName = "id"
     )
     private Recipe recipe;
+
+    @Column(
+            name = "text",
+            nullable = false
+    )
+    private String text;
 }
