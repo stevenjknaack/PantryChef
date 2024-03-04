@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -77,4 +78,22 @@ public class Recipe {
             cascade = CascadeType.ALL
     )
     private List<User> likes;
+
+    public void addImage(Image image) {
+        if (this.images == null) this.images = new ArrayList<>();
+        this.images.add(image);
+    }
+    public void addIngredient(RecipeIngredient ingredient) {
+        if (this.ingredients == null) this.ingredients = new ArrayList<>();
+        this.ingredients.add(ingredient);
+    }
+
+    public void addInstruction(Instruction instruction) {
+        if (this.instructions == null) this.instructions = new ArrayList<>();
+        this.instructions.add(instruction);
+    }
+    public void addLike(User like) {
+        if (this.likes == null) this.likes = new ArrayList<>();
+        this.likes.add(like);
+    }
 }

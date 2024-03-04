@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -83,4 +84,9 @@ public class Review {
             cascade = CascadeType.ALL
     )
     private List<User> likes;
+
+    public void addLike(User like) {
+        if (this.likes == null) this.likes = new ArrayList<>();
+        this.likes.add(like);
+    }
 }
