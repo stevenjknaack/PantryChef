@@ -19,6 +19,15 @@ public class Image {
             name = "id",
             nullable = false
     )
+    @SequenceGenerator(
+            name = "image_sequence",
+            sequenceName = "image_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "image_sequence"
+    )
     private Integer id;
 
     @Column(

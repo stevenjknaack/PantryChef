@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 //TODO add bulk method for each one
 //TODO Implement searching by recipeId and authorUsername
 @RestController
-@RequestMapping(path="/reviews")
+@RequestMapping(path="recipes/{recipeId}/reviews")
 public class ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
 
     @PostMapping(path="") // Map ONLY POST Requests
-    public Review addReview (@RequestBody Review review) throws Exception {
+    public Review addReview(@RequestBody Review review) throws Exception {
         if (review.getId() != null) {
             throw new Exception("Addition failed: Cannot set a Review's Id");
         }

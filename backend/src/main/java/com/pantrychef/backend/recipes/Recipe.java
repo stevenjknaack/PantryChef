@@ -21,11 +21,24 @@ import java.util.List;
 @Table(name = "recipe")
 public class Recipe {
     @Id
+    @Column(
+            name = "id",
+            nullable = false
+    )
+    @SequenceGenerator(
+            name = "recipe_sequence",
+            sequenceName = "recipe_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "recipe_sequence"
+    )
     private Integer id;
 
     @Column(
-            name = "name",
-            nullable = false
+            name = "name"
+            //nullable = false
     )
     private String name;
 
@@ -51,6 +64,7 @@ public class Recipe {
     @JoinColumn(
             name = "author_username",
             referencedColumnName = "username"
+          //  nullable = false
     )
     private User author;
 
@@ -63,19 +77,22 @@ public class Recipe {
 
     @OneToMany( // fetch type?
             mappedBy = "recipe",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private List<RecipeIngredient> ingredients;
 
     @OneToMany( // Fetch type?
             mappedBy = "recipe",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private List<Instruction> instructions;
 
     @ManyToMany(
             mappedBy = "likedRecipes",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private List<User> likes;
 
