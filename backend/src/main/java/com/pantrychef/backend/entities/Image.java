@@ -1,6 +1,7 @@
-package com.pantrychef.backend.images;
+package com.pantrychef.backend.entities;
 
-import com.pantrychef.backend.recipes.Recipe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,7 @@ public class Image {
     @Column(name = "alt_text")
     private String altText;
 
+    @JsonIgnore
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY

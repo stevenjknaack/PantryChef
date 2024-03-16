@@ -1,5 +1,7 @@
-package com.pantrychef.backend.recipes;
+package com.pantrychef.backend.controllers;
 
+import com.pantrychef.backend.entities.recipes.Recipe;
+import com.pantrychef.backend.repositories.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +26,9 @@ public class RecipeController {
     public Page<Recipe> getPagesOfRecipes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "100") Integer size
-    ) {
+    ) throws Exception {
+        if (page < 0 || size < 1) throw new Exception();
+
         Pageable pageRequest = PageRequest.of(page, size);
         return recipeRepository.findAll(pageRequest);
     }

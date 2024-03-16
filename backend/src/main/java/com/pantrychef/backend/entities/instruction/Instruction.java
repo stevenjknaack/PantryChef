@@ -1,11 +1,14 @@
-package com.pantrychef.backend.instructions;
+package com.pantrychef.backend.entities.instruction;
 
-import com.pantrychef.backend.recipes.Recipe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+// TODO make composite key
 
 @Entity
 @Data
@@ -13,6 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "Instruction")
+@IdClass(Instruction.class)
 public class Instruction {
     @Id
     @Column(
@@ -22,6 +26,7 @@ public class Instruction {
     private Integer stepNumber;
 
     @Id
+    @JsonIgnore
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY

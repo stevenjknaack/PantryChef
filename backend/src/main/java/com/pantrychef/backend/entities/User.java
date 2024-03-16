@@ -1,8 +1,8 @@
-package com.pantrychef.backend.users;
+package com.pantrychef.backend.entities;
 
-import com.pantrychef.backend.ingredients.UserIngredient;
-import com.pantrychef.backend.recipes.Recipe;
-import com.pantrychef.backend.reviews.Review;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.ingredients.UserIngredient;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,12 +33,14 @@ public class User {
     )
     private String email;
 
+    @JsonIgnore
     @Column(
             name = "hashed_password",
             nullable = false
     )
     private String hashedPassword;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
@@ -46,6 +48,7 @@ public class User {
     )
     private List<UserIngredient> pantry;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "author",
             cascade = CascadeType.ALL,
@@ -53,6 +56,7 @@ public class User {
     )
     private List<Recipe> recipes;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_recipe_likes",
@@ -67,6 +71,7 @@ public class User {
     )
     private List<Recipe> likedRecipes;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "author",
             cascade = CascadeType.ALL,
@@ -74,6 +79,7 @@ public class User {
     )
     private List<Review> reviews;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_review_likes",

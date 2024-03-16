@@ -1,9 +1,9 @@
-package com.pantrychef.backend.recipes;
+package com.pantrychef.backend.entities.recipes;
 
-import com.pantrychef.backend.images.Image;
-import com.pantrychef.backend.ingredients.RecipeIngredient;
-import com.pantrychef.backend.instructions.Instruction;
-import com.pantrychef.backend.users.User;
+import com.pantrychef.backend.entities.Image;
+import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
+import com.pantrychef.backend.entities.instruction.Instruction;
+import com.pantrychef.backend.entities.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

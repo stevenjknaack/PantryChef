@@ -1,4 +1,4 @@
-package com.pantrychef.backend.recipes;
+package com.pantrychef.backend.entities.recipes;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

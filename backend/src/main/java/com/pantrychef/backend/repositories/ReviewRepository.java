@@ -1,7 +1,8 @@
-package com.pantrychef.backend.reviews;
+package com.pantrychef.backend.repositories;
 
 import java.util.Optional;
 
+import com.pantrychef.backend.entities.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

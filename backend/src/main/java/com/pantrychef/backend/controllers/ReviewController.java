@@ -1,5 +1,7 @@
-package com.pantrychef.backend.reviews;
+package com.pantrychef.backend.controllers;
 
+import com.pantrychef.backend.entities.Review;
+import com.pantrychef.backend.repositories.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;

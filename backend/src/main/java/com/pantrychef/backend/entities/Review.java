@@ -1,7 +1,7 @@
-package com.pantrychef.backend.reviews;
+package com.pantrychef.backend.entities;
 
-import com.pantrychef.backend.recipes.Recipe;
-import com.pantrychef.backend.users.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +58,7 @@ public class Review {
     )
     private String dateModified;
 
+    @JsonIgnore
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY

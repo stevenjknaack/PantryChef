@@ -1,6 +1,7 @@
-package com.pantrychef.backend.ingredients;
+package com.pantrychef.backend.entities.ingredients;
 
-import com.pantrychef.backend.recipes.Recipe;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +13,7 @@ import lombok.*;
 @Builder
 @Table(name = "recipe_ingredient")
 public class RecipeIngredient extends Ingredient {
+    @JsonIgnore
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
