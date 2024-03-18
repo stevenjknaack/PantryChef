@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Container, Nav, Navbar } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import { useContext, useState } from 'react';
+import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 
 export default function PCNavbar() {
+    const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
     const [expanded, setExpanded] = useState();
 
     const collapse = () => setExpanded(false);
@@ -14,8 +16,13 @@ export default function PCNavbar() {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={toggleExpanded}/>
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav>
-                    <Nav.Link as={Link} to='/login' onClick={collapse}>Login</Nav.Link>
-                    <Nav.Link as={Link} to='/register' onClick={collapse}>Register</Nav.Link>
+                    { 
+                        loggedInUser ? <></> :
+                            <>
+                                <Nav.Link as={Link} to='/login' onClick={collapse}>Login</Nav.Link>
+                                <Nav.Link as={Link} to='/register' onClick={collapse}>Register</Nav.Link>
+                            </>
+                    }
                 </Nav>
             </Navbar.Collapse>
         </Container>

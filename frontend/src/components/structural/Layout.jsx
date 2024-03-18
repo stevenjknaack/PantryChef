@@ -5,11 +5,11 @@ import { useState } from 'react';
 import PCNavbar from './PCNavbar';
 
 export default function Layout(props) {
-    const [loggedInUserContext, setLoggedInUserContext] = useSessionStorage("loggedInUser", null);
+    const [loggedInUser, setLoggedInUser] = useSessionStorage('loggedInUser', null);
 
     return <>
-        <PCNavbar />
-        <LoggedInUserContext.Provider value={[loggedInUserContext, setLoggedInUserContext]}>
+        <LoggedInUserContext.Provider value={[loggedInUser, setLoggedInUser]}>
+            <PCNavbar />
             <Outlet />
         </LoggedInUserContext.Provider>
     </>
