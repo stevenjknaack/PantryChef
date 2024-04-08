@@ -1,0 +1,51 @@
+services:
+  frontend:
+    image: node:18-alpine
+    command: sh -c "npm install && WATCHPACK_POLLING=true npm run dev"
+    working_dir: /app
+    ports: 
+      - 5173:5173
+    volumes: 
+      - ./frontend:/app
+    networks:
+      - frontend-backend
+
+  backend:
+    image: eclipse-temurin:17-jdk-alpine
+    command: sh -c "java -jar backend-0.0.1-SNAPSHOT.jar"
+    working_dir: /app
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/build/libs:/app
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: pc_secret
+      MYSQL_DATABASE: pantrychef
+    networks:
+      - frontend-backend
+      - backend-mysql
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+        - pantrychef-mysql-data:/var/lib/mysql
+    environment:
+        #change these to recommend file accesses
+        MYSQL_ROOT_PASSWORD: pc_secret
+        MYSQL_DATABASE: pantrychef
+    networks:
+      - backend-mysql
+
+volumes:
+  pantrychef-mysql-data:
+
+networks:
+  frontend-backend: {}
+  backend-mysql: {}
+
+
+    
+  

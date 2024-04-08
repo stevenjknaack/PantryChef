@@ -1,11 +1,10 @@
 package com.pantrychef.backend.controllers;
 
+import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.recipes.Recipe;
-import com.pantrychef.backend.repositories.RecipeRepository;
+import com.pantrychef.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -14,45 +13,50 @@ import java.util.Optional;
 @RequestMapping(path = "/recipes")
 public class RecipeController {
     @Autowired
-    private RecipeRepository recipeRepository;
+    private RecipeService recipeService;
 
     @PostMapping
-    public Recipe addRecipe(@RequestBody Recipe recipe) throws Exception {
-        recipe.setId(null);
-        return recipeRepository.save(recipe);
+    public Recipe addRecipe(@RequestBody Recipe recipe) {
+        return recipeService.createRecipe(recipe);
     }
 
     @GetMapping
-    public Page<Recipe> getPagesOfRecipes(
+    public Page<RecipeResultDTO> getPageOfRecipes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "100") Integer size
-    ) throws Exception {
-        if (page < 0 || size < 1) throw new Exception();
-
-        Pageable pageRequest = PageRequest.of(page, size);
-        return recipeRepository.findAll(pageRequest);
+    ) {
+        return recipeService.queryRecipes(page, size);
     }
 
     @GetMapping(path="/{id}")
-    public Recipe getRecipe(@PathVariable Integer id) throws Exception {
-        Optional<Recipe> recipe = recipeRepository.findById(id);
-        if (recipe.isEmpty()) throw new Exception();
-        return recipe.get();
+    public Recipe getRecipe(@PathVariable Integer id) {
+        return recipeService.getRecipe(id);
     }
 
     @PutMapping(path = "/{id}")
     public Recipe updateRecipe(@RequestBody Recipe recipe) throws Exception {
-        if (recipe.getId() == null || !recipeRepository.existsById(recipe.getId())) {
-            throw new Exception();
-        }
-        return recipeRepository.save(recipe);
+        return recipeService.updateRecipe(recipe);
     }
 
     @DeleteMapping(path = "/{id}")
-    public void deleteRecipe(@PathVariable Integer id) throws Exception {
-        if (!recipeRepository.existsById(id)) {
-            throw new Exception();
-        }
-        recipeRepository.deleteById(id);
+    public Recipe deleteRecipe(@PathVariable Integer id) throws Exception {
+        return recipeService.deleteRecipe(id);
     }
 }
+
+//    @CrossOrigin(origins = "http://localhost:5173")
+//    @GetMapping(path = "/example")
+//    public Recipe getExample() {
+//        Recipe newRecipe = Recipe.builder()
+//                .name("my new example recipe please change")
+//                .build();
+//
+//        Recipe savedRecipe = recipeRepository.save(newRecipe);
+//
+////        String exampleName = savedRecipe.getName() + " " + savedRecipe.getId();
+//
+//        S.delete(savedRecipe);
+//
+//        return savedRecipe;
+//    }
+

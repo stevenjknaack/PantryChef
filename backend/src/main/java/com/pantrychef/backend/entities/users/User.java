@@ -1,6 +1,7 @@
-package com.pantrychef.backend.entities;
+package com.pantrychef.backend.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pantrychef.backend.entities.Review;
 import com.pantrychef.backend.entities.ingredients.UserIngredient;
 import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
@@ -8,8 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 // MAYBE ADD A PROFILE PIC OPTION (Randomly generated)
 @Entity
@@ -18,7 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
     @Id
     @Column(
             name = "username",
@@ -35,10 +40,13 @@ public class User {
 
     @JsonIgnore
     @Column(
-            name = "hashed_password",
+            name = "password",
             nullable = false
     )
-    private String hashedPassword;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @JsonIgnore
     @OneToMany(
@@ -117,5 +125,30 @@ public class User {
     public void addLikedReview(Review review) {
         if (this.likedReviews == null) this.likedReviews = new ArrayList<>();
         this.likedReviews.add(review);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

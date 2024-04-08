@@ -1,7 +1,7 @@
 package com.pantrychef.backend.entities.ingredients;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pantrychef.backend.entities.User;
+import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
 import lombok.*;
 

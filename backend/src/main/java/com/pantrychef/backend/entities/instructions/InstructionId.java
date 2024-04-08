@@ -1,4 +1,4 @@
-package com.pantrychef.backend.entities.instruction;
+package com.pantrychef.backend.entities.instructions;
 
 import com.pantrychef.backend.entities.recipes.Recipe;
 import lombok.AllArgsConstructor;

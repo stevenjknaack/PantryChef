@@ -2,6 +2,7 @@ package com.pantrychef.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pantrychef.backend.entities.recipes.Recipe;
+import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

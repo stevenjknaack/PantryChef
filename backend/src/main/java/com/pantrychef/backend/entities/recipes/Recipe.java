@@ -2,8 +2,8 @@ package com.pantrychef.backend.entities.recipes;
 
 import com.pantrychef.backend.entities.Image;
 import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
-import com.pantrychef.backend.entities.instruction.Instruction;
-import com.pantrychef.backend.entities.User;
+import com.pantrychef.backend.entities.instructions.Instruction;
+import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,8 +37,8 @@ public class Recipe {
     private Integer id;
 
     @Column(
-            name = "name"
-            //nullable = false
+            name = "name",
+            nullable = false
     )
     private String name;
 
@@ -63,8 +63,8 @@ public class Recipe {
     )
     @JoinColumn(
             name = "author_username",
-            referencedColumnName = "username"
-          //  nullable = false
+            referencedColumnName = "username",
+            nullable = false
     )
     private User author;
 

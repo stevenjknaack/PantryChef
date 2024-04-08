@@ -5,7 +5,7 @@ import com.pantrychef.backend.entities.Image;
 import com.pantrychef.backend.entities.recipes.Recipe;
 
 public class RecipeResultMapper {
-    public RecipeResultDTO toDTO(Recipe recipe) {
+    public static RecipeResultDTO toDTO(Recipe recipe) {
         Image mainImage;
         if (recipe.getImages().isEmpty()) mainImage = null;
         else mainImage = recipe.getImages().get(0);
