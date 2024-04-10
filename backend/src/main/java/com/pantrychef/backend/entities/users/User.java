@@ -19,14 +19,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-// MAYBE ADD A PROFILE PIC OPTION (Randomly generated)
+// TODO MAYBE ADD A PROFILE PIC OPTION (Randomly generated)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonIdentityInfo(property = "username", generator = ObjectIdGenerators.PropertyGenerator.class)
-//{"username":"stevenj","email":"stevenj@j.com","role":"USER","enabled":true,"accountNonExpired":true,"credentialsNonExpired":true,"authorities":[{"authority":"USER"}],"accountNonLocked":true}
 @JsonIgnoreProperties({"enabled", "accountNonExpired", "credentialsNonExpired",  "authorities", "accountNonLocked"})
 @Table(name = "user")
 public class User implements UserDetails {

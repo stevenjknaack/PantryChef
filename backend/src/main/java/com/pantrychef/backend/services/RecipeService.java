@@ -4,7 +4,7 @@ import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.recipes.Recipe;
 import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.errors.ResourceNotFoundException;
-import com.pantrychef.backend.mappers.RecipeResultMapper;
+import com.pantrychef.backend.dtos.mappers.RecipeResultMapper;
 import com.pantrychef.backend.repositories.RecipeRepository;
 import com.pantrychef.backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;

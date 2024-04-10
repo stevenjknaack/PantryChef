@@ -10,9 +10,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,21 +19,22 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    private final static int maxJWTCookieAge = 3600;
+
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private JWTService jWTService;
-
     @Autowired
     private AuthenticationManager authManager;
 
-    public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
-        User user = User
-                .builder()
+    public AuthenticationResponse register(
+            RegisterRequest request,
+            HttpServletResponse response
+    ) {
+        User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -48,18 +46,20 @@ public class AuthenticationService {
         String jWTToken = jWTService.generateToken(user);
 
         Cookie cookie = new Cookie("jwtToken", jWTToken);
-        cookie.setMaxAge(3600);
+        cookie.setMaxAge(maxJWTCookieAge);
         response.addCookie(cookie);
 
-        return AuthenticationResponse
-                .builder()
+        return AuthenticationResponse.builder()
                 .user(user)
-                .eat(1)
-                .msg("Successfully Registered.")
+                .eat(1) //TODO figure out eat
+                .msg("Successfully registered.")
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(
+            AuthenticationRequest request,
+            HttpServletResponse response
+    ) {
         authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(), request.getPassword()
@@ -71,9 +71,14 @@ public class AuthenticationService {
 
         String jWTToken = jWTService.generateToken(user);
 
-        return AuthenticationResponse
-                .builder()
-//                .jWTToken(jWTToken)
+        Cookie cookie = new Cookie("jwtToken", jWTToken);
+        cookie.setMaxAge(maxJWTCookieAge);
+        response.addCookie(cookie);
+
+        return AuthenticationResponse.builder()
+                .user(user)
+                .eat(1) //TODO
+                .msg("Successfully logged in.")
                 .build();
     }
 }

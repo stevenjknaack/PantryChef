@@ -1,4 +1,4 @@
-package com.pantrychef.backend.mappers;
+package com.pantrychef.backend.dtos.mappers;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.Image;

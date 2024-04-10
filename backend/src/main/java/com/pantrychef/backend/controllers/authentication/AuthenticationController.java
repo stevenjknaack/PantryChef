@@ -29,18 +29,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authService.register(request, response));
     }
 
-//    @PostMapping(path = "/login")
-//    public ResponseEntity<String> authenticate(
-//            @RequestBody AuthenticationRequest request,
-//            HttpServletResponse response
-//    ) {
-//        AuthenticationResponse authResponse = authService.authenticate(request);
-//        String jWTToken = authResponse.getJWTToken();
-//        Cookie cookie = new Cookie("jwtToken", jWTToken);
-//        cookie.setMaxAge(3600);
-//        response.addCookie(cookie);
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add(HttpHeaders.CONTENT_TYPE, "text/plain");
-//        return new ResponseEntity<>("Login successful", headers, HttpStatus.OK);
-//    }
+    @PostMapping(path = "/login")
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response
+    ) {
+        return ResponseEntity.ok(authService.authenticate(request, response));
+    }
 }
