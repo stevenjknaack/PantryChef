@@ -2,9 +2,11 @@ package com.pantrychef.backend.services;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.recipes.Recipe;
+import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.errors.ResourceNotFoundException;
 import com.pantrychef.backend.mappers.RecipeResultMapper;
 import com.pantrychef.backend.repositories.RecipeRepository;
+import com.pantrychef.backend.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +22,16 @@ public class RecipeService {
     @Autowired
     private RecipeRepository recipeRepository;
 
-    public Recipe createRecipe(Recipe recipe) {
+    @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public Recipe createRecipe(Recipe recipe, String jWTToken) {
+        String username = jwtService.extractUsername(jWTToken);
+        User user = userRepository.findById(username).orElseThrow();
+        recipe.setAuthor(user);
         recipe.setId(null);
         return recipeRepository.save(recipe);
     }

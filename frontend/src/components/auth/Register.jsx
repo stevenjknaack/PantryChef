@@ -35,27 +35,25 @@ export default function Register() {
             return;
         }
 
-        // TODO test
-        setLoggedInUser({ username: username });
-
-        // fetch('', {
-        //     method: 'POST',
-        //     credentials: 'include',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: {
-        //         email: email,
-        //         username: username,
-        //         password: password,
-        //     },
-        // }).then((response) => {
-        //     if (response.status === 200) {
-        //         response.json().then((data) => setLoggedInUser(data));
-        //     } else {
-        //         alert('Problem with registration');
-        //     }
-        // });
+        fetch('http://localhost:8080/auth/register', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                username: username,
+                password: password
+            })
+        }).then((response) => {
+            if (response.status === 200) {
+                response.json().then((data) => setLoggedInUser(data.user));
+                alert(data.user.username + ' signed in');
+            } else {
+                alert('Problem with registration');
+            }
+        });
     };
 
     return (

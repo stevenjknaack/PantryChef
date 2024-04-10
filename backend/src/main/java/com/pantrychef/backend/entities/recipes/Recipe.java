@@ -1,5 +1,9 @@
 package com.pantrychef.backend.entities.recipes;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonTypeId;
 import com.pantrychef.backend.entities.Image;
 import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
 import com.pantrychef.backend.entities.instructions.Instruction;
@@ -57,6 +61,7 @@ public class Recipe {
     @Embedded
     private TimeFacts timeFacts;
 
+    @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne(
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
@@ -64,7 +69,7 @@ public class Recipe {
     @JoinColumn(
             name = "author_username",
             referencedColumnName = "username",
-            nullable = false
+            nullable = false // TODO
     )
     private User author;
 

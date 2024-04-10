@@ -33,10 +33,10 @@ export default function Login() {
         //     headers: {
         //         'Content-Type': 'application/json',
         //     },
-        //     body: {
+        //     body: JSON.stringify({
         //         username: username,
         //         password: password,
-        //     },
+        //     }),
         // }).then((response) => {
         //     if (response.status === 200) {
         //         response.json().then((data) => setLoggedInUser(data));

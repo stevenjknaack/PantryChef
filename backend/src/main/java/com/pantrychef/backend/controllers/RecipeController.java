@@ -2,6 +2,7 @@ package com.pantrychef.backend.controllers;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.recipes.Recipe;
+import com.pantrychef.backend.services.JWTService;
 import com.pantrychef.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,16 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
+    @Autowired
+    private JWTService jWTService;
+
+
     @PostMapping
-    public Recipe addRecipe(@RequestBody Recipe recipe) {
-        return recipeService.createRecipe(recipe);
+    public Recipe addRecipe(
+            @RequestHeader(name = "Authorization") String authHeader,
+            @RequestBody Recipe recipe
+    ) {
+        return recipeService.createRecipe(recipe, jWTService.extractJWTToken(authHeader)); //TODO
     }
 
     @GetMapping

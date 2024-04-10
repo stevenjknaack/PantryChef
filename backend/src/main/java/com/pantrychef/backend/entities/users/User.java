@@ -1,6 +1,9 @@
 package com.pantrychef.backend.entities.users;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.pantrychef.backend.entities.Review;
 import com.pantrychef.backend.entities.ingredients.UserIngredient;
 import com.pantrychef.backend.entities.recipes.Recipe;
@@ -22,6 +25,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(property = "username", generator = ObjectIdGenerators.PropertyGenerator.class)
+//{"username":"stevenj","email":"stevenj@j.com","role":"USER","enabled":true,"accountNonExpired":true,"credentialsNonExpired":true,"authorities":[{"authority":"USER"}],"accountNonLocked":true}
+@JsonIgnoreProperties({"enabled", "accountNonExpired", "credentialsNonExpired",  "authorities", "accountNonLocked"})
 @Table(name = "user")
 public class User implements UserDetails {
     @Id
@@ -45,6 +51,7 @@ public class User implements UserDetails {
     )
     private String password;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private Role role;
 
