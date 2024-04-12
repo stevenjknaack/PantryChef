@@ -11,10 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Ingredient {
     @Id
-    @Column(
-            name = "id",
-            nullable = false
-    )
+    @Column(name = "id")
     @SequenceGenerator(
             name = "ingredient_sequence",
             sequenceName = "ingredient_sequence",

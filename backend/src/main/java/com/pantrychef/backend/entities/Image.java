@@ -41,10 +41,7 @@ public class Image {
     private String altText;
 
     @JsonIgnore
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "recipe_id",
             referencedColumnName = "id"

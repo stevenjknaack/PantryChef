@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
-//    private String jWTToken;
     private String msg;
     private User user;
     private long eat;

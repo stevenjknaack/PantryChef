@@ -1,12 +1,9 @@
 package com.pantrychef.backend.entities.recipes;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonTypeId;
+import com.fasterxml.jackson.annotation.*;
 import com.pantrychef.backend.entities.Image;
 import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
-import com.pantrychef.backend.entities.instructions.Instruction;
+import com.pantrychef.backend.entities.Instruction;
 import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -61,42 +58,40 @@ public class Recipe {
     @Embedded
     private TimeFacts timeFacts;
 
-    @JsonIdentityReference(alwaysAsId = true)
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @JsonIgnoreProperties({"email"})
+    @ManyToOne(fetch = FetchType.EAGER) //TODO
     @JoinColumn(
             name = "author_username",
             referencedColumnName = "username",
-            nullable = false // TODO
+            nullable = false
     )
     private User author;
 
     @OneToMany(
             mappedBy = "recipe",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
     private List<Image> images;
 
-    @OneToMany( // fetch type?
+    @OneToMany(
             mappedBy = "recipe",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
     private List<RecipeIngredient> ingredients;
 
-    @OneToMany( // Fetch type?
+    @OneToMany(
             mappedBy = "recipe",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REMOVE,
             fetch = FetchType.LAZY
     )
     private List<Instruction> instructions;
 
+    @JsonIgnore // TODO FOR NOW
     @ManyToMany(
             mappedBy = "likedRecipes",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.REMOVE, //TODO does this cascade to users or likedRecipes table
             fetch = FetchType.LAZY
     )
     private List<User> likes;

@@ -2,9 +2,10 @@ package com.pantrychef.backend.services;
 
 import com.pantrychef.backend.controllers.authentication.AuthenticationRequest;
 import com.pantrychef.backend.controllers.authentication.AuthenticationResponse;
-import com.pantrychef.backend.controllers.authentication.RegisterRequest;
+import com.pantrychef.backend.controllers.authentication.RegistrationRequest;
 import com.pantrychef.backend.entities.users.Role;
 import com.pantrychef.backend.entities.users.User;
+import com.pantrychef.backend.errors.InvalidRequestException;
 import com.pantrychef.backend.repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final static int maxJWTCookieAge = 3600;
+    private final static int maxJWTCookieAge = 3600 * 24;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,9 +32,12 @@ public class AuthenticationService {
     private AuthenticationManager authManager;
 
     public AuthenticationResponse register(
-            RegisterRequest request,
+            RegistrationRequest request,
             HttpServletResponse response
     ) {
+        if (userRepository.existsById(request.getUsername()))
+            throw new InvalidRequestException();
+
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -47,6 +51,7 @@ public class AuthenticationService {
 
         Cookie cookie = new Cookie("jwtToken", jWTToken);
         cookie.setMaxAge(maxJWTCookieAge);
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
         return AuthenticationResponse.builder()
@@ -73,6 +78,7 @@ public class AuthenticationService {
 
         Cookie cookie = new Cookie("jwtToken", jWTToken);
         cookie.setMaxAge(maxJWTCookieAge);
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
 
         return AuthenticationResponse.builder()

@@ -1,6 +1,6 @@
 package com.pantrychef.backend.configs;
 
-import com.pantrychef.backend.configs.filters.JWTAuthenticationFilter;
+import com.pantrychef.backend.filters.JWTAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class SecurityConfig  {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        http //TODO update
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()

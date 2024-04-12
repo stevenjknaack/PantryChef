@@ -1,4 +1,4 @@
-package com.pantrychef.backend.configs.filters;
+package com.pantrychef.backend.filters;
 
 import com.pantrychef.backend.services.JWTService;
 import jakarta.servlet.FilterChain;

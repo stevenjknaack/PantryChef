@@ -60,10 +60,7 @@ public class Review {
     private String dateModified;
 
     @JsonIgnore
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "recipe_id",
             referencedColumnName = "id",
@@ -71,10 +68,7 @@ public class Review {
     )
     private Recipe recipe;
 
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "author_username",
             referencedColumnName = "username"
@@ -83,7 +77,7 @@ public class Review {
 
     @ManyToMany(
             mappedBy = "likedReviews",
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY
     )
     private List<User> likes;
 

@@ -24,26 +24,23 @@ export default function Login() {
             return;
         }
 
-        // TODO test
-        setLoggedInUser({ username: username });
-
-        // fetch('', {
-        //     method: 'POST',
-        //     credentials: 'include',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         username: username,
-        //         password: password,
-        //     }),
-        // }).then((response) => {
-        //     if (response.status === 200) {
-        //         response.json().then((data) => setLoggedInUser(data));
-        //     } else {
-        //         alert('Problem with login');
-        //     }
-        // });
+        fetch('http://localhost:8080/auth/login', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        }).then((response) => {
+            if (response.status === 200) {
+                response.json().then((data) => setLoggedInUser(data.user));
+            } else {
+                alert('Problem with login');
+            }
+        });
     };
 
     return (

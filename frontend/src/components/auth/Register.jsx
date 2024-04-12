@@ -49,7 +49,6 @@ export default function Register() {
         }).then((response) => {
             if (response.status === 200) {
                 response.json().then((data) => setLoggedInUser(data.user));
-                alert(data.user.username + ' signed in');
             } else {
                 alert('Problem with registration');
             }

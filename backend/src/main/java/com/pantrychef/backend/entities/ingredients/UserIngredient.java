@@ -14,10 +14,7 @@ import lombok.*;
 @Table(name = "user_ingredient")
 public class UserIngredient extends Ingredient {
     @JsonIgnore
-    @ManyToOne(
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "username",
             referencedColumnName = "username",

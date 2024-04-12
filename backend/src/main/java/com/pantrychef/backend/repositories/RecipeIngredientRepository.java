@@ -1,10 +1,9 @@
 package com.pantrychef.backend.repositories;
 
-import com.pantrychef.backend.entities.ingredients.Ingredient;
+import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-// TODO how does this work with inheritance
 @Repository
-public interface RecipeIngredientRepository extends JpaRepository<Ingredient, Integer> {
+public interface RecipeIngredientRepository extends JpaRepository<RecipeIngredient, Integer> {
 }

@@ -25,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIdentityInfo(property = "username", generator = ObjectIdGenerators.PropertyGenerator.class)
+//@JsonIdentityInfo(property = "username", generator = ObjectIdGenerators.PropertyGenerator.class)
 @JsonIgnoreProperties({"enabled", "accountNonExpired", "credentialsNonExpired",  "authorities", "accountNonLocked"})
 @Table(name = "user")
 public class User implements UserDetails {
@@ -71,7 +71,7 @@ public class User implements UserDetails {
     private List<Recipe> recipes;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_recipe_likes",
             joinColumns = @JoinColumn(
@@ -94,7 +94,7 @@ public class User implements UserDetails {
     private List<Review> reviews;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_review_likes",
             joinColumns = @JoinColumn(

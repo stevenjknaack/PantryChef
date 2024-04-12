@@ -6,6 +6,7 @@ import com.pantrychef.backend.services.JWTService;
 import com.pantrychef.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -16,55 +17,42 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
-    @Autowired
-    private JWTService jWTService;
-
-
     @PostMapping
-    public Recipe addRecipe(
+    public ResponseEntity<Recipe> addRecipe(
             @RequestHeader(name = "Authorization") String authHeader,
             @RequestBody Recipe recipe
     ) {
-        return recipeService.createRecipe(recipe, jWTService.extractJWTToken(authHeader)); //TODO
+        return ResponseEntity.ok(recipeService.createRecipe(recipe, authHeader));
     }
 
     @GetMapping
-    public Page<RecipeResultDTO> getPageOfRecipes(
+    public ResponseEntity<Page<RecipeResultDTO>> getPageOfRecipes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "100") Integer size
     ) {
-        return recipeService.queryRecipes(page, size);
+        return ResponseEntity.ok(recipeService.queryRecipes(page, size));
     }
 
     @GetMapping(path="/{id}")
-    public Recipe getRecipe(@PathVariable Integer id) {
-        return recipeService.getRecipe(id);
+    public ResponseEntity<Recipe> getRecipe(@PathVariable Integer id) {
+        return ResponseEntity.ok(recipeService.getRecipe(id));
     }
 
     @PutMapping(path = "/{id}")
-    public Recipe updateRecipe(@RequestBody Recipe recipe) throws Exception {
-        return recipeService.updateRecipe(recipe);
+    public ResponseEntity<Recipe> updateRecipe(
+            @PathVariable Integer id,
+            @RequestHeader(name = "Authorization") String authHeader,
+            @RequestBody Recipe recipe
+    ) {
+        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe, authHeader));
     }
 
     @DeleteMapping(path = "/{id}")
-    public Recipe deleteRecipe(@PathVariable Integer id) throws Exception {
-        return recipeService.deleteRecipe(id);
+    public ResponseEntity<Recipe> deleteRecipe(
+            @RequestHeader(name = "Authorization") String authHeader,
+            @PathVariable Integer id
+    ) {
+        return ResponseEntity.ok(recipeService.deleteRecipe(id, authHeader));
     }
 }
-
-//    @CrossOrigin(origins = "http://localhost:5173")
-//    @GetMapping(path = "/example")
-//    public Recipe getExample() {
-//        Recipe newRecipe = Recipe.builder()
-//                .name("my new example recipe please change")
-//                .build();
-//
-//        Recipe savedRecipe = recipeRepository.save(newRecipe);
-//
-////        String exampleName = savedRecipe.getName() + " " + savedRecipe.getId();
-//
-//        S.delete(savedRecipe);
-//
-//        return savedRecipe;
-//    }
 
