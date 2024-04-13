@@ -14,9 +14,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User getUserFromAuthHeader(String authHeader) {
-        String jWTToken = jwtService.extractJWTToken(authHeader);
-        String username = jwtService.extractUsername(jWTToken);
-        return userRepository.findById(username).orElseThrow();
-    }
+//    public User getUserFromAuthHeader(String authHeader) {
+//        String jWTToken = jwtService.extractJWTToken(authHeader);
+//        String username = jwtService.extractUsername(jWTToken);
+//        return userRepository.findById(username).orElseThrow();
+//    }
 }

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-
+//
 export default function Home(props) {
     const alertIngredient = () => {
-        fetch('http://localhost:8080/recipes/1', {
+        fetch('http://localhost:8080/recipes', {
             credentials: 'include',
             method: 'GET'
         })

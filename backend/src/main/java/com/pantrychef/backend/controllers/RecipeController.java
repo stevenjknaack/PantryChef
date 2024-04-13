@@ -19,10 +19,10 @@ public class RecipeController {
 
     @PostMapping
     public ResponseEntity<Recipe> addRecipe(
-            @RequestHeader(name = "Authorization") String authHeader,
+            @CookieValue(name = "jwtToken") String jWTToken,
             @RequestBody Recipe recipe
     ) {
-        return ResponseEntity.ok(recipeService.createRecipe(recipe, authHeader));
+        return ResponseEntity.ok(recipeService.createRecipe(recipe, jWTToken));
     }
 
     @GetMapping
@@ -41,18 +41,20 @@ public class RecipeController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<Recipe> updateRecipe(
             @PathVariable Integer id,
-            @RequestHeader(name = "Authorization") String authHeader,
+            @CookieValue(name = "jwtToken") String jWTToken,
             @RequestBody Recipe recipe
     ) {
-        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe, authHeader));
+        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe, jWTToken));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Recipe> deleteRecipe(
-            @RequestHeader(name = "Authorization") String authHeader,
+            @CookieValue(name = "jwtToken") String jWTToken,
             @PathVariable Integer id
     ) {
-        return ResponseEntity.ok(recipeService.deleteRecipe(id, authHeader));
+        return ResponseEntity.ok(recipeService.deleteRecipe(id, jWTToken));
     }
 }
+
+// @RequestHeader(name = "Authorization") String authHeader,
 

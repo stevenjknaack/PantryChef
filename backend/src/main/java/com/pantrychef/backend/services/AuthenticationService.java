@@ -49,10 +49,7 @@ public class AuthenticationService {
 
         String jWTToken = jWTService.generateToken(user);
 
-        Cookie cookie = new Cookie("jwtToken", jWTToken);
-        cookie.setMaxAge(maxJWTCookieAge);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        addJWTCookieToResponse(jWTToken, response);
 
         return AuthenticationResponse.builder()
                 .user(user)
@@ -76,15 +73,22 @@ public class AuthenticationService {
 
         String jWTToken = jWTService.generateToken(user);
 
-        Cookie cookie = new Cookie("jwtToken", jWTToken);
-        cookie.setMaxAge(maxJWTCookieAge);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
+        addJWTCookieToResponse(jWTToken, response);
 
         return AuthenticationResponse.builder()
                 .user(user)
                 .eat(1) //TODO
                 .msg("Successfully logged in.")
                 .build();
+    }
+
+    private void addJWTCookieToResponse(String jWTToken, HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwtToken", jWTToken);
+        cookie.setMaxAge(maxJWTCookieAge);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
+        response.addCookie(cookie);
     }
 }

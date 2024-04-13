@@ -3,6 +3,7 @@ package com.pantrychef.backend.filters;
 import com.pantrychef.backend.services.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -33,15 +36,22 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String authHeaderPrefix = "Bearer ";
-
-        if (authHeader == null || !authHeader.startsWith(authHeaderPrefix)) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String jWTToken = authHeader.substring(authHeaderPrefix.length());
+        Optional<Cookie> jWTCookie = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("jwtToken"))
+                .findFirst();
+
+        if (jWTCookie.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String jWTToken = jWTCookie.get().getValue();
         String username = jWTService.extractUsername(jWTToken);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -65,3 +75,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
+//        String authHeader = request.getHeader("Authorization");
+//        String authHeaderPrefix = "Bearer ";
+//        if (authHeader == null || !authHeader.startsWith(authHeaderPrefix)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//        String jWTToken = authHeader.substring(authHeaderPrefix.length());
