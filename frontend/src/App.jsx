@@ -7,7 +7,7 @@ import PageNotFound from './components/content/PageNotFound';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import RecipeSearchPage from './components/content/search-recipes/RecipeSearchPage';
-import RecipePage from './components/content/RecipePage';
+import RecipePage from './components/content/recipe-page/RecipePage';
 
 function App() {
     return (
