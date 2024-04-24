@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Button, Container, Nav, Navbar, Stack } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
+import './structural.css';
 
 export default function PCNavbar() {
     const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
@@ -16,15 +17,14 @@ export default function PCNavbar() {
 
     return (
         <Navbar
-            bg='dark'
             data-bs-theme='dark'
             fixed='top'
             expand='sm'
             expanded={expanded}
         >
-            <Container>
+            <Container fluid>
                 <Navbar.Brand as={Link} to='/'>
-                    PantryChef
+                    <h1 className='navbar-brand-text'>PANTRYCHEF</h1>
                 </Navbar.Brand>
                 <Navbar.Toggle
                     aria-controls='responsive-navbar-nav'
@@ -35,9 +35,20 @@ export default function PCNavbar() {
                     className='justify-content-end'
                 >
                     {loggedInUser ? (
-                        <Button variant='danger' onClick={handleLogout}>
-                            Logout
-                        </Button>
+                        <>
+                            <Nav style={{ marginRight: '1rem' }}>
+                                <Nav.Link
+                                    as={Link}
+                                    to='/recipes'
+                                    onClick={collapse}
+                                >
+                                    Search Recipes
+                                </Nav.Link>
+                            </Nav>
+                            <Button variant='danger' onClick={handleLogout}>
+                                Logout
+                            </Button>
+                        </>
                     ) : (
                         <Nav>
                             <Nav.Link as={Link} to='/login' onClick={collapse}>
