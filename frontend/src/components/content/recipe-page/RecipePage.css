@@ -1,0 +1,87 @@
+h2 {
+    margin-bottom: 1.5rem !important;
+}
+
+ul {
+    padding-left: 1rem !important;
+}
+
+li {
+    margin-bottom: 1.5rem;
+}
+
+ol {
+    list-style-type: none;
+    counter-reset: bold-counter;
+    padding-left: 0.15rem !important;
+}
+
+ol li:before {
+    content: 'Step ' counter(bold-counter) '.';
+    font-weight: 600;
+    margin-right: 0.5em;
+    counter-increment: bold-counter;
+}
+
+/* GENERIC */
+
+.light {
+    font-weight: 300;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.margin-bt-none {
+    margin-bottom: 0;
+}
+
+.margin-bt-md {
+    margin-bottom: 3rem;
+}
+
+/* RECIPE PAGE */
+
+.recipe-page {
+    margin-top: 4rem;
+    max-width: 45rem;
+}
+
+/* SUBHEADER INFO  */
+
+.recipe-subheader-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.rating {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.info-separator {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+/* IMAGES */
+
+.carousel {
+    /* Bootstrap */
+    justify-content: center;
+    height: 35rem;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+}
+
+.carousel-img {
+    width: 100%;
+}
+
+/* INGREDIENTS */
+
+/* INSTRUCTIONS */

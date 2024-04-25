@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Button, Container, Nav, Navbar, Stack } from 'react-bootstrap';
+import { Button, Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import './structural.css';
@@ -34,35 +34,55 @@ export default function PCNavbar() {
                     id='responsive-navbar-nav'
                     className='justify-content-end'
                 >
-                    {loggedInUser ? (
-                        <>
-                            <Nav style={{ marginRight: '1rem' }}>
+                    <Nav style={{ marginRight: '3rem' }}>
+                        <Nav.Link as={Link} to='/recipes' onClick={collapse}>
+                            Search Recipes
+                        </Nav.Link>
+                        {loggedInUser ? (
+                            <NavDropdown title='My Account' menuVariant='dark'>
+                                <NavDropdown.Item as={Link} to='/user/pantry'>
+                                    My Pantry
+                                </NavDropdown.Item>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to='/user/favorites'
+                                >
+                                    My Favs
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to='/user/recipes'>
+                                    My Recipes
+                                </NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to='/user/settings'>
+                                    Settings
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <Button
+                                    className='btn-logout'
+                                    variant='danger'
+                                    onClick={handleLogout}
+                                >
+                                    Logout
+                                </Button>
+                            </NavDropdown>
+                        ) : (
+                            <>
                                 <Nav.Link
                                     as={Link}
-                                    to='/recipes'
+                                    to='/login'
                                     onClick={collapse}
                                 >
-                                    Search Recipes
+                                    Login
                                 </Nav.Link>
-                            </Nav>
-                            <Button variant='danger' onClick={handleLogout}>
-                                Logout
-                            </Button>
-                        </>
-                    ) : (
-                        <Nav>
-                            <Nav.Link as={Link} to='/login' onClick={collapse}>
-                                Login
-                            </Nav.Link>
-                            <Nav.Link
-                                as={Link}
-                                to='/register'
-                                onClick={collapse}
-                            >
-                                Register
-                            </Nav.Link>
-                        </Nav>
-                    )}
+                                <Nav.Link
+                                    as={Link}
+                                    to='/register'
+                                    onClick={collapse}
+                                >
+                                    Register
+                                </Nav.Link>
+                            </>
+                        )}
+                    </Nav>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
