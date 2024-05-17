@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import { useNavigate } from 'react-router-dom';
 
-export default function Register() {
+export default function RegisterPage() {
     const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
     const navigate = useNavigate();
 

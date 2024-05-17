@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function LoginPage() {
     const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
     const navigate = useNavigate();
 

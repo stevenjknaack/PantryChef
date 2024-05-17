@@ -4,8 +4,8 @@ import './App.css';
 import Layout from './components/structural/Layout';
 import Home from './components/content/home/Home';
 import PageNotFound from './components/content/PageNotFound';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import LoginPage from './components/auth/LoginPage';
+import RegisterPage from './components/auth/RegisterPage';
 import RecipeSearchPage from './components/content/recipe-search/RecipeSearchPage';
 import RecipePage from './components/content/recipe-page/RecipePage';
 import UserPantryPage from './components/content/user-pantry/UserPantryPage';
@@ -19,8 +19,8 @@ function App() {
             <Routes>
                 <Route path='/' element={<Layout />}>
                     <Route index element={<Home />} />
-                    <Route path='login' element={<Login />} />
-                    <Route path='register' element={<Register />} />
+                    <Route path='login' element={<LoginPage />} />
+                    <Route path='register' element={<RegisterPage />} />
                     <Route path='recipes' element={<RecipeSearchPage />} />
                     <Route path='recipes/:recipeId' element={<RecipePage />} />
                     <Route path='user/pantry' element={<UserPantryPage />} />

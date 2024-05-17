@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import RecipeCard from './RecipeCard';
+import './RecipeSearchPage.css';
 
 export default function RecipeSearchPage(props) {
     const [recipePage, setRecipePage] = useState({});
@@ -30,7 +31,7 @@ export default function RecipeSearchPage(props) {
                     <p>Loading...</p>
                 ) : (
                     recipePage.content.map((recipe) => (
-                        <Col key={recipe.id}>
+                        <Col key={recipe.id} md={3}>
                             <RecipeCard {...recipe} />
                         </Col>
                     ))
