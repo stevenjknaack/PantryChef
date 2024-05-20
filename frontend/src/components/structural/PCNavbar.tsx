@@ -1,18 +1,27 @@
-import { useContext, useState } from 'react';
+import { FC, useContext, useState } from 'react';
 import { Button, Container, Nav, NavDropdown, Navbar } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import './structural.css';
 
-export default function PCNavbar() {
-    const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
-    const [expanded, setExpanded] = useState();
+const PCNavbar: FC = () => {
+    const { loggedInUser, setLoggedInUser } = useContext(
+        LoggedInUserContext
+    ) ?? {
+        loggedInUser: null,
+        setLoggedInUser: () => alert('Error with user context.')
+    };
+
+    const navigate = useNavigate();
+
+    const [expanded, setExpanded] = useState(false);
 
     const collapse = () => setExpanded(false);
     const toggleExpanded = () => setExpanded((curr) => !curr);
 
     const handleLogout = () => {
         setLoggedInUser(null);
+        navigate('/');
     };
 
     return (
@@ -87,4 +96,6 @@ export default function PCNavbar() {
             </Container>
         </Navbar>
     );
-}
+};
+
+export default PCNavbar;

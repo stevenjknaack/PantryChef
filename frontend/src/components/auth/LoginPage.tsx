@@ -1,10 +1,24 @@
-import { useContext, useEffect, useState } from 'react';
+import {
+    ChangeEvent,
+    FC,
+    FormEvent,
+    useContext,
+    useEffect,
+    useState
+} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import { useNavigate } from 'react-router-dom';
+import { AuthResponseData } from '../../types';
 
-export default function LoginPage() {
-    const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
+const LoginPage: FC = () => {
+    const { loggedInUser, setLoggedInUser } = useContext(
+        LoggedInUserContext
+    ) ?? {
+        loggedInUser: null,
+        setLoggedInUser: () => alert('Error with user context.')
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -16,7 +30,7 @@ export default function LoginPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e: FormEvent) => {
         e?.preventDefault();
 
         if (username.trim() === '' || password.trim() === '') {
@@ -24,7 +38,7 @@ export default function LoginPage() {
             return;
         }
 
-        fetch('http://localhost:8080/auth/login', {
+        const response = await fetch('http://localhost:8080/auth/login', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -34,17 +48,20 @@ export default function LoginPage() {
                 username: username,
                 password: password
             })
-        }).then((response) => {
-            if (response.status === 200) {
-                response.json().then((data) => setLoggedInUser(data.user));
-            } else {
-                alert('Problem with login');
-            }
         });
+
+        if (!response.ok) alert('Problem with login');
+
+        const data: AuthResponseData = await response.json();
+        setLoggedInUser(data.user);
     };
 
     return (
-        <Form onSubmit={handleLogin}>
+        <Form
+            onSubmit={(e) => {
+                handleLogin(e);
+            }}
+        >
             <Form.Label htmlFor='input-username'>Username</Form.Label>
             <Form.Control
                 id='input-username'
@@ -64,4 +81,6 @@ export default function LoginPage() {
             </Button>
         </Form>
     );
-}
+};
+
+export default LoginPage;

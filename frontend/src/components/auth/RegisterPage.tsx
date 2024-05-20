@@ -1,10 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
+import { FC, FormEvent, useContext, useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import LoggedInUserContext from '../../contexts/LoggedInUserContext';
 import { useNavigate } from 'react-router-dom';
+import { AuthResponseData } from '../../types';
 
-export default function RegisterPage() {
-    const [loggedInUser, setLoggedInUser] = useContext(LoggedInUserContext);
+const RegisterPage: FC = () => {
+    const { loggedInUser, setLoggedInUser } = useContext(
+        LoggedInUserContext
+    ) ?? {
+        loggedInUser: null,
+        setLoggedInUser: () => alert('Error with user context.')
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,7 +25,7 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e: FormEvent) => {
         e?.preventDefault();
 
         if (
@@ -35,7 +42,7 @@ export default function RegisterPage() {
             return;
         }
 
-        fetch('http://localhost:8080/auth/register', {
+        const response = await fetch('http://localhost:8080/auth/register', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -46,13 +53,12 @@ export default function RegisterPage() {
                 username: username,
                 password: password
             })
-        }).then((response) => {
-            if (response.status === 200) {
-                response.json().then((data) => setLoggedInUser(data.user));
-            } else {
-                alert('Problem with registration');
-            }
         });
+
+        if (!response.ok) alert('Problem with registration');
+
+        const data: AuthResponseData = await response.json();
+        setLoggedInUser(data.user);
     };
 
     return (
@@ -91,4 +97,6 @@ export default function RegisterPage() {
             </Button>
         </Form>
     );
-}
+};
+
+export default RegisterPage;

@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Carousel } from 'react-bootstrap';
 import './RecipePage.css';
+import { Recipe, RecipeImage } from '../../../types';
 
-export default function RecipePage(props) {
-    const { recipeId } = useParams();
-    const [recipe, setRecipe] = useState(getExampleRecipe(recipeId));
+const RecipePage: FC = () => {
+    const { recipeId } = useParams(); // TODO figure out typing
+    const [recipe, setRecipe] = useState<Recipe>(getExampleRecipe(recipeId)); // TODO change default
 
-    const refreshRecipe = async (recipeId) => {
-        console.log(`ayy ${recipeId}`);
+    const refreshRecipe = async (recipeId: number) => {
+        console.log(`ayy ${recipeId}`); // TODO remove
         const response = await fetch(
             `http://localhost:8080/recipes/${recipeId}`
         );
@@ -18,7 +19,7 @@ export default function RecipePage(props) {
             return;
         }
 
-        const data = await response.json();
+        const data: Recipe = await response.json();
         setRecipe(data);
     };
 
@@ -26,12 +27,12 @@ export default function RecipePage(props) {
     //     refreshRecipe(recipeId);
     // }, []);
 
-    const buildCarousel = (images) => {
+    const buildCarousel = (images: Array<RecipeImage>) => {
         const carouselItems = [];
         for (let i = 0; i < images.length; i++) {
             const image = images[i];
             carouselItems.push(
-                <Carousel.Item key={image.key}>
+                <Carousel.Item key={image.id}>
                     <img
                         src={image.url}
                         alt={image.altText}
@@ -89,7 +90,7 @@ export default function RecipePage(props) {
             </div>
         </div>
     );
-}
+};
 
 function getExampleRecipe(recipeId) {
     return {
@@ -209,3 +210,5 @@ function getExampleRecipe(recipeId) {
         ]
     };
 }
+
+export default RecipePage;

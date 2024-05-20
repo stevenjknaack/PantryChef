@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { FC } from 'react';
 import './App.css';
 
 import Layout from './components/structural/Layout';
 import Home from './components/content/home/Home';
-import PageNotFound from './components/content/PageNotFound';
+import PageNotFoundPage from './components/content/PageNotFoundPage';
 import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
 import RecipeSearchPage from './components/content/recipe-search/RecipeSearchPage';
@@ -13,7 +14,7 @@ import UserFavoritesPage from './components/content/user-favorites/UserFavorites
 import UserRecipesPage from './components/content/user-recipes/UserRecipesPage';
 import UserSettingsPage from './components/content/user-settings/UserSettingsPage';
 
-function App() {
+const App: FC = () => {
     return (
         <BrowserRouter>
             <Routes>
@@ -33,11 +34,11 @@ function App() {
                         path='user/settings'
                         element={<UserSettingsPage />}
                     />
-                    <Route path='*' element={<PageNotFound />} />
+                    <Route path='*' element={<PageNotFoundPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
     );
-}
+};
 
 export default App;
