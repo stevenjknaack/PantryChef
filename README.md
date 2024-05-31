@@ -1,39 +1,30 @@
-# Pantry-Chef
+# PantryChef 🍽️
 
-# instructions 
+by Steven Knaack
+(w/ special thanks to Neha Talluri & Joseph Frazier)
 
-0. ensure you have the following installed:
-- node.js: https://nodejs.org/en
-- eclipse IDE for backend
-- vscode
-- MySQL
+## Description 📖
 
-1. clone repo 
+In most kitchens around the world, there are unused ingredients hiding in the corners of
+cupboards and chilling in the back of fridges. Most home chefs have faced the challenge of figuring out
+what to cook using these leftover ingredients. Most of us end up spending hours scrolling through online
+recipes, trying to find a match that aligns with our available ingredients and taste preferences.
+Unfortunately, many give up and let these ingredients go to waste – a loss of both money and potential
+culinary delights.
 
-2. create database in mysql following the directions in the data folder
-- in data/pantrychef_parser.py make sure global params are set correctly
-- csv files found at: https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews?resource=download
-- put reviews.csv and recipes.csv in data/original_data folder
-- run the parser
-- put folders in upload folder specified by path in data/load_db or data/load_for_mac
-- open up MySQL terminal, run "\. {setup_db.txt path}", then "\. {load.txt | load_for_mac.txt}"
-- to get paths, right click on the files and copy path
-- if no errors then you should be good
+To close this gap, we created PantryChef, an easy-to-use program made just for home cooks. Just enter
+the ingredients you have on hand, and voila! PantryChef creates a list of potential recipes for you. What's
+more, you can get insights from other users' reviews, discover new favorites, and even share your culinary
+creations by adding to the database. Under the hood, PantryChef utilizes MySQL for database
+management, Java Spring Boot for backend processing, and React.ts to deliver a seamless frontend experience. With PantryChef, we aim to make every ingredient count and help home chefs everywhere turn their
+leftovers into delightful dishes.
 
-3. open up the front end folder in vscode terminal
-- run these commands:
-- (npm install)
-- npm (run) build
-- npm run dev
-- copy link to browser (or ctrl-leftclick on windows)
+## Media 🖼️
 
-4. open up the backend folder in eclipse
-- go to "project/properties/java build path"
-- ensure json.20230618.jar and mysql-connector-j-8.0.33.jar in Backend folder are properly added to path
-- change the password to your mysql password in Config.java
-- press the run button
-- should see "Started Server at http://localhost:8000" in console
+## Installing & Running 🏃‍♀️
 
-then it should all work together :)
-just navigate back to the front end server in browser!!!
+### Using Docker Compose (Recommended) 🐋
 
+### Old Fashioned Way 👵
+
+## Helpful Links 🔗
