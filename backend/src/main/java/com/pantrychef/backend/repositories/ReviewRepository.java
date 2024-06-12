@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     public List<Review> findByRecipeId(Integer recipeId);
-    
+
+    public List<Review> findByRecipeIdAndRating(Integer recipeId, Integer rating);
+
     public List<Review> findByAuthorUsername(String authorUsername);
 }

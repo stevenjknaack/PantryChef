@@ -2,27 +2,39 @@ package com.pantrychef.backend.controllers;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.recipes.Recipe;
+import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.services.JWTService;
 import com.pantrychef.backend.services.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/recipes")
+@RequestMapping(path = "/api/recipes")
 public class RecipeController {
     @Autowired
     private RecipeService recipeService;
+    @Autowired
+    private JWTService jWTService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @PostMapping
     public ResponseEntity<Recipe> addRecipe(
             @CookieValue(name = "jwtToken") String jWTToken,
             @RequestBody Recipe recipe
     ) {
-        return ResponseEntity.ok(recipeService.createRecipe(recipe, jWTToken));
+        String username = jWTService.extractUsername(jWTToken);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return new ResponseEntity<Recipe>(
+                recipeService.createRecipe(recipe, user),
+                HttpStatus.CREATED
+        );
     }
 
     @GetMapping
@@ -44,7 +56,9 @@ public class RecipeController {
             @CookieValue(name = "jwtToken") String jWTToken,
             @RequestBody Recipe recipe
     ) {
-        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe, jWTToken));
+        String username = jWTService.extractUsername(jWTToken);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return ResponseEntity.ok(recipeService.updateRecipe(id, recipe, user));
     }
 
     @DeleteMapping(path = "/{id}")
@@ -52,7 +66,9 @@ public class RecipeController {
             @CookieValue(name = "jwtToken") String jWTToken,
             @PathVariable Integer id
     ) {
-        return ResponseEntity.ok(recipeService.deleteRecipe(id, jWTToken));
+        String username = jWTService.extractUsername(jWTToken);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return ResponseEntity.ok(recipeService.deleteRecipe(id, user));
     }
 }
 

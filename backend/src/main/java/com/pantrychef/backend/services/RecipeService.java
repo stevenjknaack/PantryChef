@@ -23,19 +23,14 @@ public class RecipeService {
     @Autowired
     private RecipeRepository recipeRepository;
     @Autowired
-    private JWTService jWTService;
-    @Autowired
     private ImageService imageService;
     @Autowired
     private InstructionService instructionService;
     @Autowired
     private RecipeIngredientService ingredientService;
-    @Autowired
-    private UserDetailsService userDetailsService;
 
-    public Recipe createRecipe(Recipe recipe, String jWTToken) {
-        String username = jWTService.extractUsername(jWTToken);
-        User user = (User) userDetailsService.loadUserByUsername(username);
+
+    public Recipe createRecipe(Recipe recipe, User user) {
         return saveRecipeRespectSublists(null, recipe, user);
     }
 
@@ -56,12 +51,9 @@ public class RecipeService {
         return recipePage.map(RecipeResultMapper::toDTO);
     }
 
-    public Recipe updateRecipe(Integer id, Recipe recipe, String jWTToken) { //TODO fix check author
+    public Recipe updateRecipe(Integer id, Recipe recipe, User user) { //TODO fix check author
         Recipe extantRecipe = recipeRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
-
-        String username = jWTService.extractUsername(jWTToken);
-        User user = (User) userDetailsService.loadUserByUsername(username);
 
         if (!extantRecipe.getAuthor().getUsername().equals(user.getUsername()))
             throw new UnauthorizedException();
@@ -69,14 +61,11 @@ public class RecipeService {
         return saveRecipeRespectSublists(id, recipe, extantRecipe.getAuthor());
     }
 
-    public Recipe deleteRecipe(Integer id, String jWTToken) {
+    public Recipe deleteRecipe(Integer id, User user) {
         if (id == null) throw new InvalidRequestException();
 
         Recipe extantRecipe = recipeRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
-
-        String username = jWTService.extractUsername(jWTToken);
-        User user = (User) userDetailsService.loadUserByUsername(username);
 
         if (!extantRecipe.getAuthor().equals(user))
             throw new UnauthorizedException();

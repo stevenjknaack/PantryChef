@@ -69,7 +69,7 @@ public class Review {
     private Recipe recipe;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
+    @JoinColumn( // TODO make un-nullable
             name = "author_username",
             referencedColumnName = "username"
     )
