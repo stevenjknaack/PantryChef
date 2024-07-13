@@ -42,7 +42,7 @@ public class RecipeService {
     public Page<RecipeResultDTO> queryRecipes(Integer page, Integer size) {
         if (page < 0 || size < 1)
             throw new IllegalArgumentException(
-                    "Page must be greater than 0 and size greater than 1."
+                    "Page must be greater than or equal to 0 and size greater than or equal to 1."
             );
 
         Pageable pageRequest = PageRequest.of(page, size);
@@ -75,7 +75,7 @@ public class RecipeService {
         return extantRecipe;
     }
 
-    @Transactional
+    @Transactional // TODO do i need to check if this is the right author
     public Recipe saveRecipeRespectSublists(Integer id, Recipe recipe, User author) {
         recipe.setId(id);
         recipe.setAuthor(author);

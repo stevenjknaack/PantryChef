@@ -42,18 +42,21 @@ const RegisterPage: FC = () => {
             return;
         }
 
-        const response = await fetch('http://localhost:8080/auth/register', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                username: username,
-                password: password
-            })
-        });
+        const response = await fetch(
+            'http://localhost:8080/api/auth/register',
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    username: username,
+                    password: password
+                })
+            }
+        );
 
         if (!response.ok) alert('Problem with registration');
 

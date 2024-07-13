@@ -12,7 +12,7 @@ const RecipeSearchPage: FC = () => {
     const refreshRecipePage = async () => {
         setLoading(true);
 
-        const response = await fetch('http://localhost:8080/recipes', {
+        const response = await fetch('http://localhost:8080/api/recipes', {
             method: 'GET',
             credentials: 'include'
         });

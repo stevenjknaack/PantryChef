@@ -52,8 +52,8 @@ public class RecipeController {
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<Recipe> updateRecipe(
-            @PathVariable Integer id,
             @CookieValue(name = "jwtToken") String jWTToken,
+            @PathVariable Integer id,
             @RequestBody Recipe recipe
     ) {
         String username = jWTService.extractUsername(jWTToken);

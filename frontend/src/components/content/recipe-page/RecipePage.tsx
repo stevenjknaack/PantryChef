@@ -11,7 +11,7 @@ const RecipePage: FC = () => {
     const refreshRecipe = async (recipeId: number) => {
         console.log(`ayy ${recipeId}`); // TODO remove
         const response = await fetch(
-            `http://localhost:8080/recipes/${recipeId}`
+            `http://localhost:8080/api/recipes/${recipeId}`
         );
 
         if (!response.ok) {
