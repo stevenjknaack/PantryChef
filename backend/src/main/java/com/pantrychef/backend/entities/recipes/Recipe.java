@@ -88,7 +88,7 @@ public class Recipe {
     )
     private List<Instruction> instructions;
 
-    @JsonIgnore // TODO FOR NOW
+    @JsonIgnore // TODO maybe add likes count?
     @ManyToMany(
             mappedBy = "likedRecipes",
             cascade = CascadeType.REMOVE, //TODO does this cascade to users or likedRecipes table

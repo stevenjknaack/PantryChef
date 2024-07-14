@@ -1,6 +1,7 @@
 package com.pantrychef.backend.controllers;
 
 import com.pantrychef.backend.entities.Review;
+import com.pantrychef.backend.entities.recipes.Recipe;
 import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.services.JWTService;
 import com.pantrychef.backend.services.ReviewService;
@@ -26,6 +27,7 @@ public class ReviewController {
     /**
      * Creates a new recipe
      * @param jWTToken Token used to identify and authenticate author
+     * @param recipeId The recipe this review will belong to
      * @param review The review to create. If an authorUsername is provided,
      *               it will be ignored
      * @return A ResponseEntity containing the created review
@@ -33,11 +35,13 @@ public class ReviewController {
     @PostMapping(path = "/recipes/{recipeId}/reviews")
     public ResponseEntity<Review> addReview(
             @CookieValue(name = "jwtToken") String jWTToken,
+            @PathVariable(name = "recipeId") Integer recipeId,
             @RequestBody Review review
     ) {
         String authorUsername = jWTService.extractUsername(jWTToken);
         User author = (User) userDetailsService.loadUserByUsername(authorUsername);
-        return ResponseEntity.ok(reviewService.saveReview(null, review, author));
+
+        return ResponseEntity.ok(reviewService.saveReview(null, recipeId, review, author));
     }
 
     /**
@@ -53,9 +57,9 @@ public class ReviewController {
     public ResponseEntity<Page<Review>> getPageOfReviews(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "100") Integer size,
-            @RequestParam(name = "rating") Integer rating,
-            @RequestParam(name = "recipeId") Integer recipeId,
-            @RequestParam(name = "authorUsername") String authorUsername
+            @RequestParam(name = "rating", required = false) Integer rating,
+            @RequestParam(name = "recipeId", required = false) Integer recipeId,
+            @RequestParam(name = "authorUsername", required = false) String authorUsername
     ) {
         return ResponseEntity.ok(
                 reviewService.queryReviews(page, size, rating, recipeId, authorUsername)
@@ -72,12 +76,12 @@ public class ReviewController {
     @PutMapping(path = "/reviews/{id}")
     public ResponseEntity<Review> updateReview(
             @CookieValue(name = "jwtToken") String jWTToken,
-            @PathVariable Integer id,
+            @PathVariable(name = "id") Integer id,
             @RequestBody Review review
     ) {
         String authorUsername = jWTService.extractUsername(jWTToken);
         User author = (User) userDetailsService.loadUserByUsername(authorUsername);
-        return ResponseEntity.ok(reviewService.saveReview(id, review, author));
+        return ResponseEntity.ok(reviewService.saveReview(id, null, review, author));
     }
 
     /**
@@ -89,7 +93,7 @@ public class ReviewController {
     @DeleteMapping(path = "/reviews/{id}")
     public ResponseEntity<Review> deleteReview(
             @CookieValue(name = "jwtToken") String jWTToken,
-            @PathVariable Integer id
+            @PathVariable(name = "id") Integer id
     ) {
         String authorUsername = jWTService.extractUsername(jWTToken);
         User author = (User) userDetailsService.loadUserByUsername(authorUsername);

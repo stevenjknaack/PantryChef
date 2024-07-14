@@ -1,6 +1,6 @@
 package com.pantrychef.backend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.pantrychef.backend.entities.recipes.Recipe;
 import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,15 +52,15 @@ public class Review {
             name = "date_created",
             nullable = false
     )
-    private String dateCreated;
+    private LocalDateTime dateCreated;
 
     @Column(
             name = "date_modified",
             nullable = false
     )
-    private String dateModified;
+    private LocalDateTime dateModified;
 
-    @JsonIgnore
+    @JsonIncludeProperties({"id"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "recipe_id",
@@ -68,6 +69,7 @@ public class Review {
     )
     private Recipe recipe;
 
+    @JsonIncludeProperties({"username"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn( // TODO make un-nullable
             name = "author_username",
@@ -75,6 +77,7 @@ public class Review {
     )
     private User author;
 
+    @JsonIgnore
     @ManyToMany(
             mappedBy = "likedReviews",
             fetch = FetchType.LAZY

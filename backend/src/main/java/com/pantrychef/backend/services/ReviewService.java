@@ -16,6 +16,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Optional;
+
+
 /**
  * Provides business logic for dealing with reviews
  */
@@ -31,23 +36,41 @@ public class ReviewService {
     /**
      * Either creates or updates a review
      * @param id The id of the review to update. If null, recipe will be created by the provided author
+     * @param recipeId The recipe this review will belong to, if being created. If updating, this is ignored
      * @param review The review to create or update an existing review with the given id with. If provided,
      *               the id and author attributes will be ignored
      * @param author The author of the review to create or update
      * @return The created or updated review
      */
-    public Review saveReview(Integer id, Review review, User author) {
-        if (id != null) {
+    public Review saveReview(Integer id, Integer recipeId, Review review, User author) {
+        LocalDateTime currentDateTime =  LocalDateTime.now();
+
+        if (id != null) { // if updating
             Review extantReview = reviewRepository.findById(id)
                     .orElseThrow(ResourceNotFoundException::new);
 
             if (!extantReview.getAuthor().equals(author)) {
                 throw new InvalidRequestException();
             }
+
+            review.setRecipe(extantReview.getRecipe());
+            review.setDateCreated(extantReview.getDateCreated());
+        } else { // if creating
+            if (recipeId == null)
+                throw new InvalidRequestException("No recipeId provided for a review creation request");
+
+            Recipe reviewsRecipe = recipeRepository.findById(recipeId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "No recipe with id " + recipeId + " exists"
+                    ));
+
+            review.setRecipe(reviewsRecipe);
+            review.setDateCreated(currentDateTime);
         }
 
         review.setId(id);
         review.setAuthor(author);
+        review.setDateModified(currentDateTime);
         return reviewRepository.save(review);
     }
 
@@ -86,19 +109,21 @@ public class ReviewService {
             throw new InvalidRequestException("page must be greater than or equal to 0. Provided: " + page);
         if (size < 1)
             throw new InvalidRequestException("size must be greater than or equal to 1. Provided: " + size);
-        if (rating < 1 || rating > 5)
+        if (rating != null && (rating < 1 || rating > 5))
             throw new InvalidRequestException("rating must be between 1 and 5 inclusive. Provided: " + rating);
 
         User author = null;
         Recipe recipe = null;
 
         if (authorUsername != null) {
-            author = userRepository.findById(authorUsername)
-                    .orElseThrow(() -> new InvalidRequestException("authorUsername must refer to an existing author"));
+            Optional<User> authorQueryResult = userRepository.findById(authorUsername);
+            if (authorQueryResult.isEmpty()) return Page.empty();
+            author = authorQueryResult.get();
         }
         if (recipeId != null) {
-            recipe = recipeRepository.findById(recipeId)
-                    .orElseThrow(() -> new InvalidRequestException("recipeId must refer to an existing recipe"));
+            Optional<Recipe> recipeQueryResult = recipeRepository.findById(recipeId);
+            if (recipeQueryResult.isEmpty()) return Page.empty();
+            recipe = recipeQueryResult.get();
         }
 
         Review reviewExampleProbe = Review.builder()

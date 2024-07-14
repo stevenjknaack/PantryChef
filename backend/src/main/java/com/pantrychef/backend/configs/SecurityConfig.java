@@ -28,8 +28,9 @@ public class SecurityConfig {
         http //TODO update
                 .csrf().disable()
                 .authorizeHttpRequests()
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/recipes/**").permitAll()
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipes/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/reviews").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
