@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A shortened view of a recipe for use in large queries
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

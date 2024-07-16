@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Details many aspects of a recipe's nutritional content
+ */
 @Embeddable
 @Data
 @NoArgsConstructor

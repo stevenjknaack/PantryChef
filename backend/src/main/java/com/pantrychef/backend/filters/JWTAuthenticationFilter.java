@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Authentication filter which requires a valid jwt token cookie on certain requests
+ */
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jWTService;
-
     @Autowired
     private UserDetailsService userDetailsService;
 

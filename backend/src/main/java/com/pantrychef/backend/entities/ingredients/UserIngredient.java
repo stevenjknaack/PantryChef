@@ -5,6 +5,9 @@ import com.pantrychef.backend.entities.users.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * A food resource that a user has access to in their pantry
+ */
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -4,6 +4,9 @@ import com.pantrychef.backend.dtos.RecipeResultDTO;
 import com.pantrychef.backend.entities.Image;
 import com.pantrychef.backend.entities.recipes.Recipe;
 
+/**
+ * Maps a Recipe to a RecipeResultDTO
+ */
 public class RecipeResultMapper {
     public static RecipeResultDTO toDTO(Recipe recipe) {
         Image mainImage;

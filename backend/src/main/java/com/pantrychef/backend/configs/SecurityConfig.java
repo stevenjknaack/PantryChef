@@ -13,16 +13,24 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security configurations
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     @Autowired
     private JWTAuthenticationFilter jWTAuthFilter;
-
     @Autowired
     private AuthenticationProvider authenticationProvider;
 
+    /**
+     * Determines which endpoints are accessible at a certain authorization level
+     * @param http The HttpSecurity object that the configuration will apply to
+     * @return The chain of security filters
+     * @throws Exception Possible Exception from the building of http
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http //TODO update

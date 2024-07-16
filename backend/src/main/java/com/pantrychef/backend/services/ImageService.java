@@ -9,12 +9,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Provides business logic for dealing with images
+ */
 @Service
 @RequiredArgsConstructor
 public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
+    /**
+     * Creates an image or updates an existing one
+     * @param image The image
+     * @param recipe The recipe this image belongs to
+     * @return The saved image
+     */
     public Image saveImage(Image image, Recipe recipe) {
         if (image.getId() != null) {
             Image extantImage = imageRepository.findById(image.getId())

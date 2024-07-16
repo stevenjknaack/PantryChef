@@ -1,10 +1,13 @@
-package com.pantrychef.backend.controllers.authentication;
+package com.pantrychef.backend.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a request for user authentication
+ */
 @Data
 @Builder
 @AllArgsConstructor

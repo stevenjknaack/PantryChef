@@ -1,4 +1,4 @@
-package com.pantrychef.backend.controllers.authentication;
+package com.pantrychef.backend.dtos;
 
 import com.pantrychef.backend.entities.users.User;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * The response to a user authentication event
+ */
 @Data
 @Builder
 @AllArgsConstructor

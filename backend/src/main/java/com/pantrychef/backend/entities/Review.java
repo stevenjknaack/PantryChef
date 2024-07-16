@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Details the experience and/or thoughts a user has about a recipe
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -84,6 +87,10 @@ public class Review {
     )
     private List<User> likes;
 
+    /**
+     * Adds a like to this review
+     * @param like A user that is liking this review
+     */
     public void addLike(User like) {
         if (this.likes == null) this.likes = new ArrayList<>();
         this.likes.add(like);

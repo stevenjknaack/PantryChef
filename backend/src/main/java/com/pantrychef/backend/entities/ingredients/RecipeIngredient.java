@@ -6,6 +6,9 @@ import com.pantrychef.backend.entities.recipes.Recipe;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * A food resource that is required to make a recipe
+ */
 @Entity
 @Data
 @NoArgsConstructor

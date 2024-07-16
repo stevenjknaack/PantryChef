@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 // TODO MAYBE ADD A PROFILE PIC OPTION (Randomly generated)
+
+/**
+ * A person that may interact with recipes and reviews
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -108,26 +112,46 @@ public class User implements UserDetails {
     )
     private List<Review> likedReviews;
 
+    /**
+     * Adds an ingredient to this user's pantry
+     * @param ingredient The ingredient
+     */
     public void addIngredientToPantry(UserIngredient ingredient) {
         if (this.pantry == null) this.pantry = new ArrayList<>();
         this.pantry.add(ingredient);
     }
 
+    /**
+     * Attributes a recipe to this author
+     * @param recipe The recipe
+     */
     public void addRecipe(Recipe recipe) {
         if (this.recipes == null) this.recipes = new ArrayList<>();
         this.recipes.add(recipe);
     }
 
+    /**
+     * Add a like to the recipe by this user
+     * @param recipe The recipe
+     */
     public void addLikedRecipe(Recipe recipe) {
         if (this.likedRecipes == null) this.likedRecipes = new ArrayList<>();
         this.likedRecipes.add(recipe);
     }
 
+    /**
+     * Attributes a review to this user
+     * @param review The review
+     */
     public void addReview(Review review) {
         if (this.reviews == null) this.reviews = new ArrayList<>();
         this.reviews.add(review);
     }
 
+    /**
+     * Add a like to the review by this user
+     * @param review The review
+     */
     public void addLikedReview(Review review) {
         if (this.likedReviews == null) this.likedReviews = new ArrayList<>();
         this.likedReviews.add(review);

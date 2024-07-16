@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Provides business logic for dealing with instructions
+ */
 @Service
 @RequiredArgsConstructor
 public class InstructionService {
@@ -16,10 +19,10 @@ public class InstructionService {
     private InstructionRepository instructionRepository;
 
     /**
-     * assume recipe is fully saved
-     * @param instr
-     * @param recipe
-     * @return
+     * Creates or updates an instruction. Assumes its recipe is fully saved
+     * @param instr The instruction
+     * @param recipe The instruction's recipe
+     * @return Saved instruction
      */
     public Instruction saveInstruction(Instruction instr, Recipe recipe) {
         if (instr.getId() != null) {

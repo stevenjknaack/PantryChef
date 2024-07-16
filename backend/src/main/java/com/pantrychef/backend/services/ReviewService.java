@@ -39,20 +39,21 @@ public class ReviewService {
      * @param recipeId The recipe this review will belong to, if being created. If updating, this is ignored
      * @param review The review to create or update an existing review with the given id with. If provided,
      *               the id and author attributes will be ignored
-     * @param author The author of the review to create or update
+     * @param user The user attempting to create or update
      * @return The created or updated review
      */
-    public Review saveReview(Integer id, Integer recipeId, Review review, User author) {
+    public Review saveReview(Integer id, Integer recipeId, Review review, User user) {
         LocalDateTime currentDateTime =  LocalDateTime.now();
 
         if (id != null) { // if updating
             Review extantReview = reviewRepository.findById(id)
                     .orElseThrow(ResourceNotFoundException::new);
 
-            if (!extantReview.getAuthor().equals(author)) {
+            if (!extantReview.getAuthor().equals(user)) {
                 throw new InvalidRequestException();
             }
 
+            review.setAuthor(extantReview.getAuthor());
             review.setRecipe(extantReview.getRecipe());
             review.setDateCreated(extantReview.getDateCreated());
         } else { // if creating
@@ -64,12 +65,12 @@ public class ReviewService {
                             "No recipe with id " + recipeId + " exists"
                     ));
 
+            review.setAuthor(user);
             review.setRecipe(reviewsRecipe);
             review.setDateCreated(currentDateTime);
         }
 
         review.setId(id);
-        review.setAuthor(author);
         review.setDateModified(currentDateTime);
         return reviewRepository.save(review);
     }
@@ -77,16 +78,16 @@ public class ReviewService {
     /**
      * Deletes a given review
      * @param id The id of the review to delete
-     * @param author The author of the review to delete
+     * @param user User attempting the deletion
      * @return A ResponseEntity with the deleted review
      */
-    public Review deleteReview(Integer id, User author) {
+    public Review deleteReview(Integer id, User user) {
         if (id == null) throw new InvalidRequestException();
 
         Review extantReview = reviewRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        if (!extantReview.getAuthor().equals(author))
+        if (!extantReview.getAuthor().equals(user))
             throw new UnauthorizedException();
 
         reviewRepository.delete(extantReview);

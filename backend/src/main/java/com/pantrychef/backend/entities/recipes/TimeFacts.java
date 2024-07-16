@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Details of a recipe's time requirements
+ */
 @Embeddable
 @Data
 @NoArgsConstructor

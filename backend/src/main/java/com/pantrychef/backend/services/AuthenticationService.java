@@ -1,8 +1,8 @@
 package com.pantrychef.backend.services;
 
-import com.pantrychef.backend.controllers.authentication.AuthenticationRequest;
-import com.pantrychef.backend.controllers.authentication.AuthenticationResponse;
-import com.pantrychef.backend.controllers.authentication.RegistrationRequest;
+import com.pantrychef.backend.dtos.AuthenticationRequest;
+import com.pantrychef.backend.dtos.AuthenticationResponse;
+import com.pantrychef.backend.dtos.RegistrationRequest;
 import com.pantrychef.backend.entities.users.Role;
 import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.errors.InvalidRequestException;
@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Provides business logic for dealing with authentication
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -31,6 +34,14 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authManager;
 
+    /**
+     * Creates a new user
+     * @param request Details of the user to create
+     * @param response The response object with which will encapsulate the return
+     * @return Either a successful response with copy of the created user
+     *         and a set cookies header with jwt token or a negative response
+     *         if the user could not be created
+     */
     public AuthenticationResponse register(
             RegistrationRequest request,
             HttpServletResponse response
@@ -58,6 +69,14 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Authenticates an existing user
+     * @param request Details of the user to authenticate
+     * @param response The response object with which will encapsulate the return
+     * @return Either a successful response with copy of the authenticated user
+     *         and a set cookies header with jwt token or a negative response
+     *         if the user could not be authenticated
+     */
     public AuthenticationResponse authenticate(
             AuthenticationRequest request,
             HttpServletResponse response
@@ -82,6 +101,11 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Takes a jwt token and adds it to the response with a SET-COOKIE header
+     * @param jWTToken The jwt token
+     * @param response The response
+     */
     private void addJWTCookieToResponse(String jWTToken, HttpServletResponse response) {
         Cookie cookie = new Cookie("jwtToken", jWTToken);
         cookie.setMaxAge(maxJWTCookieAge);

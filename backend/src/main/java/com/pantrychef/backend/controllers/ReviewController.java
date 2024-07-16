@@ -7,6 +7,7 @@ import com.pantrychef.backend.services.JWTService;
 import com.pantrychef.backend.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,10 @@ public class ReviewController {
         String authorUsername = jWTService.extractUsername(jWTToken);
         User author = (User) userDetailsService.loadUserByUsername(authorUsername);
 
-        return ResponseEntity.ok(reviewService.saveReview(null, recipeId, review, author));
+        return new ResponseEntity<Review>(
+                reviewService.saveReview(null, recipeId, review, author),
+                HttpStatus.CREATED
+        );
     }
 
     /**

@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * An instruction needed to make a food item specified in a recipe
+ */
 @Entity
 @Data
 @NoArgsConstructor

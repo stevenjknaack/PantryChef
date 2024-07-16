@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Instructions and information for a food item or meal that can be created
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -96,19 +99,37 @@ public class Recipe {
     )
     private List<User> likes;
 
+    /**
+     * Adds an image to the recipe
+     * @param image The image
+     */
     public void addImage(Image image) {
         if (this.images == null) this.images = new ArrayList<>();
         this.images.add(image);
     }
+
+    /**
+     * Adds an ingredient to the recipe
+     * @param ingredient Then ingredient
+     */
     public void addIngredient(RecipeIngredient ingredient) {
         if (this.ingredients == null) this.ingredients = new ArrayList<>();
         this.ingredients.add(ingredient);
     }
 
+    /**
+     * Adds an instruction to the recipe
+     * @param instruction The instruction
+     */
     public void addInstruction(Instruction instruction) {
         if (this.instructions == null) this.instructions = new ArrayList<>();
         this.instructions.add(instruction);
     }
+
+    /**
+     * Adds a like to the recipe
+     * @param like The user who is liking the recipe
+     */
     public void addLike(User like) {
         if (this.likes == null) this.likes = new ArrayList<>();
         this.likes.add(like);
