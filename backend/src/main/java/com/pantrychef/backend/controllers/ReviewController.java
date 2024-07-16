@@ -83,9 +83,9 @@ public class ReviewController {
             @PathVariable(name = "id") Integer id,
             @RequestBody Review review
     ) {
-        String authorUsername = jWTService.extractUsername(jWTToken);
-        User author = (User) userDetailsService.loadUserByUsername(authorUsername);
-        return ResponseEntity.ok(reviewService.saveReview(id, null, review, author));
+        String username = jWTService.extractUsername(jWTToken);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return ResponseEntity.ok(reviewService.saveReview(id, null, review, user));
     }
 
     /**
@@ -99,8 +99,8 @@ public class ReviewController {
             @CookieValue(name = "jwtToken") String jWTToken,
             @PathVariable(name = "id") Integer id
     ) {
-        String authorUsername = jWTService.extractUsername(jWTToken);
-        User author = (User) userDetailsService.loadUserByUsername(authorUsername);
-        return ResponseEntity.ok(reviewService.deleteReview(id, author));
+        String username = jWTService.extractUsername(jWTToken);
+        User user = (User) userDetailsService.loadUserByUsername(username);
+        return ResponseEntity.ok(reviewService.deleteReview(id, user));
     }
 }
