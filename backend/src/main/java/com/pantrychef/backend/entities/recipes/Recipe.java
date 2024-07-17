@@ -61,7 +61,7 @@ public class Recipe {
     @Embedded
     private TimeFacts timeFacts;
 
-    @JsonIgnoreProperties({"email"})
+    @JsonIncludeProperties({"username"})
     @ManyToOne(fetch = FetchType.EAGER) //TODO
     @JoinColumn(
             name = "author_username",
