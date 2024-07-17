@@ -39,6 +39,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/recipes/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/reviews").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipes/{id}/likes").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/reviews/{id}/likes").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

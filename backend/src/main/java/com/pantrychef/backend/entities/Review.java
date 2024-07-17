@@ -95,4 +95,13 @@ public class Review {
         if (this.likes == null) this.likes = new ArrayList<>();
         this.likes.add(like);
     }
+
+    /**
+     * Removes a like from the review
+     * @param like The user who is unliking the review
+     */
+    public void removeLike(User like) {
+        if (this.likes == null) return;
+        this.likes.remove(like);
+    }
 }

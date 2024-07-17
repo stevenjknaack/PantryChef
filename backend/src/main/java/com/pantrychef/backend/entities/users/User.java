@@ -140,6 +140,15 @@ public class User implements UserDetails {
     }
 
     /**
+     * Removes a recipe like from the user
+     * @param recipe The recipe
+     */
+    public void unlikeRecipe(Recipe recipe) {
+        if (this.likedRecipes == null) return;
+        this.likedRecipes.remove(recipe);
+    }
+
+    /**
      * Attributes a review to this user
      * @param review The review
      */
@@ -156,6 +165,16 @@ public class User implements UserDetails {
         if (this.likedReviews == null) this.likedReviews = new ArrayList<>();
         this.likedReviews.add(review);
     }
+
+    /**
+     * Removes a review like from the user
+     * @param review The review
+     */
+    public void unlikeReview(Review review) {
+        if (this.likedReviews == null) return;
+        this.likedReviews.remove(review);
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

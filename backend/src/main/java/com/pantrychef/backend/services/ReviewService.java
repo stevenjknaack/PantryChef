@@ -76,6 +76,16 @@ public class ReviewService {
     }
 
     /**
+     * Gets the review with the specified id, if it exists
+     * @param id The id
+     * @return The recipe with the id
+     */
+    public Review getReview(Integer id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    /**
      * Deletes a given review
      * @param id The id of the review to delete
      * @param user User attempting the deletion

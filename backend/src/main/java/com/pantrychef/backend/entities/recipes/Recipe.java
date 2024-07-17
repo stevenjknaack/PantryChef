@@ -93,8 +93,7 @@ public class Recipe {
 
     @JsonIgnore // TODO maybe add likes count?
     @ManyToMany(
-            mappedBy = "likedRecipes",
-            cascade = CascadeType.REMOVE, //TODO does this cascade to users or likedRecipes table
+            mappedBy = "likedRecipes", // TODO test to see if removing a user or recipe still removes from the likeRecipes table
             fetch = FetchType.LAZY
     )
     private List<User> likes;
@@ -133,5 +132,14 @@ public class Recipe {
     public void addLike(User like) {
         if (this.likes == null) this.likes = new ArrayList<>();
         this.likes.add(like);
+    }
+
+    /**
+     * Removes a like from the recipe
+     * @param like The user who is unliking the recipe
+     */
+    public void removeLike(User like) {
+        if (this.likes == null) return;
+        this.likes.remove(like);
     }
 }
