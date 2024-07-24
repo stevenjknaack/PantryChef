@@ -1,6 +1,7 @@
 package com.pantrychef.backend.controllers;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
+import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
 import com.pantrychef.backend.entities.recipes.Recipe;
 import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.services.JWTService;
@@ -11,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Web API endpoints related to recipes
@@ -49,14 +54,20 @@ public class RecipeController {
      * Completes a query for recipes
      * @param page The page number. 0 <= page. Defaults 0
      * @param size The number of results that should be included in the page. size >= 1. Defaults 100
+     * @param authorUsername An optional authorUsername to query by
+     * @param ingredients An optional ingredient list to query by
      * @return A page of recipes satisfying the query parameters
      */
     @GetMapping
     public ResponseEntity<Page<RecipeResultDTO>> getPageOfRecipes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "100") Integer size
-    ) {
-        return ResponseEntity.ok(recipeService.queryRecipes(page, size));
+            @RequestParam(name = "size", defaultValue = "100") Integer size,
+            @RequestParam(required = false) String authorUsername,
+            @RequestParam(required = false) List<String> ingredients
+            ) {
+        return ResponseEntity.ok(
+                recipeService.queryRecipes(page, size, authorUsername, ingredients)
+        );
     }
 
     /**

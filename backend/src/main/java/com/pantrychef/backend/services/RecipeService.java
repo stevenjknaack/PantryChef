@@ -1,6 +1,7 @@
 package com.pantrychef.backend.services;
 
 import com.pantrychef.backend.dtos.RecipeResultDTO;
+import com.pantrychef.backend.entities.ingredients.RecipeIngredient;
 import com.pantrychef.backend.entities.recipes.Recipe;
 import com.pantrychef.backend.entities.users.User;
 import com.pantrychef.backend.errors.InvalidRequestException;
@@ -8,13 +9,15 @@ import com.pantrychef.backend.errors.ResourceNotFoundException;
 import com.pantrychef.backend.mappers.RecipeResultMapper;
 import com.pantrychef.backend.errors.UnauthorizedException;
 import com.pantrychef.backend.repositories.RecipeRepository;
+import com.pantrychef.backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides business logic for dealing with recipes
@@ -30,6 +33,8 @@ public class RecipeService {
     private InstructionService instructionService;
     @Autowired
     private RecipeIngredientService ingredientService;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Creates or updates a recipe. All sublists included will also be saved
@@ -87,17 +92,36 @@ public class RecipeService {
      * Completes a query for recipes
      * @param page The page number. 0 <= page. Defaults 0
      * @param size The number of results that should be included in the page. size >= 1. Defaults 100
+     * @param authorUsername An optional authorUsername to query by
+     * @param ingredientNames An optional list of ingredient names to query by
      * @return A page of recipes satisfying the query parameters
      */
-    public Page<RecipeResultDTO> queryRecipes(Integer page, Integer size) {
+    public Page<RecipeResultDTO> queryRecipes(
+            Integer page, Integer size, String authorUsername, List<String> ingredientNames
+    ) {
         if (page < 0 || size < 1)
             throw new IllegalArgumentException(
                     "Page must be greater than or equal to 0 and size greater than or equal to 1."
             );
 
         Pageable pageRequest = PageRequest.of(page, size);
-        Page<Recipe> recipePage = recipeRepository.findAll(pageRequest);
+//        if (ingredientNames != null) { // TODO
+//            return recipeRepository.findAllByIngredientNames(pageRequest);
+//        }
 
+        User author = null;
+        if (authorUsername != null) {
+            Optional<User> authorQueryResult = userRepository.findById(authorUsername);
+            if (authorQueryResult.isEmpty()) return Page.empty();
+            author = authorQueryResult.get();
+        }
+
+        Recipe recipeExampleProbe = Recipe.builder()
+                .author(author)
+                .build();
+
+        Example<Recipe> recipeExample = Example.of(recipeExampleProbe);
+        Page<Recipe> recipePage = recipeRepository.findAll(recipeExample, pageRequest);
         return recipePage.map(RecipeResultMapper::toDTO);
     }
 
