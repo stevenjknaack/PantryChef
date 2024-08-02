@@ -1,7 +1,7 @@
 # PantryChef 🍽️
 
 by Steven Knaack
-(w/ special thanks to Neha Talluri & Joseph Frazier)
+(w/ special thanks to [Neha Talluri](https://github.com/ntalluri) & Joseph Frazier)
 
 ## Description 📖
 
@@ -21,10 +21,42 @@ leftovers into delightful dishes.
 
 ## Media 🖼️
 
+### Recipe Page
+
+![A screenshot of a recipe's page](./assets/recipe_page_1.png)
+![Another screenshot of a recipe's page](./assets/recipe_page_2.png)
+
 ## Installing & Running 🏃‍♀️
 
 ### Using Docker Compose (Recommended) 🐋
 
 ### Old Fashioned Way 👵
 
+0. Ensure you have [Node.js](https://nodejs.org/en/download/package-manager) downloaded
+
+1. Clone the git repository
+
+```
+git clone https://github.com/stevenjknaack/PantryChef.git
+```
+
+2. Navigate to the frontend directory and run the following
+
+```
+npm run install
+npm run dev
+```
+
+3. While the frontend is running, navigate to the backend folder and run
+
+```
+./gradlew bootRun
+```
+
+4. Click this [link](http://localhost:5173/) to access PantryChef
+
 ## Helpful Links 🔗
+
+-   [Figma Prototype](https://www.figma.com/design/7kbXP4C4IJvyDLaCC6yYIL/PantryChef?node-id=0-1&t=Wo33CpZHMntnxIbv-1)
+
+-   [Recipe and Review Dataset](https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews?resource=download&select=reviews.csv)

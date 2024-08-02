@@ -92,7 +92,7 @@ const RecipePage: FC = () => {
     );
 };
 
-function getExampleRecipe(recipeId) {
+function getExampleRecipe(recipeId: any) {
     return {
         id: recipeId,
         name: 'Awesome Egg Rolls',

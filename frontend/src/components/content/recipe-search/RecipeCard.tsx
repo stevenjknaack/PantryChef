@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { RecipeSearchResult } from '../../../types';
+import './RecipeSearchPage.css';
 
 const RecipeCard: FC<RecipeSearchResult> = ({
     id,
@@ -13,13 +14,10 @@ const RecipeCard: FC<RecipeSearchResult> = ({
 }) => {
     const navigate = useNavigate();
     return (
-        <Card onClick={() => navigate(`./${id}`)}>
-            <img
-                src={mainImage.url}
-                alt={mainImage.altText}
-                height='200'
-                width='200'
-            />
+        <Card onClick={() => navigate(`./${id}`)} className='recipe-card'>
+            <div className='img-box'>
+                <img src={mainImage.url} alt={`An image of ${name}`} />
+            </div>
             <h2>{name}</h2>
             <h3>{authorUsername}</h3>
             <p>{description}</p>
